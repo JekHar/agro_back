@@ -1,0 +1,35 @@
+grumphp:
+  extensions:
+    - YieldStudio\GrumPHPLaravelPint\ExtensionLoader
+  hooks_preset: local
+  hooks_dir: ~
+  git_hook_variables:
+    EXEC_GRUMPHP_COMMAND: "php"
+  tasks:
+    laravel_pint:
+      config: pint.json
+      preset: laravel
+      auto_fix: false
+      auto_stage: false
+      triggered_by:
+        - php
+    git_commit_message:
+      allow_empty_message: false
+      enforce_capitalized_subject: true
+      enforce_no_subject_trailing_period: true
+      max_subject_width: 72
+      case_insensitive: false
+      multiline: true
+      additional_modifiers: ""
+      matchers:
+        - '/^LAR-\d+ .+$/'
+    phpversion:
+      project: "8.2"
+    yamllint:
+      parse_custom_tags: true
+    composer:
+      no_check_all: true
+      no_check_lock: false
+      no_check_publish: false
+      with_dependencies: false
+      strict: false

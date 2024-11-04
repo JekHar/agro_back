@@ -1,0 +1,25 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "align_multiline_comment": true,
+        "array_indentation": true,
+        "array_syntax": {"syntax": "short"},
+        "blank_line_after_namespace": true,
+        "blank_line_after_opening_tag": true,
+        "combine_consecutive_issets": true,
+        "combine_consecutive_unsets": true,
+        "concat_space": {"spacing": "one"},
+        "explicit_string_variable": true,
+        "function_typehint_space": true,
+        "include": true,
+        "lambda_not_used_import": true,
+        "linebreak_after_opening_tag": true,
+        "magic_constant_casing": true,
+        "magic_method_casing": true,
+        "method_argument_space": true,
+        "native_function_casing": true,
+        "no_blank_lines_after_class_opening": true,
+        "no_empty_comment": true,
+        "single_quote": true
+    }
+}
