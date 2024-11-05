@@ -9,6 +9,7 @@
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "spatie/laravel-permission": "^6.9",
+        "yajra/laravel-datatables": "^11.0",
         "yieldstudio/grumphp-laravel-pint": "^1.0"
     },
     "require-dev": {

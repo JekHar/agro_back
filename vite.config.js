@@ -14,7 +14,6 @@ export default defineConfig({
                 'resources/sass/oneui/themes/modern.scss',
                 'resources/sass/oneui/themes/smooth.scss',
                 'resources/js/oneui/app.js',
-                'resources/js/app.js',
                 'resources/js/pages/datatables.js',
                 ...glob.sync('resources/js/input-validators/*.js'),
             ],

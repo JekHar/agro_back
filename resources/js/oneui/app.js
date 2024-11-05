@@ -1,4 +1,3 @@
-// app.js
 import Template from "./modules/template.js";
 import LangHelper from "./modules/lang-helper.js";
 
