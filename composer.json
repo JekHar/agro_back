@@ -40,11 +40,13 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "php vendor/bin/grumphp git:init"
+            "php vendor/bin/grumphp git:init",
+            "@php -r \"file_put_contents('.git/hooks/pre-commit', str_replace('--skip-success-output\\')', '--skip-success-output\\' < /dev/tty)', file_get_contents('.git/hooks/pre-commit')));\""
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php -r \"file_put_contents('.git/hooks/pre-commit', str_replace('--skip-success-output\\')', '--skip-success-output\\' < /dev/tty)', file_get_contents('.git/hooks/pre-commit')));\""
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
