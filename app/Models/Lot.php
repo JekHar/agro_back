@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
+
+class Lot extends Model implements Auditable
+{
+    use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+
+    protected $fillable = [
+        'merchant_id',
+        'numbering'
+    ];
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class);
+    }
+
+    public function coordinates()
+    {
+        return $this->hasMany(Coordinate::class);
+    }
+}
