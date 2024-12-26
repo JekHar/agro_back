@@ -26,12 +26,15 @@ class ServiceDataTable extends DataTable
             return $row->merchant->business_name ?? 'N/A';
             })
         ->filterColumn('merchant_name', function ($query, $keyword) {
-            $query->where('merchants.name', 'like', "%{$keyword}%");
+            $query->where('merchants.business_name', 'like', "%{$keyword}%");
         })
         ->editColumn('updated_at', fn ($item) => $item->updated_at->format('Y-m-d H:i:s'))
         ->editColumn('created_at', fn ($item) => $item->created_at->format('Y-m-d H:i:s'))
         ->addColumn('action', 'pages.services.action')
         ->rawColumns(['image', 'action'])
+        ->setRowClass(function () {
+            return 'align-middle position-relative';
+        })
         ->setRowId('id');
     }
 

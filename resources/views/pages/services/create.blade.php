@@ -1,19 +1,19 @@
 @extends('layouts.backend')
 @section('content')
     <x-hero
-        :title="__('crud.items.plural')"
-        :subtitle="__('crud.items.Items list')"
+        :title="__('crud.services.plural')"
+        :subtitle="__('crud.services.services list')"
         :breadcrumbs="[
             [
                 'label' => 'Home',
                 'url' => '/',
             ],
             [
-                'label' => __('crud.items.plural'),
+                'label' => __('crud.services.plural'),
                 'url' => route('services.index'),
             ],
             [
-                'label' => __('crud.items.actions.edit'),
+                'label' => __('crud.services.actions.create'),
             ],
         ]"></x-hero>
 
@@ -21,7 +21,7 @@
         <div class="block block-rounded">
             <div class="block-header block-header-default">
                 <h3 class="block-title">
-                    {{ __('crud.items.Items list') }}
+                    {{ __('crud.services.services list') }}
                 </h3>
             </div>
             <div class="block-content block-content-full">
