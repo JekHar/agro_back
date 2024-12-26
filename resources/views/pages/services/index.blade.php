@@ -13,13 +13,13 @@
 @endpush
 
 @section('content')
-    <x-hero :title="__('crud.Services.plural')" :subtitle="__('crud.items.Items list')" :breadcrumbs="[
+    <x-hero :title="__('crud.services.plural')" :subtitle="__('crud.services.services list')" :breadcrumbs="[
         [
             'label' => 'Home',
             'url' => '/',
         ],
         [
-            'label' => __('crud.items.plural'),
+            'label' => __('crud.services.plural'),
         ],
     ]"></x-hero>
 
@@ -27,8 +27,8 @@
 
         <div class="block block-rounded">
             <div class="block-header block-header-default">
-                <h3 class="block-title">
-                    {{ __('crud.items.Items list') }}
+                <h3 class="block-title">    
+                    {{ __('crud.services.services list') }}
                 </h3>
                 <div class="block-options">
                     <a href="{{ route('services.create') }}" class="btn btn-sm btn-primary">

@@ -24,6 +24,7 @@ class ServiceRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'merchant_id' => ['required', 'exists:merchants,id'],
+            'description' => ['nullable', 'string'],
             'price_per_hectare' => ['required', 'numeric'],
         ];
     }
