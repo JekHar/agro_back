@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Types\MerchantType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
@@ -12,6 +13,7 @@ class Merchant extends Model implements ContractsAuditable
 {
     use SoftDeletes;
     use Auditable;
+    use HasFactory;
 
     protected $fillable = [
         'business_name',
@@ -29,7 +31,7 @@ class Merchant extends Model implements ContractsAuditable
 
     protected $casts = [
         'merchant_type' => MerchantType::class,
-        
+
     ];
 
     public function parentMerchant()
