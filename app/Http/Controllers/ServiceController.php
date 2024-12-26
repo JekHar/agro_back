@@ -18,8 +18,7 @@ class ServiceController extends Controller
 
     public function create()
     {
-        $merchants = Merchant::where('merchant_type', MerchantType::CLIENT)->pluck('business_name', 'id');   
-        return view('pages.services.create', compact('merchants'));
+        return view('pages.services.form');
     }
 
     public function store(ServiceRequest $request)
@@ -30,11 +29,10 @@ class ServiceController extends Controller
         return redirect()->route('services.index');
     }
 
-    public function edit(Service $service)
+    public function edit($id)
     {
-        $merchants = Merchant::where('merchant_type', MerchantType::CLIENT)->pluck('business_name', 'id');
-        return view('pages.services.edit', compact('service', 'merchants'));
-        
+
+        return view('pages.services.form', compact('id'));
     }
 
 

@@ -86,7 +86,7 @@ class ServiceDataTable extends DataTable
             Column::make('name')->title('Service Name'),
             Column::make('description')->title('Service Description'),
             Column::make('price_per_hectare')->title('Price per Hectare'),
-            Column::make('disabled_at')->title('Disabled At'),
+            // Column::make('disabled_at')->title('Disabled At'),
             Column::make('merchant_name'),
             Column::make('created_at'),
             Column::make('updated_at'),
