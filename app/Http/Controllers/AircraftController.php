@@ -23,4 +23,11 @@ class AircraftController extends Controller
        
         return view('pages.aircraft.form', compact('id'));
     }
+
+    public function destroy($id)
+    {
+        Aircraft::destroy($id);
+        return redirect()->route('aircrafts.index');
+        
+    }
 }

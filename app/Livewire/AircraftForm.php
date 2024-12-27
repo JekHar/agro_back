@@ -26,8 +26,8 @@ class AircraftForm extends Component
             'merchant_id' => 'required|exists:merchants,id',
             'brand' => 'required|string|max:255',
             'models' => 'required|string|max:255',
-            'manufacturing_year' => 'required|numeric',
-            'acquisition_date' => 'required|date',
+            'manufacturing_year' => 'nullable|numeric',
+            'acquisition_date' => 'nullable|date',
             'working_width' => 'required|numeric|min:0'
         ];
     }

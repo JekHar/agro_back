@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AircraftController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('services', ServiceController::class);
     Route::resource('aircrafts', AircraftController::class);
+    Route::resource('products', ProductController::class);
 });
 
 Route::view('/pages/slick', 'pages.slick');
