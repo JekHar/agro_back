@@ -42,12 +42,16 @@ return [
             'updated_at' => 'Updated At',
             'password' => 'Password',
             'password_confirmation' => 'Confirm Password',
+            'merchant' => 'Merchant',
+            'role' => 'Role',
         ],
         'actions' => [
             'create' => 'Create User',
             'edit' => 'Edit User',
             'delete' => 'Delete User',
         ],
+        'select_merchant' => 'Select Merchant',
+        'select_role' => 'Select Role',
     ],
     'dashboard' => [
         'singular' => 'Dashboard',

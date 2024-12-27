@@ -4,9 +4,11 @@ namespace App\Livewire;
 
 use App\Models\User;
 use App\Models\Merchant;
+use App\Types\MerchantType;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Spatie\Permission\Models\Role;
 
 class UserForm extends Component
 {
@@ -18,6 +20,7 @@ class UserForm extends Component
     public $password_confirmation;
     public $merchant_id;
     public $role;
+    public $roles;
     public $merchants;
     public $isEditing = false;
 
@@ -26,7 +29,7 @@ class UserForm extends Component
         $rules = [
             'name' => 'required|string|max:255',
             'merchant_id' => 'required|exists:merchants,id',
-            'role' => 'required|in:Piloto,Apoyo a Tierra'
+            'role' => 'required|exists:roles,id', // Changed to validate against role IDs
         ];
 
         if (!$this->isEditing) {
@@ -37,34 +40,26 @@ class UserForm extends Component
         return $rules;
     }
 
-    protected function messages()
-    {
-        return [
-            'name.required' => 'El nombre es requerido',
-            'email.required' => 'El correo electrónico es requerido',
-            'email.email' => 'El correo electrónico debe ser válido',
-            'email.unique' => 'Este correo electrónico ya está registrado',
-            'password.required' => 'La contraseña es requerida',
-            'password.confirmed' => 'Las contraseñas no coinciden',
-            'merchant_id.required' => 'El comerciante es requerido',
-            'merchant_id.exists' => 'El comerciante seleccionado no existe',
-            'role.required' => 'El rol es requerido',
-            'role.in' => 'El rol debe ser Piloto o Apoyo a Tierra'
-        ];
-    }
-
     public function mount($userId = null)
     {
-        $this->merchants = Merchant::pluck('name', 'id');
+        $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
+            ->pluck('business_name', 'id');
+
+        // Get only Pilot and Ground Support roles
+        $this->roles = Role::whereIn('name', ['Pilot', 'Ground Support'])
+            ->pluck('name', 'id');
 
         if ($userId) {
             $this->isEditing = true;
             $this->userId = $userId;
-            $this->user = User::findOrFail($userId);
+            $this->user = User::find($userId);
             $this->name = $this->user->name;
             $this->email = $this->user->email;
             $this->merchant_id = $this->user->merchant_id;
-            $this->role = $this->user->roles->first()?->name;
+
+            // Get the role ID instead of name
+            $userRole = $this->user->roles()->first();
+            $this->role = $userRole ? $userRole->id : null;
         }
     }
 
@@ -73,32 +68,38 @@ class UserForm extends Component
         $validatedData = $this->validate();
 
         if ($this->isEditing) {
-            $this->user->update($validatedData);
-            $this->user->syncRoles([$validatedData['role']]);
-        } else {
-            $userData = array_merge($validatedData, [
-                'password' => Hash::make($validatedData['password'])
+            $this->user->update([
+                'name' => $validatedData['name'],
+                'merchant_id' => $validatedData['merchant_id'],
             ]);
 
-            $user = User::create($userData);
-            $user->assignRole($validatedData['role']);
-        }
+            // Get the role by ID and sync
+            $role = Role::find($validatedData['role']);
+            if ($role) {
+                $this->user->syncRoles([$role->name]);
+            }
+        } else {
+            $userData = [
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'merchant_id' => $validatedData['merchant_id'],
+                'password' => Hash::make($validatedData['password'])
+            ];
 
-        session()->flash(
-            'success',
-            $this->isEditing ? 'Usuario actualizado exitosamente.' : 'Usuario creado exitosamente.'
-        );
+            $user = User::create($userData);
+
+            // Get the role by ID and assign
+            $role = Role::find($validatedData['role']);
+            if ($role) {
+                $user->assignRole($role->name);
+            }
+        }
 
         return redirect()->route('users.index');
     }
 
     public function render()
     {
-        return view('livewire.user-form', [
-            'roles' => [
-                'Piloto' => 'Piloto',
-                'Apoyo a Tierra' => 'Apoyo a Tierra'
-            ]
-        ]);
+        return view('livewire.user-form');
     }
 }

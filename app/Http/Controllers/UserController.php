@@ -16,21 +16,14 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('pages.users.create');
+        return view('pages.users.form');
     }
 
     // Guardar nuevo usuario
     public function store(UserRequest $request)
     {
-
-        $referer = $request->headers->get('referer');
-        $usersUrl = route('users.index');
-
-        User::create($request->validated());
-
-        if ($referer != $usersUrl) {
-            return redirect()->route('users.index');
-        }
+        $validated = $request->validated();
+        User::create($validated);
 
         return redirect()->route('users.index');
     }

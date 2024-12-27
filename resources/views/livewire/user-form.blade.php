@@ -46,8 +46,8 @@
                         id="merchant_id"
                         wire:model="merchant_id">
                         <option value="">{{ __('crud.users.select_merchant') }}</option>
-                        @foreach($this->merchants as $merchant)
-                        <option value="{{ $merchant->id }}">{{ $merchant->name }}</option>
+                        @foreach ($merchants as $id => $businessName)
+                        <option value="{{ $id }}">{{ $businessName }}</option>
                         @endforeach
                     </select>
                     @error('merchant_id')
@@ -66,8 +66,8 @@
                         id="role"
                         wire:model="role">
                         <option value="">{{ __('crud.users.select_role') }}</option>
-                        @foreach($this->roles as $value => $label)
-                        <option value="{{ $value }}">{{ $label }}</option>
+                        @foreach($roles as $id => $role)
+                        <option value="{{ $id }}">{{ $role }}</option>
                         @endforeach
                     </select>
                     @error('role')

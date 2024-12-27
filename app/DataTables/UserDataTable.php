@@ -22,9 +22,22 @@ class UserDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'pages.users.actions')
+            ->addColumn('merchant_name', function ($user) {
+                return $user->merchant->business_name ?? 'N/A';
+            })
+            ->filterColumn('merchant_name', function ($query, $keyword) {
+                $query->where('merchants.business_name', 'like', "%{$keyword}%");
+            })
+            
             ->addColumn('role', function ($user) {
                 return $user->roles->first()?->name ?? 'N/A';
+            })
+            ->editColumn('updated_at', fn($item) => $item->updated_at->format('Y-m-d H:i:s'))
+            ->editColumn('created_at', fn($item) => $item->created_at->format('Y-m-d H:i:s'))
+            ->addColumn('action', 'pages.users.action')
+            ->rawColumns(['image', 'action'])
+            ->setRowClass(function () {
+                return 'align-middle position-relative';
             })
             ->setRowId('id');
     }
@@ -36,7 +49,9 @@ class UserDataTable extends DataTable
     {
         return $model->newQuery()
             ->with('roles')
-            ->with('merchant');
+            ->with('merchant')
+            ->join('merchants', 'users.merchant_id', '=', 'merchants.id') 
+            ->select('users.*', 'merchants.business_name as merchant_name');
     }
 
     /**
@@ -49,6 +64,11 @@ class UserDataTable extends DataTable
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->orderBy(1)
+                    ->parameters([
+                        'dom' => 'Bfrtip',
+                        'drawCallback' => 'function() { initDeleteConfirmation() }',
+
+                    ])
                     ->selectStyleSingle()
                     ->buttons([
                         Button::make('excel'),
@@ -70,7 +90,8 @@ class UserDataTable extends DataTable
             Column::make('name'),
             Column::make('email'),
             column::make('role'),
-            column::make('merchant_id'),
+            Column::make('merchant_name'),
+            // column::make('merchant_id'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')
