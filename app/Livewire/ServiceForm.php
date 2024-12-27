@@ -29,7 +29,7 @@ class ServiceForm extends Component
             'price_per_hectare' => 'required|numeric|min:0',
         ];
     }
-
+    
     public function mount($serviceId = null)
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)

@@ -6,7 +6,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
-    <title>Sistema de gestion para ventas mayoristas - AFANTEC</title>
+    <title>Makup</title>
 
     <meta name="description" content="Sistema de gestion para ventas mayoristas">
     <meta name="author" content="AFANTEC">
