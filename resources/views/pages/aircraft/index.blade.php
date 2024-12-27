@@ -13,13 +13,13 @@
 @endpush
 
 @section('content')
-    <x-hero :title="__('crud.services.plural')" :subtitle="__('crud.services.services list')" :breadcrumbs="[
+    <x-hero :title="__('crud.aircrafts.plural')" :subtitle="__('crud.aircrafts.aircrafts list')" :breadcrumbs="[
         [
             'label' => 'Home',
             'url' => '/',
         ],
         [
-            'label' => __('crud.services.plural'),
+            'label' => __('crud.aircrafts.plural'),
         ],
     ]"></x-hero>
 
@@ -28,16 +28,16 @@
         <div class="block block-rounded">
             <div class="block-header block-header-default">
                 <h3 class="block-title">    
-                    {{ __('crud.services.services list') }}
+                    {{ __('crud.aircrafts.aircrafts list') }}
                 </h3>
                 <div class="block-options">
-                    <a href="{{ route('services.create') }}" class="btn btn-sm btn-primary">
+                    <a href="{{ route('aircrafts.create') }}" class="btn btn-sm btn-primary">
                         <i class="fa fa-plus me-1"></i>
-                        {{ __('crud.services.add') }}
+                        {{ __('crud.aircrafts.add') }}
                     </a>
-                </div> 
+                </div>  
             </div>
-            @include('pages.services.service-datatable')
+            @include('pages.aircraft.aircraft-datatable')
         </div>
     </div>
 @endsection

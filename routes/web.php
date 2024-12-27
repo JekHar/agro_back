@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\MerchantController;
+use App\Http\Controllers\AircraftController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;

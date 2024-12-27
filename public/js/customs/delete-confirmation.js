@@ -9,7 +9,7 @@ function initDeleteConfirmation() {
 
             Swal.fire({
                 title: '¿Estás seguro?',
-                text: '¿Estás seguro de eliminar ${itemTitle}?',
+                text: `¿Estás seguro de eliminar ${itemTitle}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

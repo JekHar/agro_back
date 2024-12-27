@@ -18,34 +18,38 @@ class ServiceController extends Controller
 
     public function create()
     {
-        $merchants = Merchant::where('merchant_type', MerchantType::CLIENT)->pluck('business_name', 'id');   
-        return view('pages.services.create', compact('merchants'));
+        return view('pages.services.form');
     }
 
     public function store(ServiceRequest $request)
     {
         $validated = $request->validated();
-        Service::created($validated);
-        return redirect()->route('services.index');
-    }
+        Service::create($validated);
 
-    public function show($id)
-    {
-        return view('services.show');
+        return redirect()->route('services.index');
     }
 
     public function edit($id)
     {
-        return view('services.edit');
+
+        return view('pages.services.form', compact('id'));
     }
 
-    public function update(Request $request, $id)
+
+
+    public function update(ServiceRequest $request, Service $service)
     {
-        //
+        $validated = $request->validated();
+        $service->update($validated);
+
+        return redirect()->route('services.index');
+
     }   
 
     public function destroy($id)
     {
-        //
+        Service::destroy($id);
+
+        return redirect()->route('services.index');
     }
 }
