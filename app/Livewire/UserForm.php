@@ -41,7 +41,7 @@ class UserForm extends Component
     {
         return [
             'Pilot' => __('Pilot'),
-            'Apoyo a Tierra' => __('Apoyo a Tierra'),
+            'Ground Support' => __('Ground Support'),
         ];
     }
 

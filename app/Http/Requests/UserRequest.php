@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -18,7 +19,7 @@ class UserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'merchant_id' => ['required', 'exists:merchants,id'],
-            'role' => ['required', Rule::in(['Piloto', 'Apoyo a Tierra'])],
+            'role' => ['required', Rule::in(['Pilot', 'Ground Support'])],
         ];
     }
 
@@ -32,3 +33,4 @@ class UserRequest extends FormRequest
             'role.in' => 'El rol debe ser Piloto o Apoyo a Tierra',
         ];
     }
+}
