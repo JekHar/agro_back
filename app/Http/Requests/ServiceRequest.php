@@ -22,10 +22,12 @@ class ServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'merchant_id' => ['required', 'exists:merchants,id'],
-            'description' => ['nullable', 'string'],
-            'price_per_hectare' => ['required', 'numeric'],
+            'name' => $this->isEditing 
+                ? 'required|string|max:255'
+                : 'required|string|max:255|unique:services,name',
+            'description' => 'required|string',
+            'merchant_id' => 'required|exists:merchants,id',
+            'price_per_hectare' => 'required|numeric|min:0',
         ];
     }
 }
