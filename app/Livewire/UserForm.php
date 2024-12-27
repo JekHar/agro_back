@@ -2,108 +2,103 @@
 
 namespace App\Livewire;
 
-use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Models\Merchant;
-use Illuminate\Support\Facades\Hash;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserForm extends Component
 {
-    public ?string $userId;
-    public ?User $user = null;
-    public bool $isModal = false;
-    public string $name = '';
-    public string $email = '';
-    public string $password = '';
-    public string $password_confirmation = '';
-    public string $role = '';
-    public ?int $merchant_id = null;
-    public bool $isEditing = false;
+    public $user;
+    public $userId;
+    public $name;
+    public $email;
+    public $password;
+    public $password_confirmation;
+    public $merchant_id;
+    public $role;
+    public $merchants;
+    public $isEditing = false;
 
-    public function mount($userId = null)
+    protected function rules()
     {
-        $this->userId = $userId;
+        $rules = [
+            'name' => 'required|string|max:255',
+            'merchant_id' => 'required|exists:merchants,id',
+            'role' => 'required|in:Piloto,Apoyo a Tierra'
+        ];
 
-        if ($this->userId) {
-            $this->user = User::findOrFail($this->userId);
-            $this->isEditing = true;
-            $this->name = $this->user->name;
-            $this->email = $this->user->email;
-            $this->merchant_id = $this->user->merchant_id;
-            $this->role = $this->user->roles->first()?->name ?? '';
+        if (!$this->isEditing) {
+            $rules['email'] = 'required|email|unique:users,email';
+            $rules['password'] = ['required', 'confirmed', Password::defaults()];
         }
+
+        return $rules;
     }
 
-    #[Computed]
-    public function roles(): array
+    protected function messages()
     {
         return [
-            'Pilot' => __('Pilot'),
-            'Ground Support' => __('Ground Support'),
+            'name.required' => 'El nombre es requerido',
+            'email.required' => 'El correo electrónico es requerido',
+            'email.email' => 'El correo electrónico debe ser válido',
+            'email.unique' => 'Este correo electrónico ya está registrado',
+            'password.required' => 'La contraseña es requerida',
+            'password.confirmed' => 'Las contraseñas no coinciden',
+            'merchant_id.required' => 'El comerciante es requerido',
+            'merchant_id.exists' => 'El comerciante seleccionado no existe',
+            'role.required' => 'El rol es requerido',
+            'role.in' => 'El rol debe ser Piloto o Apoyo a Tierra'
         ];
     }
 
-    #[Computed]
-    public function merchants()
+    public function mount($userId = null)
     {
-        return Merchant::all();
+        $this->merchants = Merchant::pluck('name', 'id');
+
+        if ($userId) {
+            $this->isEditing = true;
+            $this->userId = $userId;
+            $this->user = User::findOrFail($userId);
+            $this->name = $this->user->name;
+            $this->email = $this->user->email;
+            $this->merchant_id = $this->user->merchant_id;
+            $this->role = $this->user->roles->first()?->name;
+        }
     }
 
-    public function save(): void
+    public function save()
     {
-        $request = new UserRequest();
-        $validated = $this->validate($request->rules(), $request->messages());
+        $validatedData = $this->validate();
 
-        try {
-            $userData = [
-                'name' => $validated['name'],
-                'merchant_id' => $validated['merchant_id'],
-            ];
-
-            if (!$this->isEditing) {
-                $userData['email'] = $validated['email'];
-                $userData['password'] = Hash::make($validated['password']);
-            }
-
-            if ($this->user && $this->user->exists) {
-                $this->user->update($userData);
-                $this->user->syncRoles([$validated['role']]);
-                $message = __('Usuario actualizado exitosamente');
-            } else {
-                $user = User::create($userData);
-                $user->assignRole($validated['role']);
-                $message = __('Usuario creado exitosamente');
-            }
-
-            $this->dispatch('user-saved');
-
-            $this->dispatch('swal', [
-                'title' => __('¡Éxito!'),
-                'message' => $message,
-                'icon' => 'success',
-                'redirect' => route('users.index'),
+        if ($this->isEditing) {
+            $this->user->update($validatedData);
+            $this->user->syncRoles([$validatedData['role']]);
+        } else {
+            $userData = array_merge($validatedData, [
+                'password' => Hash::make($validatedData['password'])
             ]);
 
-            if ($this->isModal) {
-                $this->dispatch('close-modal');
-            }
-
-            if (!$this->user || !$this->user->exists) {
-                $this->reset(['name', 'email', 'password', 'password_confirmation', 'role', 'merchant_id']);
-            }
-        } catch (\Exception $e) {
-            $this->dispatch('swal', [
-                'title' => __('Error'),
-                'message' => __('Ocurrió un error al procesar la solicitud'),
-                'icon' => 'error',
-            ]);
+            $user = User::create($userData);
+            $user->assignRole($validatedData['role']);
         }
+
+        session()->flash(
+            'success',
+            $this->isEditing ? 'Usuario actualizado exitosamente.' : 'Usuario creado exitosamente.'
+        );
+
+        return redirect()->route('users.index');
     }
 
     public function render()
     {
-        return view('livewire.user-form');
+        return view('livewire.user-form', [
+            'roles' => [
+                'Piloto' => 'Piloto',
+                'Apoyo a Tierra' => 'Apoyo a Tierra'
+            ]
+        ]);
     }
 }

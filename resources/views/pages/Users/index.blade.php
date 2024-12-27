@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css') }}">
 @endsection
-@push('after_body')
+@push('scripts')
     @include('partials.datatables-js')
     {{ $dataTable->scripts() }}
 @endpush

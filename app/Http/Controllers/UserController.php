@@ -5,25 +5,22 @@ namespace App\Http\Controllers;
 use App\DataTables\UserDataTable;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     // Mostrar lista de usuarios
-    public function index(UserDataTable $dataTable): mixed
+    public function index(UserDataTable $dataTable)
     {
         return $dataTable->render('pages.users.index');
     }
 
-    public function create(): View
+    public function create()
     {
         return view('pages.users.create');
     }
 
     // Guardar nuevo usuario
-    public function store(UserRequest $request): RedirectResponse
+    public function store(UserRequest $request)
     {
 
         $referer = $request->headers->get('referer');
@@ -32,7 +29,7 @@ class UserController extends Controller
         User::create($request->validated());
 
         if ($referer != $usersUrl) {
-            return redirect()->to($referer)->with('success', 'User created successfully.');
+            return redirect()->route('users.index');
         }
 
         return redirect()->route('users.index');
@@ -43,23 +40,24 @@ class UserController extends Controller
     //     return view('users.show', compact('user'));
     // }
 
-    public function edit(User $user): View
+    public function edit($id)
     {
-        return view('pages.users.edit', compact('user'));
+        return view('pages.users.form', compact('id'));
     }
 
     // Actualizar usuario
-    public function update(UserRequest $request, User $user): RedirectResponse
+    public function update(UserRequest $request, User $user)
     {
-        $user->update($request->validated());
+        $validated = $request->validated();
+        $user->update($validated);
 
         return redirect()->route('users.index');
     }
 
-    public function destroy(User $user): RedirectResponse
+    public function destroy($id)
     {
-        $user->delete();
+        User::destroy($id);
 
-        return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente.');
+        return redirect()->route('users.index');
     }
 }

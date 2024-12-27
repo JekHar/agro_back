@@ -1,55 +1,119 @@
 <div>
-    <form wire:submit="save" class="space-y-6">
-        <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">{{ __('Nombre') }}</label>
-            <input type="text" wire:model="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+    <form wire:submit.prevent="save">
+        <div class="row">
+            <!-- Nombre -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <label class="form-label" for="name">{{ __('crud.users.fields.name') }}</label>
+                    <input type="text"
+                        class="form-control @error('name') is-invalid @enderror"
+                        id="name"
+                        wire:model="name"
+                        placeholder="{{ __('crud.users.fields.name') }}">
+                    @error('name')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <label class="form-label" for="email">{{ __('crud.users.fields.email') }}</label>
+                    <input type="email"
+                        class="form-control @error('email') is-invalid @enderror"
+                        id="email"
+                        wire:model="email"
+                        placeholder="{{ __('crud.users.fields.email') }}"
+                        @if($isEditing) disabled @endif>
+                    @error('email')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Selección de Merchant -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <label class="form-label" for="merchant_id">{{ __('crud.users.fields.merchant') }}</label>
+                    <select class="form-control @error('merchant_id') is-invalid @enderror"
+                        id="merchant_id"
+                        wire:model="merchant_id">
+                        <option value="">{{ __('crud.users.select_merchant') }}</option>
+                        @foreach($this->merchants as $merchant)
+                        <option value="{{ $merchant->id }}">{{ $merchant->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('merchant_id')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Rol -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <label class="form-label" for="role">{{ __('crud.users.fields.role') }}</label>
+                    <select class="form-control @error('role') is-invalid @enderror"
+                        id="role"
+                        wire:model="role">
+                        <option value="">{{ __('crud.users.select_role') }}</option>
+                        @foreach($this->roles as $value => $label)
+                        <option value="{{ $value }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('role')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
         </div>
 
         @if(!$isEditing)
-        <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">{{ __('Email') }}</label>
-            <input type="email" wire:model="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
+        <div class="row">
+            <!-- Password -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <label class="form-label" for="password">{{ __('crud.users.fields.password') }}</label>
+                    <input type="password"
+                        class="form-control @error('password') is-invalid @enderror"
+                        id="password"
+                        wire:model="password">
+                    @error('password')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
 
-        <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">{{ __('Contraseña') }}</label>
-            <input type="password" wire:model="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-
-        <div>
-            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">{{ __('Confirmar Contraseña') }}</label>
-            <input type="password" wire:model="password_confirmation" id="password_confirmation" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <!-- Password Confirmation -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <label class="form-label" for="password_confirmation">{{ __('crud.users.fields.password_confirmation') }}</label>
+                    <input type="password"
+                        class="form-control"
+                        id="password_confirmation"
+                        wire:model="password_confirmation">
+                </div>
+            </div>
         </div>
         @endif
 
-        <div>
-            <label for="merchant_id" class="block text-sm font-medium text-gray-700">{{ __('Comerciante') }}</label>
-            <select wire:model="merchant_id" id="merchant_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                <option value="">{{ __('Seleccionar comerciante') }}</option>
-                @foreach($this->merchants as $merchant)
-                <option value="{{ $merchant->id }}">{{ $merchant->name }}</option>
-                @endforeach
-            </select>
-            @error('merchant_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-
-        <div>
-            <label for="role" class="block text-sm font-medium text-gray-700">{{ __('Rol') }}</label>
-            <select wire:model="role" id="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                <option value="">{{ __('Seleccionar rol') }}</option>
-                @foreach($this->roles as $value => $label)
-                <option value="{{ $value }}">{{ $label }}</option>
-                @endforeach
-            </select>
-            @error('role') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-
-        <div class="flex justify-end">
-            <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                {{ $isEditing ? __('Actualizar') : __('Crear') }}
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">
+                <i class="fa fa-fw fa-{{ $isEditing ? 'save' : 'plus' }} me-1"></i>
+                {{ $isEditing ? __('crud.users.actions.edit') : __('crud.users.add') }}
             </button>
         </div>
     </form>
