@@ -22,8 +22,9 @@ class MerchantsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'merchants.action')
-            ->setRowId('id');
+            ->addColumn('action', 'pages.merchants.actions')
+            ->setRowId('id')
+            ->rawColumns(['action']);
     }
 
     /**
@@ -35,10 +36,12 @@ class MerchantsDataTable extends DataTable
        return $model->newQuery()
            ->select('merchants.*')
            ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
-           ->leftJoin('orders', 'merchants.id', '=', 'orders.merchant_id')
+           //->leftJoin('orders', 'merchants.id', '=', 'orders.merchant_id')
            ->where('merchant_type', 'Client')
-           ->selectRaw('COUNT(DISTINCT lots.id) as lots_count, MAX(orders.created_at) as last_service')
-           ->groupBy('merchants.id');
+           //->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
+           //->selectRaw('COUNT(DISTINCT lots.id) as lots_count, MAX(orders.created_at) as last_service')
+           //->groupBy('merchants.id');
+           ;
    }
 
    if (request()->routeIs('merchants.tenants.*')) {
@@ -62,7 +65,7 @@ class MerchantsDataTable extends DataTable
             ->parameters([
                 'dom' => 'Bfrtip',
                 'drawCallback' => 'function() { initDeleteConfirmation() }',
-                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                
             ])
             ->selectStyleSingle()
             ->buttons([
@@ -70,8 +73,6 @@ class MerchantsDataTable extends DataTable
                 Button::make('csv'),
                 Button::make('pdf'),
                 Button::make('print'),
-                Button::make('reset'),
-                Button::make('reload')
             ]);
     }
 
@@ -84,7 +85,7 @@ class MerchantsDataTable extends DataTable
         if (request()->routeIs('merchants.tenants.*')) {
             return [
                 Column::make('id')->title('#'),
-                Column::make('bussines_name')->name('business_name'),
+                Column::make('business_name')->name('business_name'),
                 Column::make('trade_name')->name('trade name'),
                 Column::make('fiscal_number')->name('fiscal number'),
                 Column::make('email')->name('email'),
@@ -99,14 +100,14 @@ class MerchantsDataTable extends DataTable
         if (request()->routeIs('merchants.clients.*')) {
             return [
                 Column::make('id')->title('#'),
-                Column::make('bussines_name')->name('business_name'),
+                Column::make('business_name')->name('business_name'),
                 Column::make('trade_name')->name('trade name'),
                 Column::make('fiscal_number')->name('fiscal number'),
                 Column::make('main_activity')->name('main activity'),
                 Column::make('email')->name('email'),
                 Column::make('phone')->name('phone'),
-                Column::Make('lots')->name('lots'),
-                Column::Make('last_service')->name('last service'),
+                //Column::Make('lots')->name('lots'),
+                //Column::Make('last_service')->name('last service'),
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)

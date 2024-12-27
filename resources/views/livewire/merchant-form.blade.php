@@ -1,3 +1,5 @@
+
+
 <div>
     <form wire:submit="save" class="space-y-4">
         <div class="block">
@@ -9,10 +11,10 @@
                             <i class="fa fa-building"></i>
                         </span>
                         <input type="text"
-                            class="form-control @error('merchant.business_name') is-invalid @enderror"
-                            wire:model="merchant.business_name"
+                            class="form-control @error('business_name') is-invalid @enderror"
+                            wire:model="business_name"
                             placeholder="{{ __('Ingrese nombre comercial') }}">
-                        @error('merchant.business_name')
+                        @error('business_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -25,10 +27,10 @@
                             <i class="fa fa-file-text"></i>
                         </span>
                         <input type="text"
-                            class="form-control @error('merchant.trade_name') is-invalid @enderror"
-                            wire:model="merchant.trade_name"
+                            class="form-control @error('trade_name') is-invalid @enderror"
+                            wire:model="trade_name"
                             placeholder="{{ __('Ingrese nombre fiscal') }}">
-                        @error('merchant.trade_name')
+                        @error('trade_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -43,10 +45,10 @@
                             <i class="fa fa-id-card"></i>
                         </span>
                         <input type="text"
-                            class="form-control @error('merchant.fiscal_number') is-invalid @enderror"
-                            wire:model="merchant.fiscal_number"
+                            class="form-control @error('fiscal_number') is-invalid @enderror"
+                            wire:model="fiscal_number"
                             placeholder="{{ __('Ingrese NIF/CIF') }}">
-                        @error('merchant.fiscal_number')
+                        @error('fiscal_number')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -60,10 +62,10 @@
                             <i class="fa fa-briefcase"></i>
                         </span>
                         <input type="text"
-                            class="form-control @error('merchant.main_activity') is-invalid @enderror"
-                            wire:model="merchant.main_activity"
+                            class="form-control @error('main_activity') is-invalid @enderror"
+                            wire:model="main_activity"
                             placeholder="{{ __('Ingrese actividad principal') }}">
-                        @error('merchant.main_activity')
+                        @error('main_activity')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -80,10 +82,10 @@
                             <i class="fa fa-envelope"></i>
                         </span>
                         <input type="email"
-                            class="form-control @error('merchant.email') is-invalid @enderror"
-                            wire:model="merchant.email"
+                            class="form-control @error('email') is-invalid @enderror"
+                            wire:model="email"
                             placeholder="{{ __('correo@ejemplo.com') }}">
-                        @error('merchant.email')
+                        @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -96,10 +98,10 @@
                             <i class="fa fa-phone"></i>
                         </span>
                         <input type="text"
-                            class="form-control @error('merchant.phone') is-invalid @enderror"
-                            wire:model="merchant.phone"
+                            class="form-control @error('phone') is-invalid @enderror"
+                            wire:model="phone"
                             placeholder="{{ __('Teléfono') }}">
-                        @error('merchant.phone')
+                        @error('phone')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -108,7 +110,7 @@
 
             <div class="row mt-4">
                 <div class="col-md-6">
-                    <input type="hidden" wire:model="merchant.merchant_type">
+                    <input type="hidden" wire:model="merchant_type">
                 </div>
             </div>
 
@@ -120,10 +122,10 @@
                             <i class="fa fa-map-marker"></i>
                         </span>
                         <input type="text"
-                            class="form-control @error('merchant.locality') is-invalid @enderror"
-                            wire:model="merchant.locality"
+                            class="form-control @error('locality') is-invalid @enderror"
+                            wire:model="locality"
                             placeholder="{{ __('Ingrese localidad') }}">
-                        @error('merchant.locality')
+                        @error('locality')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -136,10 +138,10 @@
                             <i class="fa fa-location-arrow"></i>
                         </span>
                         <input type="text"
-                            class="form-control @error('merchant.address') is-invalid @enderror"
-                            wire:model="merchant.address"
+                            class="form-control @error('address') is-invalid @enderror"
+                            wire:model="address"
                             placeholder="{{ __('Ingrese dirección') }}">
-                        @error('merchant.address')
+                        @error('address')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

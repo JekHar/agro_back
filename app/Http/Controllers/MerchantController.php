@@ -39,7 +39,7 @@ class MerchantController extends Controller
 
         Merchant::create($merchantData);
 
-        return redirect()->route($this->getRedirectRoute($request) . '.index')->with('success', 'Merchant created successfully.');
+        return redirect()->route($this->getRedirectRoute($request) . 'merchants.index')->with('success', 'Merchant created successfully.');
     }
 
     /**
@@ -59,7 +59,7 @@ class MerchantController extends Controller
 
         $merchant->update($merchantData);
 
-        return redirect()->route($this->getRedirectRoute($request) . '.index')->with('success', 'Merchant updated successfully.');
+        return redirect()->route($this->getRedirectRoute($request) . '.merchants.index')->with('success', 'Merchant updated successfully.');
     }
 
     /**
@@ -69,7 +69,7 @@ class MerchantController extends Controller
     {
         $merchant->delete();
 
-        return redirect()->route($this->getRedirectRoute(request()) . '.index')->with('success', 'Merchant deleted successfully.');
+        return redirect()->route($this->getRedirectRoute(request()) . '.merchants.index')->with('success', 'Merchant deleted successfully.');
     }
 
     /**

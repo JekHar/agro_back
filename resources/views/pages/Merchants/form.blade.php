@@ -26,7 +26,7 @@
         <div class="block-content p-4">
             <livewire:merchant-form
                 :merchantId="$id ?? ''"
-                :isClient="request()->is('client/*')" />
+                :isClient="request()->routeIs('merchants.clients.*')" />
 
         </div>
     </div>

@@ -45,7 +45,7 @@ class MerchantForm extends Component
             $this->main_activity = $merchant->main_activity;
             $this->email = $merchant->email;
             $this->phone = $merchant->phone;
-            $this->merchant_type = $merchant->merchant_type ?? MerchantType::TENANT;
+            $this->merchant_type = $merchant->merchant_type ?? ($isClient ? MerchantType::CLIENT : MerchantType::TENANT);
             $this->locality = $merchant->locality;
             $this->address = $merchant->address;
         } else {
@@ -60,23 +60,20 @@ class MerchantForm extends Component
     public function save()
     {
         $validated = $this->validate();
-
-        $validated['merchant_type'] = MerchantType::from($validated['merchant_type']);
+        $validated['merchant_type'] = MerchantType::from($validated['merchant_type']->value);
 
         try {
             if ($this->merchant && $this->merchant->exists) {
                 $this->merchant->update($validated);
-                $message = __('Comercio actualizado exitosamente');
             } else {
                 Merchant::create($validated);
-                $message = __('Comercio creado exitosamente');
             }
 
-            $redirectRoute = $this->isClient
+            $route = $validated['merchant_type'] === MerchantType::CLIENT
                 ? 'merchants.clients.merchants.index'
                 : 'merchants.tenants.merchants.index';
 
-            return redirect()->route($redirectRoute);
+            return redirect()->route($route);
         } catch (\Exception $e) {
             session()->flash('error', __('Ocurrió un error al procesar la solicitud'));
         }
