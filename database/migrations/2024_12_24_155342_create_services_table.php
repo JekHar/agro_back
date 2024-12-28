@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('merchant_id')->nullable();
+            $table->unsignedBigInteger('merchant_id');
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->decimal('price_per_hectare', 11, 2);
             $table->timestamp('disabled_at')->nullable();
             $table->timestamps();

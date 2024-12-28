@@ -3,19 +3,13 @@
 
 <head>
     <meta charset="utf-8">
-    <!--
-      Available classes for <html> element:
 
-      'dark'                  Enable dark mode - Default dark mode preference can be set in app.js file (always saved and retrieved in localStorage afterwards):
-                                window.One = new App({ darkMode: "system" }); // "on" or "off" or "system"
-      'dark-custom-defined'   Dark mode is always set based on the preference in app.js file (no localStorage is used)
-    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
-    <title>OneUI - Bootstrap 5 Admin Template &amp; UI Framework</title>
+    <title>Sistema de gestion para ventas mayoristas - AFANTEC</title>
 
-    <meta name="description" content="OneUI - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave">
-    <meta name="author" content="pixelcave">
+    <meta name="description" content="Sistema de gestion para ventas mayoristas">
+    <meta name="author" content="AFANTEC">
     <meta name="robots" content="index, follow">
 
     <!-- Icons -->
@@ -23,16 +17,17 @@
     <link rel="icon" sizes="192x192" type="image/png" href="{{ asset('media/favicons/favicon-192x192.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('media/favicons/apple-touch-icon-180x180.png') }}">
 
+
     <!-- Modules -->
+    @vite(['resources/sass/main.scss'])
+    <link rel="stylesheet" href="{{ asset('js/plugins/sweetalert2/sweetalert2.min.css') }}">
+    @livewireStyles
     @stack('css')
-    @vite(['resources/sass/main.scss', 'resources/js/oneui/app.js'])
+    <script src="{{ asset('js/lib/jquery.min.js') }}"></script>
 
-    <!-- Alternatively, you can also include a specific color theme after the main stylesheet to alter the default color theme of the template -->
-    {{-- @vite(['resources/sass/main.scss', 'resources/sass/oneui/themes/amethyst.scss', 'resources/js/oneui/app.js']) --}}
-
-    <!-- Load and set dark mode preference (blocking script to prevent flashing) -->
+    <link rel="stylesheet" href="{{ asset('js/plugins/sweetalert2/sweetalert2.min.css') }}">
     <script src="{{ asset('js/setTheme.js') }}"></script>
-    @stack('js')
+    <script src="{{ asset('js/lib/jquery.min.js') }}"></script>
 </head>
 
 <body>
@@ -107,9 +102,7 @@
     </aside>
     <!-- END Side Overlay -->
 
-    <!-- Sidebar -->
-    @include('layouts.sidebar')
-    <!-- END Sidebar -->
+    @include("layouts.sidebar")
 
     <!-- Header -->
     <header id="page-header">
@@ -126,13 +119,13 @@
 
                 <!-- Open Search Section (visible on smaller screens) -->
                 <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
-                <button type="button" class="btn btn-sm btn-alt-secondary d-md-none" data-toggle="layout" data-action="header_search_on">
+                <!-- <button type="button" class="btn btn-sm btn-alt-secondary d-md-none" data-toggle="layout" data-action="header_search_on">
                     <i class="fa fa-fw fa-search"></i>
-                </button>
+                </button> -->
                 <!-- END Open Search Section -->
 
                 <!-- Search Form (visible on larger screens) -->
-                <form class="d-none d-md-inline-block" action="/dashboard" method="POST">
+                <!-- <form class="d-none d-md-inline-block" action="/dashboard" method="POST">
                     @csrf
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2" name="page-header-search-input2">
@@ -140,7 +133,7 @@
                 <i class="fa fa-fw fa-search"></i>
               </span>
                     </div>
-                </form>
+                </form> -->
                 <!-- END Search Form -->
             </div>
             <!-- END Left Section -->
@@ -160,129 +153,119 @@
                             <p class="mt-2 mb-0 fw-medium">{{ auth()->user()->name }}</p>
                             <p class="mb-0 text-muted fs-sm fw-medium">{{ auth()->user()->email }}</p>
                         </div>
-                        <div class="p-2">
-                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)">
-                                <span class="fs-sm fw-medium">Inbox</span>
-                                <span class="badge rounded-pill bg-primary ms-2">3</span>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('profile') }}">
-                                <span class="fs-sm fw-medium">Profile</span>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)">
-                                <span class="fs-sm fw-medium">Settings</span>
-                            </a>
-                        </div>
+{{--                        <div class="p-2">--}}
+{{--                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('profile') }}">--}}
+{{--                                <span class="fs-sm fw-medium">Perfil</span>--}}
+{{--                            </a>--}}
+{{--                        </div>--}}
                         <div role="separator" class="dropdown-divider m-0"></div>
                         <div class="p-2">
-                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)">
-                                <span class="fs-sm fw-medium">Lock Account</span>
-                            </a>
+
                             <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">
-                                <span class="fs-sm fw-medium">Log Out</span>
+                                <span class="fs-sm fw-medium">Cerrar sesión</span>
                             </a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
                             </form>
-
                         </div>
                     </div>
                 </div>
                 <!-- END User Dropdown -->
 
                 <!-- Notifications Dropdown -->
-                <div class="dropdown d-inline-block ms-2">
-                    <button type="button" class="btn btn-sm btn-alt-secondary" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-fw fa-bell"></i>
-                        <span class="text-primary">•</span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0 fs-sm" aria-labelledby="page-header-notifications-dropdown">
-                        <div class="p-2 bg-body-light border-bottom text-center rounded-top">
-                            <h5 class="dropdown-header text-uppercase">Notifications</h5>
-                        </div>
-                        <ul class="nav-items mb-0">
-                            <li>
-                                <a class="text-dark d-flex py-2" href="javascript:void(0)">
-                                    <div class="flex-shrink-0 me-2 ms-3">
-                                        <i class="fa fa-fw fa-check-circle text-success"></i>
-                                    </div>
-                                    <div class="flex-grow-1 pe-2">
-                                        <div class="fw-semibold">You have a new follower</div>
-                                        <span class="fw-medium text-muted">15 min ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-dark d-flex py-2" href="javascript:void(0)">
-                                    <div class="flex-shrink-0 me-2 ms-3">
-                                        <i class="fa fa-fw fa-plus-circle text-primary"></i>
-                                    </div>
-                                    <div class="flex-grow-1 pe-2">
-                                        <div class="fw-semibold">1 new sale, keep it up</div>
-                                        <span class="fw-medium text-muted">22 min ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-dark d-flex py-2" href="javascript:void(0)">
-                                    <div class="flex-shrink-0 me-2 ms-3">
-                                        <i class="fa fa-fw fa-times-circle text-danger"></i>
-                                    </div>
-                                    <div class="flex-grow-1 pe-2">
-                                        <div class="fw-semibold">Update failed, restart server</div>
-                                        <span class="fw-medium text-muted">26 min ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-dark d-flex py-2" href="javascript:void(0)">
-                                    <div class="flex-shrink-0 me-2 ms-3">
-                                        <i class="fa fa-fw fa-plus-circle text-primary"></i>
-                                    </div>
-                                    <div class="flex-grow-1 pe-2">
-                                        <div class="fw-semibold">2 new sales, keep it up</div>
-                                        <span class="fw-medium text-muted">33 min ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-dark d-flex py-2" href="javascript:void(0)">
-                                    <div class="flex-shrink-0 me-2 ms-3">
-                                        <i class="fa fa-fw fa-user-plus text-success"></i>
-                                    </div>
-                                    <div class="flex-grow-1 pe-2">
-                                        <div class="fw-semibold">You have a new subscriber</div>
-                                        <span class="fw-medium text-muted">41 min ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-dark d-flex py-2" href="javascript:void(0)">
-                                    <div class="flex-shrink-0 me-2 ms-3">
-                                        <i class="fa fa-fw fa-check-circle text-success"></i>
-                                    </div>
-                                    <div class="flex-grow-1 pe-2">
-                                        <div class="fw-semibold">You have a new follower</div>
-                                        <span class="fw-medium text-muted">42 min ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="p-2 border-top text-center">
-                            <a class="d-inline-block fw-medium" href="javascript:void(0)">
-                                <i class="fa fa-fw fa-arrow-down me-1 opacity-50"></i> Load More..
-                            </a>
-                        </div>
-                    </div>
-                </div>
+{{--                <div class="dropdown d-inline-block ms-2">--}}
+{{--                    <button type="button" class="btn btn-sm btn-alt-secondary" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
+{{--                        <i class="fa fa-fw fa-bell"></i>--}}
+{{--                        <span class="text-primary">•</span>--}}
+{{--                    </button>--}}
+{{--                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0 fs-sm" aria-labelledby="page-header-notifications-dropdown">--}}
+{{--                        <div class="p-2 bg-body-light border-bottom text-center rounded-top">--}}
+{{--                            <h5 class="dropdown-header text-uppercase">Notifications</h5>--}}
+{{--                        </div>--}}
+{{--                        <ul class="nav-items mb-0">--}}
+{{--                            <li>--}}
+{{--                                <a class="text-dark d-flex py-2" href="javascript:void(0)">--}}
+{{--                                    <div class="flex-shrink-0 me-2 ms-3">--}}
+{{--                                        <i class="fa fa-fw fa-check-circle text-success"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="flex-grow-1 pe-2">--}}
+{{--                                        <div class="fw-semibold">You have a new follower</div>--}}
+{{--                                        <span class="fw-medium text-muted">15 min ago</span>--}}
+{{--                                    </div>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li>--}}
+{{--                                <a class="text-dark d-flex py-2" href="javascript:void(0)">--}}
+{{--                                    <div class="flex-shrink-0 me-2 ms-3">--}}
+{{--                                        <i class="fa fa-fw fa-plus-circle text-primary"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="flex-grow-1 pe-2">--}}
+{{--                                        <div class="fw-semibold">1 new sale, keep it up</div>--}}
+{{--                                        <span class="fw-medium text-muted">22 min ago</span>--}}
+{{--                                    </div>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li>--}}
+{{--                                <a class="text-dark d-flex py-2" href="javascript:void(0)">--}}
+{{--                                    <div class="flex-shrink-0 me-2 ms-3">--}}
+{{--                                        <i class="fa fa-fw fa-times-circle text-danger"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="flex-grow-1 pe-2">--}}
+{{--                                        <div class="fw-semibold">Update failed, restart server</div>--}}
+{{--                                        <span class="fw-medium text-muted">26 min ago</span>--}}
+{{--                                    </div>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li>--}}
+{{--                                <a class="text-dark d-flex py-2" href="javascript:void(0)">--}}
+{{--                                    <div class="flex-shrink-0 me-2 ms-3">--}}
+{{--                                        <i class="fa fa-fw fa-plus-circle text-primary"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="flex-grow-1 pe-2">--}}
+{{--                                        <div class="fw-semibold">2 new sales, keep it up</div>--}}
+{{--                                        <span class="fw-medium text-muted">33 min ago</span>--}}
+{{--                                    </div>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li>--}}
+{{--                                <a class="text-dark d-flex py-2" href="javascript:void(0)">--}}
+{{--                                    <div class="flex-shrink-0 me-2 ms-3">--}}
+{{--                                        <i class="fa fa-fw fa-user-plus text-success"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="flex-grow-1 pe-2">--}}
+{{--                                        <div class="fw-semibold">You have a new subscriber</div>--}}
+{{--                                        <span class="fw-medium text-muted">41 min ago</span>--}}
+{{--                                    </div>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li>--}}
+{{--                                <a class="text-dark d-flex py-2" href="javascript:void(0)">--}}
+{{--                                    <div class="flex-shrink-0 me-2 ms-3">--}}
+{{--                                        <i class="fa fa-fw fa-check-circle text-success"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="flex-grow-1 pe-2">--}}
+{{--                                        <div class="fw-semibold">You have a new follower</div>--}}
+{{--                                        <span class="fw-medium text-muted">42 min ago</span>--}}
+{{--                                    </div>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                        <div class="p-2 border-top text-center">--}}
+{{--                            <a class="d-inline-block fw-medium" href="javascript:void(0)">--}}
+{{--                                <i class="fa fa-fw fa-arrow-down me-1 opacity-50"></i> Load More..--}}
+{{--                            </a>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
                 <!-- END Notifications Dropdown -->
 
                 <!-- Toggle Side Overlay -->
                 <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
-                <button type="button" class="btn btn-sm btn-alt-secondary ms-2" data-toggle="layout" data-action="side_overlay_toggle">
+                <!-- <button type="button" class="btn btn-sm btn-alt-secondary ms-2" data-toggle="layout" data-action="side_overlay_toggle">
                     <i class="fa fa-fw fa-list-ul fa-flip-horizontal"></i>
-                </button>
+                </button> -->
                 <!-- END Toggle Side Overlay -->
             </div>
             <!-- END Right Section -->
@@ -321,7 +304,7 @@
 
     <!-- Main Container -->
     <main id="main-container">
-        @stack('content')
+        @yield('content')
     </main>
     <!-- END Main Container -->
 
@@ -341,6 +324,46 @@
     <!-- END Footer -->
 </div>
 <!-- END Page Container -->
+
+
+@vite(['resources/js/oneui/app.js'])
+@livewireScripts
+@stack('scripts')
+<script src="{{ asset('js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="{{ asset('js/customs/delete-confirmation.js') }}"></script>
+
+
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('swal', (data) => {
+            Swal.fire({
+                title: data[0].title,
+                text: data[0].message,
+                icon: data[0].icon,
+            });
+
+            if(data[0].redirect) {
+                setTimeout(() => {
+                    window.location.href = data[0].redirect;
+                }, 2000);
+            }
+        });
+    });
+
+
+</script>
+@if (session('swal'))
+<script>
+    Swal.fire({
+        title: "{{ session('swal.title') }}",
+        text: "{{ session('swal.message') }}",
+        icon: "{{ session('swal.icon') }}",
+        confirmButtonText: 'OK'
+    });
+</script>
+@endif
+
+
 </body>
 
 </html>
