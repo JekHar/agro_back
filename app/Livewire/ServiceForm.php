@@ -20,14 +20,10 @@ class ServiceForm extends Component
     public $merchants;
     public $isEditing = false;
 
-
-    public function rules()
+    protected function rules()
     {
-        $request = new ServiceRequest();
-        $request->merge(['isEditing' => $this->isEditing]);
-        return $request->rules();
+        return (new ServiceRequest())->rules();
     }
-
 
     public function mount($serviceId = null)
     {
@@ -57,6 +53,7 @@ class ServiceForm extends Component
                 Service::create($validatedData);
                 $message = 'Service created successfully';
             }
+
             $this->dispatch('swal', [
                 'title' => 'Success',
                 'message' => $message,
@@ -67,16 +64,14 @@ class ServiceForm extends Component
             if ($this->isModal) {
                 $this->dispatch('close-modal');
             }
-    
 
         } catch (\Exception $e) {
             $this->dispatch('swal', [
-                'title' => __('Error'),
-                'message' => __('Ocurrió un error al procesar la solicitud'),
+                'title' => ('Error'),
+                'message' => ('Ocurrió un error al procesar la solicitud'),
                 'icon' => 'error',
             ]);
         }
-
 
         return redirect()->route('services.index');
     }

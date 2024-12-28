@@ -19,13 +19,11 @@ class ServiceRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules(): array 
     {
         return [
-            'name' => $this->isEditing 
-                ? 'required|string|max:255'
-                : 'required|string|max:255|unique:services,name',
-            'description' => 'required|string',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'merchant_id' => 'required|exists:merchants,id',
             'price_per_hectare' => 'required|numeric|min:0',
         ];
