@@ -24,7 +24,7 @@ class ServiceForm extends Component
     {
         return (new ServiceRequest())->rules();
     }
-
+    
     public function mount($serviceId = null)
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
@@ -73,7 +73,7 @@ class ServiceForm extends Component
             ]);
         }
 
-        return redirect()->route('services.index');
+        // return redirect()->route('services.index');
     }
 
     public function render()

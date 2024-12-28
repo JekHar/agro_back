@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
@@ -11,11 +12,14 @@ class Aircraft extends Model  implements ContractsAuditable
 {
     use SoftDeletes;
     use Auditable;
+    use HasFactory;
+
+    protected $table = 'aircrafts';
 
     protected $fillable = [
         'merchant_id',
         'brand',
-        'model',
+        'models',
         'manufacturing_year',
         'acquisition_date',
         'working_width'

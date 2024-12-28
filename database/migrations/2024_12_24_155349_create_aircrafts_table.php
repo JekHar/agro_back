@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->string('brand');
-            $table->string('model');
+            $table->string('models');
             $table->integer('manufacturing_year');
             $table->date('acquisition_date');
             $table->decimal('working_width', 11, 2);
