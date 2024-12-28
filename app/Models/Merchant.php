@@ -54,6 +54,11 @@ class Merchant extends Model implements ContractsAuditable
         return $this->hasMany(Service::class);
     }
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
     public function aircraft()
     {
         return $this->hasMany(Aircraft::class);

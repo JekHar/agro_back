@@ -2,9 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Http\Requests\ProductRequest;
 use Livewire\Component;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Merchant;
+use App\Types\MerchantType;
 
 class ProductForm extends Component
 {
@@ -18,24 +21,20 @@ class ProductForm extends Component
     public $application_volume_per_hectare;
     public $stock;
     public $categories;
+    public $merchant_id;
+    public $merchants;
     public $isEditing = false;
 
     protected function rules()
     {
-        return [
-            'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:255|unique:products,sku,' . $this->productId,
-            'category_id' => 'required|exists:categories,id',
-            'concentration' => 'required|numeric|min:0',
-            'dosage_per_hectare' => 'required|numeric|min:0',
-            'application_volume_per_hectare' => 'required|numeric|min:0',
-            'stock' => 'required|numeric|min:0'
-        ];
+        return (new ProductRequest())->rules();
     }
-    
+
     public function mount($productId = null)
     {
         $this->categories = Category::pluck('name', 'id');
+        $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
+        ->pluck('business_name', 'id');
 
         if ($productId) {
             $this->isEditing = true;
@@ -44,6 +43,7 @@ class ProductForm extends Component
             $this->name = $this->product->name;
             $this->sku = $this->product->sku;
             $this->category_id = $this->product->category_id;
+            $this->merchant_id = $this->product->merchant_id;
             $this->concentration = $this->product->concentration;
             $this->dosage_per_hectare = $this->product->dosage_per_hectare;
             $this->application_volume_per_hectare = $this->product->application_volume_per_hectare;
@@ -55,13 +55,30 @@ class ProductForm extends Component
     {
         $validatedData = $this->validate();
 
-        if ($this->isEditing) {
-            $this->product->update($validatedData);
-        } else {
-            Product::create($validatedData);
-        }
+        try {
+            if ($this->isEditing) {
+                $this->product->update($validatedData);
+                $message = __('crud.prducts.updated');
+            } else {
+                Product::create($validatedData);
+                $message = __('crud.products.success');
+            }
 
-        return redirect()->route('products.index');
+            $this->dispatch('swal', [
+                'title' => 'Success',
+                'message' => $message,
+                'icon' => 'success',
+                'redirect' => route('products.index')
+            ]);
+
+            
+        } catch (\Throwable $th) {
+            $this->dispatch('swal', [
+                'title' => ('Error'),
+                'message' => ('Ocurrió un error al procesar la solicitud'),
+                'icon' => 'error',
+            ]);
+        }
     }
 
     public function render()

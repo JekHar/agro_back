@@ -28,11 +28,14 @@ class ProductDataTable extends DataTable
             ->filterColumn('category_id', function ($query, $keyword) {
                 $query->where('categories.name', 'like', "%$keyword%");
             })
+            ->filterColumn('merchant_name', function ($query, $keyword) {
+                $query->where('merchants.business_name', 'like', "%$keyword%");
+            })
             ->editColumn('created_at', function ($row) {
-                return $row->created_at->format('Y-m-d H:i:s');
+                return $row->created_at->format('d-m-Y H:i:s');
             })
             ->editColumn('updated_at', function ($row) {
-                return $row->updated_at->format('Y-m-d H:i:s');
+                return $row->updated_at->format('d-m-Y H:i:s');
             })
             ->addColumn('action', 'pages.products.action')
             ->setRowId('id');
@@ -45,7 +48,8 @@ class ProductDataTable extends DataTable
     {
         return $model->newQuery()
             ->join('categories', 'products.category_id', '=', 'categories.id')
-            ->select('products.*', 'categories.name as category_name');
+            ->join('merchants', 'products.merchant_id', '=', 'merchants.id')
+            ->select('products.*', 'categories.name as category_name',  'merchants.business_name as merchant_name');
     }
 
     /**
@@ -81,13 +85,14 @@ class ProductDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name'),
-            Column::make('sku'),
-            Column::make('category_id'),
-            Column::make('concentration'),
-            Column::make('dosage_per_hectare'),
-            Column::make('application_volume_per_hectare'),
-            Column::make('stock'),
+            Column::make('name')->title('Nombre'),
+            Column::make('sku')->title('SKU'),
+            Column::make('category_id')->title('Categoría'),
+            Column::make('merchant_name')->title('Nombre del Cliente'),
+            Column::make('concentration')->title('Concentración'),
+            Column::make('dosage_per_hectare')->title('Dosis por hectárea'),
+            Column::make('application_volume_per_hectare')->title('Volumen de aplicación por hectárea'),
+            Column::make('stock')->title('Stock'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')

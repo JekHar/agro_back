@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('concentration', 11, 2);
             $table->decimal('dosage_per_hectare', 11, 2);
             $table->decimal('application_volume_per_hectare', 11, 2);
-            $table->unsignedBigInteger('merchant_id');
+            $table->unsignedBigInteger('merchant_id')->nullable();
             $table->integer('stock');
             $table->timestamps();
             $table->softDeletes();

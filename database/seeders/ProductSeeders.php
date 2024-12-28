@@ -16,20 +16,26 @@ class ProductSeeders extends Seeder
     public function run(): void
     {
         $categories = Category::all();
-        $merchants = MerchantType::CLIENT;
 
         if ($categories->isEmpty()) {
             $this->command->warn('No categories found. Run CategorySeeder first.');
             return;
         }
 
+        $merchants = Merchant::where('merchant_type', 'client')->get();
+
         if ($merchants->isEmpty()) {
-            $this->command->warn('No categories found. Run CategorySeeder first.');
+            $this->command->warn('No merchants of type "cliente" found. Please seed Merchants first.');
             return;
         }
 
-        $categories->each(function ($category) {
-            Product::factory(10)->create(['category_id' => $category->id]);
+        $categories->each(function ($category) use ($merchants) {
+            $merchants->each(function ($merchant) use ($category) {
+                Product::factory(10)->create([
+                    'category_id' => $category->id,
+                    'merchant_id' => $merchant->id,
+                ]);
+            });
         });
     }
 }

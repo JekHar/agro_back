@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Merchant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,9 +21,10 @@ class ProductFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'sku' => strtoupper($this->faker->unique()->lexify('SKU-????')),
-            'category_id' => Category::factory(), 
-            'concentration' => $this->faker->numberBetween(1, 100) ,
-            'dosage_per_hectare' => $this->faker->randomFloat(2, 5, 20) ,
+            'category_id' => Category::factory(),
+            'merchant_id' => Merchant::factory(),
+            'concentration' => $this->faker->numberBetween(1, 100),
+            'dosage_per_hectare' => $this->faker->randomFloat(2, 5, 20),
             'application_volume_per_hectare' => $this->faker->randomFloat(2, 100, 200),
             'stock' => $this->faker->numberBetween(10, 100),
         ];

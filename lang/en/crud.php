@@ -111,6 +111,8 @@ return [
         'plural' => 'Products',
         'products list' => 'Products List',
         'add' => 'Add products',
+        'updated' => 'Product updated successfully',
+        'success' => 'Product created successfully',
         'select_category' => 'Select Category',
         'fields' => [
             'name' => 'Name',

@@ -20,12 +20,18 @@ class Product extends Model implements Auditable
         'concentration',
         'dosage_per_hectare',
         'application_volume_per_hectare',
-        'stock'
+        'stock',
+        'merchant_id',  
     ];
 
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class);
     }
 }
