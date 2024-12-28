@@ -6,8 +6,12 @@ return [
         'plural' => 'Merchants',
         'Merchants list' => 'Merchants List',
         'add' => 'Add Merchant',
+        'delete' => 'Delete User',
+        'actions' => 'Actions',
+        'Users list' => 'Users List',
         'fields' => [
             'name' => 'Name',
+            'email' => 'Email Address',
             'description' => 'Description',
             'base_price' => 'Base Price',
             'merchant_id' => 'Merchant',
@@ -30,6 +34,7 @@ return [
         'plural' => 'Users',
         'Users list' => 'Users List',
         'add' => 'Add User',
+        'form' => 'User Form',
         'fields' => [
             'name' => 'Name',
             'description' => 'Description',
@@ -49,9 +54,23 @@ return [
             'create' => 'Create User',
             'edit' => 'Edit User',
             'delete' => 'Delete User',
+            'created' => 'User created successfully',
+            'updated' => 'User updated successfully',
+            'deleted' => 'User deleted successfully',
+            'error' => 'An error occurred while processing your request'
         ],
         'select_merchant' => 'Select Merchant',
         'select_role' => 'Select Role',
+        'roles' => [
+            'pilot' => 'Pilot',
+            'ground_support' => 'Ground Support'
+        ],
+        'breadcrumbs' => [
+            'home' => 'Home',
+            'users' => 'Users',
+            'create' => 'Create User',
+            'edit' => 'Edit User'
+        ],
     ],
     'dashboard' => [
         'singular' => 'Dashboard',

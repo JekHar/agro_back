@@ -12,11 +12,9 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get all merchants
         $merchants = Merchant::all();
 
         foreach ($merchants as $merchant) {
-            // Create tenant user for merchants that are of type 'tenant'
             if ($merchant->merchant_type === 'tenant') {
                 $tenant = User::create([
                     'name' => "Tenant {$merchant->business_name}",
@@ -27,7 +25,6 @@ class UserSeeder extends Seeder
                 $tenant->assignRole('Tenant');
             }
 
-            // Create Pilot and Ground Support for each merchant
             $roles = ['Pilot', 'Ground Support'];
             foreach ($roles as $role) {
                 $user = User::create([
@@ -40,11 +37,9 @@ class UserSeeder extends Seeder
                 $user->assignRole($role);
             }
 
-            // Create some additional random users for each merchant using factory
             User::factory(2)->create([
                 'merchant_id' => $merchant->id,
             ])->each(function ($user) use ($roles) {
-                // Randomly assign either Pilot or Ground Support role
                 $user->assignRole($roles[array_rand($roles)]);
             });
         }

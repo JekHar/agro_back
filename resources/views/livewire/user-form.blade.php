@@ -1,7 +1,6 @@
 <div>
     <form wire:submit.prevent="save">
         <div class="row">
-            <!-- Nombre -->
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="name">{{ __('crud.users.fields.name') }}</label>
@@ -18,7 +17,6 @@
                 </div>
             </div>
 
-            <!-- Email -->
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="email">{{ __('crud.users.fields.email') }}</label>
@@ -38,7 +36,6 @@
         </div>
 
         <div class="row">
-            <!-- Selección de Merchant -->
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="merchant_id">{{ __('crud.users.fields.merchant') }}</label>
@@ -58,7 +55,6 @@
                 </div>
             </div>
 
-            <!-- Rol -->
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="role">{{ __('crud.users.fields.role') }}</label>
@@ -81,7 +77,6 @@
 
         @if(!$isEditing)
         <div class="row">
-            <!-- Password -->
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="password">{{ __('crud.users.fields.password') }}</label>
@@ -97,7 +92,6 @@
                 </div>
             </div>
 
-            <!-- Password Confirmation -->
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="password_confirmation">{{ __('crud.users.fields.password_confirmation') }}</label>

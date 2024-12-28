@@ -1,7 +1,5 @@
 @extends('layouts.backend')
 @section('content')
-@livewireScripts
-@livewireStyles
 
 <x-hero :title="isset($id) ? __('crud.users.actions.edit') : __('crud.users.add')"
     :subtitle="isset($id) ? __('crud.users.actions.edit') : __('crud.users.form')"

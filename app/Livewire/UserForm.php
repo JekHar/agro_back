@@ -2,50 +2,33 @@
 
 namespace App\Livewire;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Models\Merchant;
 use App\Types\MerchantType;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Models\Role;
 
 class UserForm extends Component
 {
     public $user;
     public $userId;
-    public $name;
-    public $email;
-    public $password;
-    public $password_confirmation;
-    public $merchant_id;
-    public $role;
+    public $name = '';
+    public $email = '';
+    public $password = '';
+    public $password_confirmation = '';
+    public $merchant_id = '';
+    public $role = '';
     public $roles;
     public $merchants;
     public $isEditing = false;
-
-    protected function rules()
-    {
-        $rules = [
-            'name' => 'required|string|max:255',
-            'merchant_id' => 'required|exists:merchants,id',
-            'role' => 'required|exists:roles,id', // Changed to validate against role IDs
-        ];
-
-        if (!$this->isEditing) {
-            $rules['email'] = 'required|email|unique:users,email';
-            $rules['password'] = ['required', 'confirmed', Password::defaults()];
-        }
-
-        return $rules;
-    }
+    public bool $isModal = false;
 
     public function mount($userId = null)
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
             ->pluck('business_name', 'id');
-
-        // Get only Pilot and Ground Support roles
         $this->roles = Role::whereIn('name', ['Pilot', 'Ground Support'])
             ->pluck('name', 'id');
 
@@ -56,8 +39,6 @@ class UserForm extends Component
             $this->name = $this->user->name;
             $this->email = $this->user->email;
             $this->merchant_id = $this->user->merchant_id;
-
-            // Get the role ID instead of name
             $userRole = $this->user->roles()->first();
             $this->role = $userRole ? $userRole->id : null;
         }
@@ -65,37 +46,70 @@ class UserForm extends Component
 
     public function save()
     {
-        $validatedData = $this->validate();
+        try {
+            $request = new UserRequest();
+            $request->merge(['userId' => $this->userId]);
+            $validatedData = $this->validate($request->rules());
 
-        if ($this->isEditing) {
-            $this->user->update([
-                'name' => $validatedData['name'],
-                'merchant_id' => $validatedData['merchant_id'],
+            if ($this->isEditing) {
+                $this->user->update([
+                    'name' => $validatedData['name'],
+                    'merchant_id' => $validatedData['merchant_id'],
+                ]);
+
+                $role = Role::find($validatedData['role']);
+                if ($role) {
+                    $this->user->syncRoles([$role->name]);
+                }
+
+                $message = __('crud.users.actions.updated');
+            } else {
+                $userData = [
+                    'name' => $validatedData['name'],
+                    'email' => $validatedData['email'],
+                    'merchant_id' => $validatedData['merchant_id'],
+                    'password' => Hash::make($validatedData['password'])
+                ];
+
+                $user = User::create($userData);
+                $role = Role::find($validatedData['role']);
+                if ($role) {
+                    $user->assignRole($role->name);
+                }
+
+                $message = __('crud.users.actions.created');
+            }
+
+            $this->dispatch('user-saved');
+
+            $this->dispatch('swal', [
+                'title' => __('Success!'),
+                'message' => $message,
+                'icon' => 'success',
+                'redirect' => route('users.index'),
             ]);
 
-            // Get the role by ID and sync
-            $role = Role::find($validatedData['role']);
-            if ($role) {
-                $this->user->syncRoles([$role->name]);
+            if ($this->isModal) {
+                $this->dispatch('close-modal');
             }
-        } else {
-            $userData = [
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'merchant_id' => $validatedData['merchant_id'],
-                'password' => Hash::make($validatedData['password'])
-            ];
 
-            $user = User::create($userData);
-
-            // Get the role by ID and assign
-            $role = Role::find($validatedData['role']);
-            if ($role) {
-                $user->assignRole($role->name);
+            if (!$this->isEditing) {
+                $this->reset([
+                    'name',
+                    'email',
+                    'password',
+                    'password_confirmation',
+                    'merchant_id',
+                    'role'
+                ]);
             }
+        } catch (\Exception $e) {
+            $this->dispatch('swal', [
+                'title' => __('Error'),
+                'message' => __('crud.users.actions.error'),
+                'icon' => 'error',
+            ]);
         }
-
-        return redirect()->route('users.index');
     }
 
     public function render()
