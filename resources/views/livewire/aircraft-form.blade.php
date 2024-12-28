@@ -90,7 +90,7 @@
                     <label class="form-label"
                         for="acquisition_date">{{ __('crud.aircrafts.fields.acquisition_date') }}</label>
                     <input type="date" class="form-control @error('acquisition_date') is-invalid @enderror js-flatpickr form-control js-flatpickr-enabled flatpickr-input active"
-                        id="acquisition_date" wire:model="acquisition_date" name="example-flatpickr-custom" placeholder="d-m-Y" data-date-format="d-m-Y">
+                        id="acquisition_date" wire:model="acquisition_date" name="example-flatpickr-custom" placeholder="d-m-Y" data-date-format="dd-mm-AA">
                     @error('acquisition_date')
                         <span class="invalid-feedback d-block" role="alert">
                             <strong>{{ $message }}</strong>
