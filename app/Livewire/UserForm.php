@@ -6,6 +6,7 @@ use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Models\Merchant;
 use App\Types\MerchantType;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -27,7 +28,9 @@ class UserForm extends Component
 
     protected function rules()
     {
-        return (new UserRequest())->rules();
+        $userRequest = new UserRequest();
+        $userRequest->setuserId($this->userId);
+        return $userRequest->rules();
     }
 
     public function mount($userId = null)
@@ -51,13 +54,14 @@ class UserForm extends Component
 
     public function save()
     {
+        $validatedData = $this->validate();
         try {
-            $validatedData = $this->validate();
-
             if ($this->isEditing) {
                 $this->user->update([
                     'name' => $validatedData['name'],
                     'merchant_id' => $validatedData['merchant_id'],
+                    'email' => $validatedData['email'],
+                    'password' => Hash::make($validatedData['password'])
                 ]);
 
                 if ($validatedData['role']) {
@@ -91,6 +95,8 @@ class UserForm extends Component
                 $this->reset(['name', 'email', 'password', 'password_confirmation', 'merchant_id', 'role']);
             }
         } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            dd($e->getMessage());
             $this->dispatch('swal', [
                 'title' => __('Error'),
                 'message' => __('crud.users.actions.error'),
