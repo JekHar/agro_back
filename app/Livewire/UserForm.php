@@ -25,6 +25,11 @@ class UserForm extends Component
     public $isEditing = false;
     public bool $isModal = false;
 
+    protected function rules()
+    {
+        return (new UserRequest())->rules();
+    }
+
     public function mount($userId = null)
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
@@ -47,9 +52,7 @@ class UserForm extends Component
     public function save()
     {
         try {
-            $request = new UserRequest();
-            $request->merge(['userId' => $this->userId]);
-            $validatedData = $this->validate($request->rules());
+            $validatedData = $this->validate();
 
             if ($this->isEditing) {
                 $this->user->update([
@@ -57,34 +60,25 @@ class UserForm extends Component
                     'merchant_id' => $validatedData['merchant_id'],
                 ]);
 
-                $role = Role::find($validatedData['role']);
-                if ($role) {
-                    $this->user->syncRoles([$role->name]);
+                if ($validatedData['role']) {
+                    $this->user->syncRoles([Role::find($validatedData['role'])->name]);
                 }
-
-                $message = __('crud.users.actions.updated');
             } else {
-                $userData = [
+                $user = User::create([
                     'name' => $validatedData['name'],
                     'email' => $validatedData['email'],
                     'merchant_id' => $validatedData['merchant_id'],
                     'password' => Hash::make($validatedData['password'])
-                ];
+                ]);
 
-                $user = User::create($userData);
-                $role = Role::find($validatedData['role']);
-                if ($role) {
-                    $user->assignRole($role->name);
+                if ($validatedData['role']) {
+                    $user->assignRole(Role::find($validatedData['role'])->name);
                 }
-
-                $message = __('crud.users.actions.created');
             }
-
-            $this->dispatch('user-saved');
 
             $this->dispatch('swal', [
                 'title' => __('Success!'),
-                'message' => $message,
+                'message' => __($this->isEditing ? 'crud.users.actions.updated' : 'crud.users.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('users.index'),
             ]);
@@ -94,14 +88,7 @@ class UserForm extends Component
             }
 
             if (!$this->isEditing) {
-                $this->reset([
-                    'name',
-                    'email',
-                    'password',
-                    'password_confirmation',
-                    'merchant_id',
-                    'role'
-                ]);
+                $this->reset(['name', 'email', 'password', 'password_confirmation', 'merchant_id', 'role']);
             }
         } catch (\Exception $e) {
             $this->dispatch('swal', [
