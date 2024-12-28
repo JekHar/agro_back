@@ -2,15 +2,15 @@
 
 return [
     'merchants' => [
-        'singular' => 'Comerciante',
-        'plural' => 'Comerciantes',
-        'Merchants list' => 'Lista de Comerciantes',
-        'add' => 'Agregar Comerciante',
+        'singular' => 'Empresa',
+        'plural' => 'Empresas',
+        'Merchants list' => 'Lista de Empresas',
+        'add' => 'Agregar Empresa',
         'fields' => [
             'name' => 'Nombre',
             'description' => 'Descripción',
             'base_price' => 'Precio Base',
-            'merchant_id' => 'Comerciante',
+            'merchant_id' => 'Empresa',
             'image' => 'Imagen',
             'email' => 'Correo Electrónico',
             'phone' => 'Teléfono',
@@ -20,9 +20,9 @@ return [
             'updated_at' => 'Actualizado El',
         ],
         'actions' => [
-            'create' => 'Crear Comerciante',
-            'edit' => 'Editar Comerciante',
-            'delete' => 'Eliminar Comerciante',
+            'create' => 'Crear Empresa',
+            'edit' => 'Editar Empresa',
+            'delete' => 'Eliminar Empresa',
         ],
     ],
     'users' => [
@@ -52,7 +52,7 @@ return [
     'dashboard' => [
         'singular' => 'Panel de Control',
         'settings' => 'Configuración',
-        'dashboard subtitle' => 'Aquí puedes ver los datos y estadísticas de tu comerciante',
+        'dashboard subtitle' => 'Aquí puedes ver los datos y estadísticas de tu Empresa',
         'all users' => 'Ver todos los usuarios',
         'all items' => 'Ver todos los elementos',
         'all lootboxes' => 'Ver todas las lootboxes',
@@ -65,12 +65,12 @@ return [
         'plural' => 'Servicios',
         'services list' => 'Lista de Servicios',
         'add' => 'Agregar Servicio',
-        'select_merchant' => 'Seleccionar Comerciante',
+        'select_merchant' => 'Seleccionar Empresa',
         'fields' => [
             'name' => 'Nombre',
             'description' => 'Descripción',
             'price_per_hectare' => 'Precio por Hectárea',
-            'merchant' => 'Comerciante',
+            'merchant' => 'Empresa',
             'created_at' => 'Creado El',
             'updated_at' => 'Actualizado El',
         ],
@@ -85,12 +85,12 @@ return [
         'plural' => 'Aeronaves',
         'aircrafts list' => 'Lista de Aeronaves',
         'add' => 'Agregar Aeronave',
-        'select_merchant' => 'Seleccionar Comerciante',
+        'select_merchant' => 'Seleccionar Empresa',
         'fields' => [
             'name' => 'Nombre',
             'description' => 'Descripción',
             'price_per_hectare' => 'Precio por Hectárea',
-            'merchant' => 'Comerciante',
+            'merchant' => 'Empresa',
             'brand' => 'Marca',
             'model' => 'Modelo',
             'manufacturing_year' => 'Año de Fabricación',

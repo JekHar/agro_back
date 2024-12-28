@@ -2,10 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Http\Controllers\MerchantController;
 use App\Models\Merchant;
 use App\Types\MerchantType;
 use Illuminate\Validation\Rules\Enum;
 use Livewire\Component;
+use App\Http\Requests\MerchantRequest;
+use Illuminate\Support\Facades\App;
+
 
 class MerchantForm extends Component
 {
@@ -22,18 +26,12 @@ class MerchantForm extends Component
     public bool $isClient;
     public bool $showMainActivity;
 
-    protected $rules = [
-        'business_name' => 'required|string|max:255',
-        'trade_name' => 'required|string|max:255',
-        'fiscal_number' => 'required|string|max:20',
-        'main_activity' => 'nullable|string',
-        'email' => 'required|email',
-        'phone' => 'required|string',
-        'merchant_type' => 'required',
-        'locality' => 'required|string',
-        'address' => 'required|string',
-    ];
+    private MerchantRequest $request;
 
+    public function rules(): array
+    {
+        return App::make(MerchantRequest::class)->rules();
+    }
 
     public function mount(?Merchant $merchant = null, bool $isClient = false)
     {

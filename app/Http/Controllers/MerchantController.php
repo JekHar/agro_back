@@ -45,9 +45,9 @@ class MerchantController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Merchant $merchant): View
+    public function edit($id): View
     {
-        return view('pages.merchants.form', compact('merchant'));
+        return view('pages.merchants.form', compact('id'));
     }
 
     /**
