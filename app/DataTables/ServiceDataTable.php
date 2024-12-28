@@ -28,8 +28,8 @@ class ServiceDataTable extends DataTable
         ->filterColumn('merchant_name', function ($query, $keyword) {
             $query->where('merchants.business_name', 'like', "%{$keyword}%");
         })
-        ->editColumn('updated_at', fn ($item) => $item->updated_at->format('Y-m-d H:i:s'))
-        ->editColumn('created_at', fn ($item) => $item->created_at->format('Y-m-d H:i:s'))
+        ->editColumn('updated_at', fn ($item) => $item->updated_at->format('d-m-Y H:i:s'))
+        ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
         ->addColumn('action', 'pages.services.action')
         ->rawColumns(['image', 'action'])
         ->setRowClass(function () {
@@ -83,11 +83,11 @@ class ServiceDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name')->title('Service Name'),
-            Column::make('description')->title('Service Description'),
-            Column::make('price_per_hectare')->title('Price per Hectare'),
+            Column::make('name')->title('Nombre del Servicio'),
+            Column::make('description')->title('Descripcion del Servicio'),
+            Column::make('price_per_hectare')->title('Precio por Hectarea'),
             // Column::make('disabled_at')->title('Disabled At'),
-            Column::make('merchant_name'),
+            Column::make('merchant_name')->title('Nombre de fantasia'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')
