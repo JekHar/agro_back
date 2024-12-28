@@ -2,52 +2,50 @@
 
 namespace App\DataTables;
 
-use App\Models\Service;
+use App\Models\Aircraft;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class ServiceDataTable extends DataTable
+class AircraftDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
+     * @param QueryBuilder $query Results from query() method.p
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-        ->addColumn('merchant_name', function ($row) {
-            return $row->merchant->business_name ?? 'N/A';
+            ->addColumn('merchant_name', function ($row) {
+                return $row->merchant->business_name ?? 'N/A';
+                })
+            ->filterColumn('merchant_name', function ($query, $keyword) {
+                $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
-        ->filterColumn('merchant_name', function ($query, $keyword) {
-            $query->where('merchants.business_name', 'like', "%{$keyword}%");
-        })
-        ->editColumn('updated_at', fn ($item) => $item->updated_at->format('d-m-Y H:i:s'))
-        ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
-        ->addColumn('action', 'pages.services.action')
-        ->rawColumns(['image', 'action'])
-        ->setRowClass(function () {
-            return 'align-middle position-relative';
-        })
-        ->setRowId('id');
+            ->editColumn('acquisition_date', fn ($row) => Carbon::parse($row->acquisition_date)->format('d-m-Y'))            
+            ->editColumn('updated_at', fn ($row) => $row->updated_at->format('d-m-Y H:i:s'))
+            ->editColumn('created_at', fn ($row) => $row->created_at->format('d-m-Y H:i:s'))
+            ->addColumn('action', 'pages.aircraft.action')
+            ->rawColumns(['image', 'action'])
+            ->setRowClass(function () {
+                return 'align-middle position-relative';
+            })
+            ->setRowId('id');
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(Service $model): QueryBuilder
+    public function query(Aircraft $model): QueryBuilder
     {
-
         return $model->newQuery()
-    
-            ->join('merchants', 'services.merchant_id', '=', 'merchants.id')
-            ->select('services.*', 'merchants.business_name as  merchant_name');
+            ->join('merchants', 'aircrafts.merchant_id', '=', 'merchants.id')
+            ->select('aircrafts.*', 'merchants.business_name as  merchant_name');
     }
 
     /**
@@ -56,17 +54,17 @@ class ServiceDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('service-table')
+                    ->setTableId('aircroft-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     //->dom('Bfrtip')
                     ->orderBy(1, 'desc')
+                    ->selectStyleSingle()
                     ->parameters([
                         'dom' => 'Bfrtip',
                         'drawCallback' => 'function() { initDeleteConfirmation() }',
 
                     ])
-                    ->selectStyleSingle()
                     ->buttons([
                         Button::make('excel'),
                         Button::make('csv'),
@@ -84,11 +82,12 @@ class ServiceDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name')->title('Nombre del Servicio'),
-            Column::make('description')->title('Descripcion del Servicio'),
-            Column::make('price_per_hectare')->title('Precio por Hectarea'),
-            // Column::make('disabled_at')->title('Disabled At'),
-            Column::make('merchant_name')->title('Nombre de fantasia'),
+            Column::make('merchant_name')->title('Nombre del Cliente'),
+            Column::make('brand')->title('Marca'),
+            Column::make('models')->title('Modelo'),
+            Column::make('manufacturing_year')->title('Año de Fabricación'),
+            Column::computed('acquisition_date')->title('Fecha de Adquisición'),
+            Column::make('working_width')->title('Ancho de Trabajo'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')
@@ -104,6 +103,6 @@ class ServiceDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Service_' . date('YmdHis');
+        return 'Aircroft_' . date('YmdHis');
     }
 }
