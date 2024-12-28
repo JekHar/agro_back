@@ -73,7 +73,7 @@ class ServiceForm extends Component
             ]);
         }
 
-        return redirect()->route('services.index');
+        // return redirect()->route('services.index');
     }
 
     public function render()

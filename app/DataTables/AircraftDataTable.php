@@ -3,7 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Aircraft;
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -27,13 +27,9 @@ class AircraftDataTable extends DataTable
             ->filterColumn('merchant_name', function ($query, $keyword) {
                 $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
-            ->filterColumn('acquisition_date', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(acquisition_date, '%d-%m-%Y') like ?", ["%$keyword%"])
-                    ->orWhereRaw("DATE_FORMAT(acquisition_date, '%d/%m/%Y') like ?", ["%$keyword%"]);
-            })
-            ->editColumn('updated_at', fn ($item) => $item->updated_at->format('Y-m-d H:i:s'))
-            ->editColumn('created_at', fn ($item) => $item->created_at->format('Y-m-d H:i:s'))
-
+            ->editColumn('acquisition_date', fn ($row) => Carbon::parse($row->acquisition_date)->format('d-m-Y'))            
+            ->editColumn('updated_at', fn ($row) => $row->updated_at->format('d-m-Y H:i:s'))
+            ->editColumn('created_at', fn ($row) => $row->created_at->format('d-m-Y H:i:s'))
             ->addColumn('action', 'pages.aircraft.action')
             ->rawColumns(['image', 'action'])
             ->setRowClass(function () {
@@ -86,12 +82,12 @@ class AircraftDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('merchant_name')->title('Merchant Name'),
-            Column::make('brand')->title('Brand'),
-            Column::make('models')->title('Model'),
-            Column::make('manufacturing_year')->title('Manufacturing Year'),
-            Column::make('acquisition_date')->title('Acquisition Date'),
-            Column::make('working_width')->title('Working Width'),
+            Column::make('merchant_name')->title('Nombre del Cliente'),
+            Column::make('brand')->title('Marca'),
+            Column::make('models')->title('Modelo'),
+            Column::make('manufacturing_year')->title('Año de Fabricación'),
+            Column::computed('acquisition_date')->title('Fecha de Adquisición'),
+            Column::make('working_width')->title('Ancho de Trabajo'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')

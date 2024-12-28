@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Http\Requests\AircraftRequest;
 use Livewire\Component;
 use App\Models\Aircraft;
 use App\Models\Merchant;
@@ -22,16 +23,9 @@ class AircraftForm extends Component
 
     protected function rules()
     {
-        return [
-            'merchant_id' => 'required|exists:merchants,id',
-            'brand' => 'required|string|max:255',
-            'models' => 'required|string|max:255',
-            'manufacturing_year' => 'required|numeric',
-            'acquisition_date' => 'required|date',
-            'working_width' => 'required|numeric|min:0'
-        ];
+        return (new AircraftRequest())->rules();
     }
-    
+
     public function mount($aircraftId = null)
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
@@ -54,13 +48,31 @@ class AircraftForm extends Component
     {
         $validatedData = $this->validate();
 
-        if ($this->isEditing) {
-            $this->aircraft->update($validatedData);
-        } else {
-            Aircraft::create($validatedData);
+        try {
+            if ($this->isEditing) {
+                $this->aircraft->update($validatedData);
+                $message = 'Service updated successfully';
+            } else {
+                Aircraft::create($validatedData);
+                $message = 'Service created successfully';
+            }
+
+            $this->dispatch('swal', [
+                'title' => 'Success',
+                'message' => $message,
+                'icon' => 'success',
+                'redirect' => route('aircrafts.index')
+            ]);
+
+        } catch (\Throwable $th) {
+            $this->dispatch('swal', [
+                'title' => ('Error'),
+                'message' => ('Ocurrió un error al procesar la solicitud'),
+                'icon' => 'error',
+            ]);
         }
 
-        return redirect()->route('aircrafts.index');
+        // return redirect()->route('aircrafts.index');
     }
 
     public function render()
