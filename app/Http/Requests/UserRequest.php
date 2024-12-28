@@ -7,6 +7,13 @@ use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
+    protected ?int $userId = null;
+
+    public function setuserId(int $userId): void
+    {
+        $this->userId = $userId;
+    }
+
     public function authorize(): bool
     {
         return true;
@@ -30,10 +37,10 @@ class UserRequest extends FormRequest
             ],
         ];
 
-        if (!$userId) {
-            $rules['email'] = ['required', 'email', 'unique:users,email'];
-            $rules['password'] = ['required', 'min:8', 'confirmed'];
-            $rules['password_confirmation'] = ['required'];
+        $rules['email'] = ['required', 'email', 'unique:users,email' . ($userId ? ",$userId" : '')];
+        $rules['password'] = ['required', 'min:8', 'confirmed'];
+        if ($userId) {
+            $rules['password'] = ['nullable', 'min:8', 'confirmed'];
         }
 
         return $rules;

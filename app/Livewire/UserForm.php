@@ -6,6 +6,7 @@ use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Models\Merchant;
 use App\Types\MerchantType;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -24,6 +25,13 @@ class UserForm extends Component
     public $merchants;
     public $isEditing = false;
     public bool $isModal = false;
+
+    protected function rules()
+    {
+        $userRequest = new UserRequest();
+        $userRequest->setuserId($this->userId);
+        return $userRequest->rules();
+    }
 
     public function mount($userId = null)
     {
@@ -46,45 +54,35 @@ class UserForm extends Component
 
     public function save()
     {
+        $validatedData = $this->validate();
         try {
-            $request = new UserRequest();
-            $request->merge(['userId' => $this->userId]);
-            $validatedData = $this->validate($request->rules());
-
             if ($this->isEditing) {
                 $this->user->update([
                     'name' => $validatedData['name'],
                     'merchant_id' => $validatedData['merchant_id'],
+                    'email' => $validatedData['email'],
+                    'password' => Hash::make($validatedData['password'])
                 ]);
 
-                $role = Role::find($validatedData['role']);
-                if ($role) {
-                    $this->user->syncRoles([$role->name]);
+                if ($validatedData['role']) {
+                    $this->user->syncRoles([Role::find($validatedData['role'])->name]);
                 }
-
-                $message = __('crud.users.actions.updated');
             } else {
-                $userData = [
+                $user = User::create([
                     'name' => $validatedData['name'],
                     'email' => $validatedData['email'],
                     'merchant_id' => $validatedData['merchant_id'],
                     'password' => Hash::make($validatedData['password'])
-                ];
+                ]);
 
-                $user = User::create($userData);
-                $role = Role::find($validatedData['role']);
-                if ($role) {
-                    $user->assignRole($role->name);
+                if ($validatedData['role']) {
+                    $user->assignRole(Role::find($validatedData['role'])->name);
                 }
-
-                $message = __('crud.users.actions.created');
             }
-
-            $this->dispatch('user-saved');
 
             $this->dispatch('swal', [
                 'title' => __('Success!'),
-                'message' => $message,
+                'message' => __($this->isEditing ? 'crud.users.actions.updated' : 'crud.users.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('users.index'),
             ]);
@@ -94,16 +92,11 @@ class UserForm extends Component
             }
 
             if (!$this->isEditing) {
-                $this->reset([
-                    'name',
-                    'email',
-                    'password',
-                    'password_confirmation',
-                    'merchant_id',
-                    'role'
-                ]);
+                $this->reset(['name', 'email', 'password', 'password_confirmation', 'merchant_id', 'role']);
             }
         } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            dd($e->getMessage());
             $this->dispatch('swal', [
                 'title' => __('Error'),
                 'message' => __('crud.users.actions.error'),

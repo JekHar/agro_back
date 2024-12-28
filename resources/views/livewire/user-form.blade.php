@@ -24,8 +24,7 @@
                         class="form-control @error('email') is-invalid @enderror"
                         id="email"
                         wire:model="email"
-                        placeholder="{{ __('crud.users.fields.email') }}"
-                        @if($isEditing) disabled @endif>
+                        placeholder="{{ __('crud.users.fields.email') }}">
                     @error('email')
                     <span class="invalid-feedback d-block" role="alert">
                         <strong>{{ $message }}</strong>
@@ -75,7 +74,6 @@
             </div>
         </div>
 
-        @if(!$isEditing)
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-4">
@@ -102,7 +100,6 @@
                 </div>
             </div>
         </div>
-        @endif
 
         <div class="text-end">
             <button type="submit" class="btn btn-success">
