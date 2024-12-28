@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\Merchant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
