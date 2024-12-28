@@ -10,7 +10,7 @@
 @section('content')
 <x-hero
     :title="__('crud.categories.plural')"
-    :subtitle="__('crud.categories.categories list')"
+    :subtitle="__('crud.categories.categories_list')"
     :breadcrumbs="[
             [
                 'label' => 'Home',
@@ -25,7 +25,7 @@
     <div class="block block-rounded">
         <div class="block-header block-header-default">
             <h3 class="block-title">
-                {{ __('crud.categories.categories list') }}
+                {{ __('crud.categories.categories_list') }}
             </h3>
             <div class="block-options">
                 <a href="{{ route('categories.create') }}" class="btn btn-sm btn-primary">

@@ -1,9 +1,8 @@
 <?php
 
-namespace app\Livewire;
+namespace App\Livewire;
 
 use App\Models\Category;
-use App\Http\Requests\CategoryRequest;
 use Livewire\Component;
 
 class CategoryForm extends Component
@@ -14,6 +13,15 @@ class CategoryForm extends Component
     public $category_id = '';
     public $isEditing = false;
     public bool $isModal = false;
+
+    protected function rules()
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+        ];
+    }
 
     public function mount($categoryId = null)
     {
@@ -37,17 +45,32 @@ class CategoryForm extends Component
                     'description' => $validatedData['description'],
                     'category_id' => $validatedData['category_id'],
                 ]);
+                $message = __('crud.categories.actions.updated');
             } else {
                 Category::create($validatedData);
+                $message = __('crud.categories.actions.created');
             }
 
-            session()->flash('success', __('crud.categories.actions.saved'));
-            $this->dispatch('categorySaved');
-            $this->reset(['name', 'description', 'category_id']);
+            $this->dispatch('category-saved');
+
+            $this->dispatch('swal', [
+                'title' => __('crud.categories.Success!'),
+                'message' => $message,
+                'icon' => 'success',
+                'redirect' => route('categories.index'),
+            ]);
+
+            if ($this->isModal) {
+                $this->dispatch('close-modal');
+            }
+
+            if (!$this->isEditing) {
+                $this->reset(['name', 'description', 'category_id']);
+            }
         } catch (\Exception $e) {
             $this->dispatch('swal', [
                 'title' => __('Error'),
-                'message' => $e->getMessage(),
+                'message' => __('crud.categories.actions.error'),
                 'icon' => 'error',
             ]);
         }
@@ -58,4 +81,3 @@ class CategoryForm extends Component
         return view('livewire.category-form');
     }
 }
-

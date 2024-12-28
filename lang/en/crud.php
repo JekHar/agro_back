@@ -4,11 +4,11 @@ return [
     'merchants' => [
         'singular' => 'Merchant',
         'plural' => 'Merchants',
-        'Merchants list' => 'Merchants List',
+        'Merchants_list' => 'Merchants List',
         'add' => 'Add Merchant',
         'delete' => 'Delete User',
         'actions' => 'Actions',
-        'Users list' => 'Users List',
+        'Users_list' => 'Users List',
         'fields' => [
             'name' => 'Name',
             'email' => 'Email Address',
@@ -32,7 +32,7 @@ return [
     'users' => [
         'singular' => 'User',
         'plural' => 'Users',
-        'Users list' => 'Users List',
+        'Users_list' => 'Users List',
         'add' => 'Add User',
         'form' => 'User Form',
         'fields' => [
@@ -75,18 +75,18 @@ return [
     'dashboard' => [
         'singular' => 'Dashboard',
         'settings' => 'Settings',
-        'dashboard subtitle' => 'Here you can view the data and statistics of your merchant',
-        'all users' => 'See all users',
-        'all items' => 'See all items',
-        'all lootboxes' => 'See all lootboxes',
-        'all subsidiaries' => 'See all subsidiaries',
-        'all sales' => 'See all sales',
+        'dashboard_subtitle' => 'Here you can view the data and statistics of your merchant',
+        'all_users' => 'See all users',
+        'all_items' => 'See all items',
+        'all_lootboxes' => 'See all lootboxes',
+        'all_subsidiaries' => 'See all subsidiaries',
+        'all_sales' => 'See all sales',
         'add' => 'Add',
     ],
     'services' => [
         'singular' => 'Service',
         'plural' => 'Services',
-        'services list' => 'Services List',
+        'services_list' => 'Services List',
         'add' => 'Add Services',
         'select_merchant' => 'Select Merchant',
         'fields' => [
@@ -107,7 +107,7 @@ return [
     'subsidiaries' => [
         'singular' => 'Subsidiary',
         'plural' => 'Subsidiaries',
-        'Subsidiaries list' => 'Subsidiaries List',
+        'Subsidiaries_list' => 'Subsidiaries List',
         'add' => 'Add Subsidiary',
         'fields' => [
             'name' => 'Name',
@@ -120,6 +120,37 @@ return [
             'create' => 'Create Subsidiary',
             'edit' => 'Edit Subsidiary',
             'delete' => 'Delete Subsidiary',
+        ],
+    ],
+    'categories' => [
+        'singular' => 'Category',
+        'plural' => 'Categories',
+        'form' => 'Category Form',
+        'add' => 'Add Category',
+        'categories_list' => 'Categories List',
+        'Success!' => 'Success!',
+        'fields' => [
+            'name' => 'Name',
+            'description' => 'Description',
+            'category_id' => 'Parent Category',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+        ],
+        'actions' => [
+            'create' => 'Create Category',
+            'edit' => 'Edit Category',
+            'delete' => 'Delete Category',
+            'created' => 'Category created successfully',
+            'updated' => 'Category updated successfully',
+            'deleted' => 'Category deleted successfully',
+            'error' => 'An error occurred while processing your request'
+        ],
+        'select_parent' => 'Select Parent Category',
+        'breadcrumbs' => [
+            'home' => 'Home',
+            'categories' => 'Categories',
+            'create' => 'Create Category',
+            'edit' => 'Edit Category'
         ],
     ],
 ];
