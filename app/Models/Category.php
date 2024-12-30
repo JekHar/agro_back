@@ -19,7 +19,7 @@ class Category extends Model implements Auditable
         'category_id',
     ];
 
-    public function productC()
+    public function products()
     {
         return $this->hasMany(Product::class);
     }

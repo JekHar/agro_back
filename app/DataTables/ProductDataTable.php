@@ -25,7 +25,7 @@ class ProductDataTable extends DataTable
             ->editColumn('category_id', function ($product) {
                 return $product->category_name;
             })
-            ->filterColumn('category_id', function ($query, $keyword) {
+            ->filterColumn('category_name', function ($query, $keyword) {
                 $query->where('categories.name', 'like', "%$keyword%");
             })
             ->filterColumn('merchant_name', function ($query, $keyword) {
@@ -46,9 +46,10 @@ class ProductDataTable extends DataTable
      */
     public function query(Product $model): QueryBuilder
     {
+
         return $model->newQuery()
-            ->join('categories', 'products.category_id', '=', 'categories.id')
-            ->join('merchants', 'products.merchant_id', '=', 'merchants.id')
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
             ->select('products.*', 'categories.name as category_name',  'merchants.business_name as merchant_name');
     }
 
@@ -87,7 +88,7 @@ class ProductDataTable extends DataTable
             Column::make('id'),
             Column::make('name')->title('Nombre'),
             Column::make('sku')->title('SKU'),
-            Column::make('category_id')->title('Categoría'),
+            Column::make('category_name')->title('Categoría'),
             Column::make('merchant_name')->title('Nombre del Cliente'),
             Column::make('concentration')->title('Concentración'),
             Column::make('dosage_per_hectare')->title('Dosis por hectárea'),

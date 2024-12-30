@@ -27,7 +27,9 @@ class ProductForm extends Component
 
     protected function rules()
     {
-        return (new ProductRequest())->rules();
+        $productRequest = new ProductRequest();
+        $productRequest->setProductId($this->productId);
+        return $productRequest->rules();
     }
 
     public function mount($productId = null)

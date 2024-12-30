@@ -6,12 +6,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest
 {
+    protected ?string $productId = null;
+
+    public function setProductId(?string $productId): void
+    {
+        $this->productId = $productId;
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,10 +27,12 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productId = $this->productId;
         return [
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:255|unique:products,sku,' . $this->productId,
+            'sku' => 'required|string|max:255|unique:products,sku,' . $productId,
             'category_id' => 'required|exists:categories,id',
+            'merchant_id' => 'required|exists:merchants,id',
             'concentration' => 'required|numeric|min:0',
             'dosage_per_hectare' => 'required|numeric|min:0',
             'application_volume_per_hectare' => 'required|numeric|min:0',

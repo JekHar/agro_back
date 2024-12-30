@@ -7,9 +7,9 @@ use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
-    protected ?int $userId = null;
+    protected ?string $userId = null;
 
-    public function setuserId(int $userId): void
+    public function setuserId(?string $userId): void
     {
         $this->userId = $userId;
     }

@@ -21,8 +21,8 @@ class ProductFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'sku' => strtoupper($this->faker->unique()->lexify('SKU-????')),
-            'category_id' => Category::factory(),
-            'merchant_id' => Merchant::factory(),
+            'category_id' => Category::inRandomOrder()->first()->id,
+            'merchant_id' => Merchant::where('merchant_type', 'client')->inRandomOrder()->first()->id,
             'concentration' => $this->faker->numberBetween(1, 100),
             'dosage_per_hectare' => $this->faker->randomFloat(2, 5, 20),
             'application_volume_per_hectare' => $this->faker->randomFloat(2, 100, 200),
