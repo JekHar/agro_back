@@ -87,4 +87,12 @@ class MerchantController extends Controller
     {
         return $this->isClientRoute($request) ? 'merchants.clients' : 'merchants.tenants';
     }
+
+    //Get tenants
+    public function getTenants()
+    {
+        $tenants = Merchant::where('merchant_type', 'tenant')->select(['id', 'business_name'])->get();
+        return response()->json($tenants);
+    }
+    
 }

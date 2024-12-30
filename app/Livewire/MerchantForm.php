@@ -9,7 +9,7 @@ use Illuminate\Validation\Rules\Enum;
 use Livewire\Component;
 use App\Http\Requests\MerchantRequest;
 use Illuminate\Support\Facades\App;
-
+use Illuminate\Support\Facades\Auth;
 
 class MerchantForm extends Component
 {
@@ -19,22 +19,31 @@ class MerchantForm extends Component
     public ?string $main_activity = '';
     public ?string $email = '';
     public ?string $phone = '';
-    public MerchantType $merchant_type;
+    public ?string $merchant_type;
+    public ?int $merchant_id = null;
     public ?string $locality = '';
     public ?string $address = '';
     public ?Merchant $merchant = null;
     public bool $isClient;
     public bool $showMainActivity;
+    public array $tenants = [];
 
-    private MerchantRequest $request;
 
-    public function rules(): array
+    protected function rules()
     {
-        return App::make(MerchantRequest::class)->rules();
+        $merchantRequest = new MerchantRequest();
+        if ($this->merchant && $this->merchant->exists) {
+            $merchantRequest->setMerchantId($this->merchant->id);
+        }
+        $merchantRequest->setIsClient($this->isClient);
+        return $merchantRequest->rules();
     }
 
     public function mount(?Merchant $merchant = null, bool $isClient = false)
     {
+        $this->tenants = Merchant::where('merchant_type', MerchantType::TENANT)
+        ->pluck('business_name', 'id')->toArray();
+
         if ($merchant) {
             $this->merchant = $merchant;
             $this->business_name = $merchant->business_name;
@@ -43,11 +52,11 @@ class MerchantForm extends Component
             $this->main_activity = $merchant->main_activity;
             $this->email = $merchant->email;
             $this->phone = $merchant->phone;
-            $this->merchant_type = $merchant->merchant_type ?? ($isClient ? MerchantType::CLIENT : MerchantType::TENANT);
+            $this->merchant_type = $merchant->merchant_type ?? ($isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value);
             $this->locality = $merchant->locality;
             $this->address = $merchant->address;
         } else {
-            $this->merchant_type = $isClient ? MerchantType::CLIENT : MerchantType::TENANT;
+            $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
         }
 
         $this->isClient = $isClient;
@@ -58,16 +67,21 @@ class MerchantForm extends Component
     public function save()
     {
         $validated = $this->validate();
-        $validated['merchant_type'] = MerchantType::from($validated['merchant_type']->value);
 
         try {
+            if (auth()->user()->hasRole('Tenant')) {
+                $validated['merchant_id'] = auth()->user()->merchant_id;
+            }
             if ($this->merchant && $this->merchant->exists) {
                 $this->merchant->update($validated);
+                $message = 'Service created successfully';
             } else {
+                dd($validated);
                 Merchant::create($validated);
+                $message = 'Service created successfully';
             }
 
-            $route = $validated['merchant_type'] === MerchantType::CLIENT
+            $route = $validated['merchant_type'] === MerchantType::CLIENT->value
                 ? 'merchants.clients.merchants.index'
                 : 'merchants.tenants.merchants.index';
 

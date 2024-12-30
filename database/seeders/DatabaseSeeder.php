@@ -15,9 +15,27 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $user = User::factory()->create([
+        $user1 = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => bcrypt('password'),
+        ]);
+        
+        $user2 = User::factory()->create([
+            'name' => 'Test Tenant User',
+            'email' => 'tenant@example.com',
+            'password' => bcrypt('password'),
+        ]);
+        
+        $user3 = User::factory()->create([
+            'name' => 'Test Pilot User',
+            'email' => 'pilot@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $user4 = User::factory()->create([
+            'name' => 'Test Ground Support User',
+            'email' => 'ground@example.com',
             'password' => bcrypt('password'),
         ]);
 
@@ -28,9 +46,12 @@ class DatabaseSeeder extends Seeder
             MerchantSeeder::class,
             ServiceSeeder::class,
             AircraftSeeder::class,
+            UserSeeder::class,
 
         ]);
-        $user->assignRole('Admin');
-        
+        $user1->assignRole('Admin');
+        $user2->assignRole('Tenant');
+        $user3->assignRole('Pilot');
+        $user4->assignRole('Ground Support');
     }
 }
