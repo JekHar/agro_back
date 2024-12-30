@@ -4,7 +4,7 @@
             <!-- Nombre del Servicio -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="name">{{ __('crud.services.fields.name') }}</label>
+                    <label class="form-label" for="name"> <span class="text-danger">*</span> {{ __('crud.services.fields.name') }}</label>
                     <input type="text"
                            class="form-control @error('name') is-invalid @enderror"
                            id="name"
@@ -39,8 +39,8 @@
             <!-- Selección de Merchant -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="merchant_id">{{ __('crud.services.fields.merchant') }}</label>
-                    <select class="form-control @error('merchant_id') is-invalid @enderror" 
+                    <label class="form-label" for="merchant_id"> <span class="text-danger">*</span> {{ __('crud.services.fields.merchant') }}</label>
+                    <select class="form-select  @error('merchant_id') is-invalid @enderror" 
                             id="merchant_id" 
                             wire:model="merchant_id">
                         <option value="">{{ __('crud.services.select_merchant') }}</option>
@@ -59,7 +59,7 @@
             <!-- Precio por Hectárea -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="price_per_hectare">{{ __('crud.services.fields.price_per_hectare') }}</label>
+                    <label class="form-label" for="price_per_hectare"> <span class="text-danger">*</span> {{ __('crud.services.fields.price_per_hectare') }}</label>
                     <div class="input-group">
                         <span class="input-group-text">$</span>
                         <input type="number"

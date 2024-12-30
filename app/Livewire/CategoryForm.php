@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Livewire\Component;
 
@@ -16,11 +17,11 @@ class CategoryForm extends Component
 
     protected function rules()
     {
-        return [
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'category_id' => ['nullable', 'exists:categories,id'],
-        ];
+        $categoryRequest = new CategoryRequest();
+        $categoryRequest->setCategoryId($this->category_id);
+        return $categoryRequest->rules();
+
+
     }
 
     public function mount($categoryId = null)

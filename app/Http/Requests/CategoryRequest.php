@@ -6,6 +6,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryRequest extends FormRequest
 {
+    protected ?string $categoryId = null;
+
+    public function setCategoryId(?string $categoryId): void
+    {
+        $this->categoryId = $categoryId;
+    }
 
     public function authorize(): bool
     {
@@ -17,7 +23,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
             'category_id' => ['nullable', 'exists:categories,id'],  
         ];
     }
