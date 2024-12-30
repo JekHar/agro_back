@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Http\Requests\ServiceRequest;
 use Livewire\Component;
 use App\Models\Service;
 use App\Models\Merchant;
@@ -15,19 +16,13 @@ class ServiceForm extends Component
     public $description;
     public $merchant_id;
     public $price_per_hectare;
+    public bool $isModal = false;
     public $merchants;
     public $isEditing = false;
 
     protected function rules()
     {
-        return [
-            'name' => $this->isEditing 
-                ? 'required|string|max:255'
-                : 'required|string|max:255|unique:services,name',
-            'description' => 'required|string',
-            'merchant_id' => 'required|exists:merchants,id',
-            'price_per_hectare' => 'required|numeric|min:0',
-        ];
+        return (new ServiceRequest())->rules();
     }
     
     public function mount($serviceId = null)
@@ -50,13 +45,35 @@ class ServiceForm extends Component
     {
         $validatedData = $this->validate();
 
-        if ($this->isEditing) {
-            $this->service->update($validatedData);
-        } else {
-            Service::create($validatedData);
+        try {
+            if ($this->isEditing) {
+                $this->service->update($validatedData);
+                $message = 'Service updated successfully';
+            } else {
+                Service::create($validatedData);
+                $message = 'Service created successfully';
+            }
+
+            $this->dispatch('swal', [
+                'title' => 'Success',
+                'message' => $message,
+                'icon' => 'success',
+                'redirect' => route('services.index')
+            ]);
+
+            if ($this->isModal) {
+                $this->dispatch('close-modal');
+            }
+
+        } catch (\Exception $e) {
+            $this->dispatch('swal', [
+                'title' => ('Error'),
+                'message' => ('Ocurrió un error al procesar la solicitud'),
+                'icon' => 'error',
+            ]);
         }
 
-        return redirect()->route('services.index');
+        // return redirect()->route('services.index');
     }
 
     public function render()
