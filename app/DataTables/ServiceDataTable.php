@@ -45,6 +45,7 @@ class ServiceDataTable extends DataTable
     {
 
         return $model->newQuery()
+    
             ->join('merchants', 'services.merchant_id', '=', 'merchants.id')
             ->select('services.*', 'merchants.business_name as  merchant_name');
     }
