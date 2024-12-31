@@ -20,7 +20,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     }); 
     Route::prefix('tenants')->name('merchants.tenants.')->group(function () {
         Route::resource('merchants', MerchantController::class);
-        Route::get('merchants-tenants', [MerchantController::class, 'getTenants'])->name('get.tenants');
     });
 
     Route::resource('services', ServiceController::class);

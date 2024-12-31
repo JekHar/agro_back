@@ -61,7 +61,7 @@ class MerchantsDataTable extends DataTable
             ->setTableId('merchants-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(1)
+            ->orderBy(0, 'asc')
             ->parameters([
                 'dom' => 'Bfrtip',
                 'drawCallback' => 'function() { initDeleteConfirmation() }',

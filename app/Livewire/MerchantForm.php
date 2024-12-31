@@ -13,17 +13,19 @@ use Illuminate\Support\Facades\Auth;
 
 class MerchantForm extends Component
 {
-    public ?string $business_name = '';
-    public ?string $trade_name = '';
-    public ?string $fiscal_number = '';
-    public ?string $main_activity = '';
-    public ?string $email = '';
-    public ?string $phone = '';
-    public ?string $merchant_type;
-    public ?int $merchant_id = null;
-    public ?string $locality = '';
-    public ?string $address = '';
-    public ?Merchant $merchant = null;
+    public $merchant;
+    public  $business_name;
+    public $merchantId;
+    public  $trade_name;
+    public  $fiscal_number;
+    public  $main_activity;
+    public  $email;
+    public  $phone;
+    public  $merchant_type;
+    public  $merchant_id ;
+    public  $locality;
+    public  $address;
+    public $isEditing = false;
     public bool $isClient;
     public bool $showMainActivity;
     public array $tenants = [];
@@ -34,29 +36,43 @@ class MerchantForm extends Component
         $merchantRequest = new MerchantRequest();
         if ($this->merchant && $this->merchant->exists) {
             $merchantRequest->setMerchantId($this->merchant->id);
+
         }
         $merchantRequest->setIsClient($this->isClient);
         return $merchantRequest->rules();
     }
 
-    public function mount(?Merchant $merchant = null, bool $isClient = false)
+    public function mount(bool $isClient = false, $merchantId = null)
     {
-        $this->tenants = Merchant::where('merchant_type', MerchantType::TENANT)
-        ->pluck('business_name', 'id')->toArray();
+        if(!auth()->user()->hasRole('Tenant')){
+            $this->tenants = Merchant::where('merchant_type', MerchantType::TENANT)
+            ->pluck('business_name', 'id')->toArray();
+        }
 
-        if ($merchant) {
-            $this->merchant = $merchant;
-            $this->business_name = $merchant->business_name;
-            $this->trade_name = $merchant->trade_name;
-            $this->fiscal_number = $merchant->fiscal_number;
-            $this->main_activity = $merchant->main_activity;
-            $this->email = $merchant->email;
-            $this->phone = $merchant->phone;
-            $this->merchant_type = $merchant->merchant_type ?? ($isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value);
-            $this->locality = $merchant->locality;
-            $this->address = $merchant->address;
+        if ($merchantId) {
+            $this->isEditing = true;
+            $this->merchantId = $merchantId;
+            $this->merchant = Merchant::find($merchantId);
+            $this->business_name = $this->merchant->business_name;
+            $this->trade_name = $this->merchant->trade_name;
+            $this->fiscal_number = $this->merchant->fiscal_number;
+            $this->main_activity = $this->merchant->main_activity;
+            $this->email = $this->merchant->email;
+            $this->phone = $this->merchant->phone;
+            $this->merchant_type = $this->merchant->merchant_type 
+            ? $this->merchant->merchant_type 
+            : ($isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value);
+            $this->locality = $this->merchant->locality;
+            $this->address = $this->merchant->address;
+
+            if (auth()->user()->hasRole('Tenant')) {
+                $this->merchant_id = auth()->id();
+            }
         } else {
             $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
+            if (auth()->user()->hasRole('Tenant')) {
+                $this->merchant_id = auth()->id();
+            }
         }
 
         $this->isClient = $isClient;
@@ -66,28 +82,49 @@ class MerchantForm extends Component
 
     public function save()
     {
-        $validated = $this->validate();
 
+        $validated = $this->validate();
         try {
+
+            if (!auth()->user()->can('clients.merchants.create')) {
+                throw new \Exception('No tienes permiso para crear clientes');
+            }
+
             if (auth()->user()->hasRole('Tenant')) {
-                $validated['merchant_id'] = auth()->user()->merchant_id;
+                $validated['merchant_id'] = auth()->user()->id;
+                $validated['merchant_type'] = $this->merchant_type;
+
             }
             if ($this->merchant && $this->merchant->exists) {
                 $this->merchant->update($validated);
                 $message = 'Service created successfully';
             } else {
-                dd($validated);
+
                 Merchant::create($validated);
                 $message = 'Service created successfully';
             }
 
-            $route = $validated['merchant_type'] === MerchantType::CLIENT->value
-                ? 'merchants.clients.merchants.index'
-                : 'merchants.tenants.merchants.index';
+            
+            
+            $route = $validated['merchant_type'] === MerchantType::CLIENT
+            ? 'merchants.clients.merchants.index'
+            : 'merchants.tenants.merchants.index';
 
-            return redirect()->route($route);
+
+            
+            $this->dispatch('swal', [
+                'title' => 'Success',
+                'message' => $message,
+                'icon' => 'success',
+                'redirect' => route($route)
+            ]);
+
         } catch (\Exception $e) {
-            session()->flash('error', __('Ocurrió un error al procesar la solicitud'));
+            $this->dispatch('swal', [
+                'title' => ('Error'),
+                'message' => $e->getMessage(),
+                'icon' => 'error',
+            ]);
         }
     }
 

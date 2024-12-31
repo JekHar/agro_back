@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Types\MerchantType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class MerchantRequest extends FormRequest
 {
@@ -27,17 +29,16 @@ class MerchantRequest extends FormRequest
             'trade_name' => ['nullable', 'string', 'max:255'],
             'fiscal_number' => [
                 'required',
-                'string',
-                'max:50',
+                'numeric',  
                 Rule::unique('merchants', 'fiscal_number')
                 ->ignore($this->merchantId),
             ],
             'merchant_id' => ['required_if:merchant_type,client', 'exists:merchants,id'],
-            'merchant_type' => ['required', 'string', Rule::in(['tenant', 'client'])],
+            'merchant_type' => ['required', new Enum(MerchantType::class)],
             'email' => ['required', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'locality' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+            'locality' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
         ];
 
         if ($this->isClientRoute()) {
