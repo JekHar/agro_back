@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AircraftController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
@@ -26,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('aircrafts', AircraftController::class);
+    Route::resource('products', ProductController::class);
 
 });
 require __DIR__ . '/auth.php';

@@ -47,6 +47,8 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             AircraftSeeder::class,
             UserSeeder::class,
+            CategorySeeders::class,
+            ProductSeeders::class,
 
         ]);
         $user1->assignRole('Admin');
