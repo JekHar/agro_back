@@ -33,7 +33,7 @@ class MerchantRequest extends FormRequest
                 Rule::unique('merchants', 'fiscal_number')
                 ->ignore($this->merchantId),
             ],
-            'merchant_id' => ['required_if:merchant_type,client', 'exists:merchants,id'],
+            'merchant_id' => ['nullable', 'exists:merchants,id'],
             'merchant_type' => ['required', new Enum(MerchantType::class)],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['required', 'string', 'max:20'],

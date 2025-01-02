@@ -2,29 +2,26 @@
 
 namespace App\Livewire;
 
-use App\Http\Controllers\MerchantController;
 use App\Models\Merchant;
 use App\Types\MerchantType;
-use Illuminate\Validation\Rules\Enum;
 use Livewire\Component;
 use App\Http\Requests\MerchantRequest;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
+
 
 class MerchantForm extends Component
 {
     public $merchant;
-    public  $business_name;
+    public $business_name;
     public $merchantId;
-    public  $trade_name;
-    public  $fiscal_number;
-    public  $main_activity;
-    public  $email;
-    public  $phone;
-    public  $merchant_type;
-    public  $merchant_id ;
-    public  $locality;
-    public  $address;
+    public $trade_name;
+    public $fiscal_number;
+    public $main_activity;
+    public $email;
+    public $phone;
+    public $merchant_type;
+    public $merchant_id ;
+    public $locality;
+    public $address;
     public $isEditing = false;
     public bool $isClient;
     public bool $showMainActivity;
@@ -44,10 +41,11 @@ class MerchantForm extends Component
 
     public function mount(bool $isClient = false, $merchantId = null)
     {
-        if(!auth()->user()->hasRole('Tenant')){
+        if((auth()->user()->hasRole('Admin') && $isClient) ||  (!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin'))) {
             $this->tenants = Merchant::where('merchant_type', MerchantType::TENANT)
-            ->pluck('business_name', 'id')->toArray();
+                ->pluck('business_name', 'id')->toArray();
         }
+    
 
         if ($merchantId) {
             $this->isEditing = true;
@@ -65,7 +63,9 @@ class MerchantForm extends Component
             $this->locality = $this->merchant->locality;
             $this->address = $this->merchant->address;
 
-            if (auth()->user()->hasRole('Tenant')) {
+            if (auth()->user()->hasRole('Admin')) {
+                $this->merchant_id = null;
+            } elseif (auth()->user()->hasRole('Tenant')) {
                 $this->merchant_id = auth()->id();
             }
         } else {
@@ -84,12 +84,16 @@ class MerchantForm extends Component
     {
 
         $validated = $this->validate();
+
         try {
 
             if (!auth()->user()->can('clients.merchants.create')) {
                 throw new \Exception('No tienes permiso para crear clientes');
             }
-
+            if(auth()->user()->hasRole('Admin')) {
+                $validated['merchant_id'] = $this->merchant_id;
+                $validated['merchant_type'] = $this->merchant_type;
+            }
             if (auth()->user()->hasRole('Tenant')) {
                 $validated['merchant_id'] = auth()->user()->id;
                 $validated['merchant_type'] = $this->merchant_type;
@@ -106,10 +110,9 @@ class MerchantForm extends Component
 
             
             
-            $route = $validated['merchant_type'] === MerchantType::CLIENT
+            $route = $validated['merchant_type'] === MerchantType::CLIENT->value
             ? 'merchants.clients.merchants.index'
             : 'merchants.tenants.merchants.index';
-
 
             
             $this->dispatch('swal', [

@@ -39,7 +39,8 @@
 
                 <!-- Fila 2: Empresa y CUIT -->
                 <div class="row mb-4">
-                    @if(!auth()->user()->hasRole('Tenant'))
+                    @if((auth()->user()->hasRole('Admin') && $isClient) || 
+                    (!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
                     <div class="col-md-6">
                         <label class="form-label">{{ __('Empresa') }}</label>
                         <div class="input-group">
