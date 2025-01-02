@@ -4,14 +4,17 @@ namespace App\Livewire;
 
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class CategoryForm extends Component
 {
     public $category;
+    public $categoryId;
     public $name = '';
     public $description = '';
     public $category_id = '';
+    public $categories;
     public $isEditing = false;
     public bool $isModal = false;
 
@@ -26,8 +29,11 @@ class CategoryForm extends Component
 
     public function mount($categoryId = null)
     {
+        $this->categories = Category::pluck('name', 'id');
+
         if ($categoryId) {
             $this->isEditing = true;
+            $this->categoryId = $categoryId;
             $this->category = Category::find($categoryId);
             $this->name = $this->category->name;
             $this->description = $this->category->description;
@@ -37,26 +43,21 @@ class CategoryForm extends Component
 
     public function save()
     {
+        $validatedData = $this->validate();
         try {
-            $validatedData = $this->validate();
-
             if ($this->isEditing) {
                 $this->category->update([
                     'name' => $validatedData['name'],
                     'description' => $validatedData['description'],
                     'category_id' => $validatedData['category_id'],
                 ]);
-                $message = __('crud.categories.actions.updated');
             } else {
                 Category::create($validatedData);
-                $message = __('crud.categories.actions.created');
             }
 
-            $this->dispatch('category-saved');
-
             $this->dispatch('swal', [
-                'title' => __('crud.categories.Success!'),
-                'message' => $message,
+                'title' => __('Success!'),
+                'message' => __($this->isEditing ? 'crud.categories.actions.updated' : 'crud.categories.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('categories.index'),
             ]);
@@ -69,6 +70,7 @@ class CategoryForm extends Component
                 $this->reset(['name', 'description', 'category_id']);
             }
         } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
             $this->dispatch('swal', [
                 'title' => __('Error'),
                 'message' => __('crud.categories.actions.error'),

@@ -26,7 +26,8 @@ class Merchant extends Model implements ContractsAuditable
         'disabled_at',
         'merchant_id',
         'locality',
-        'address'
+        'address',
+        'merchant_id'
     ];
 
     protected $casts = [
