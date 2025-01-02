@@ -21,8 +21,10 @@ class CategoryForm extends Component
     protected function rules()
     {
         $categoryRequest = new CategoryRequest();
-        $categoryRequest->setCategoryId($this->categoryId);
+        $categoryRequest->setCategoryId($this->category_id);
         return $categoryRequest->rules();
+
+
     }
 
     public function mount($categoryId = null)

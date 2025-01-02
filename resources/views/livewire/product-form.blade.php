@@ -5,7 +5,7 @@
                 <!-- Nombre -->
                 <div class="col-md-6">
                     <div class="mb-4">
-                        <label class="form-label" for="name">{{ __('crud.products.fields.name') }}</label>
+                        <label class="form-label" for="name"> <span class="text-danger">*</span> {{ __('crud.products.fields.name') }}</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" 
                             id="name" wire:model="name" placeholder="Ingrese el nombre del producto">
                         @error('name')
@@ -19,7 +19,7 @@
                 <!-- SKU -->
                 <div class="col-md-6">
                     <div class="mb-4">
-                        <label class="form-label" for="sku">{{ __('crud.products.fields.sku') }}</label>
+                        <label class="form-label" for="sku"> <span class="text-danger">*</span>  {{ __('crud.products.fields.sku') }}</label>
                         <input type="text" class="form-control @error('sku') is-invalid @enderror" 
                             id="sku" wire:model="sku" placeholder="Ingrese el SKU">
                         @error('sku')
@@ -35,7 +35,7 @@
                 <!-- Categoría -->
                 <div class="col-md-6">
                     <div class="mb-4">
-                        <label class="form-label" for="category_id">{{ __('crud.products.fields.category') }}</label>
+                        <label class="form-label" for="category_id"> <span class="text-danger">*</span> {{ __('crud.products.fields.category') }}</label>
                         <select class="form-select js-select2 @error('category_id') is-invalid @enderror" 
                             id="category_id" wire:model="category_id">
                             <option value="">{{ __('crud.products.select_category') }}</option>
@@ -54,7 +54,7 @@
                 <!-- Comerciante -->
                 <div class="col-md-6">
                     <div class="mb-4">
-                        <label class="form-label" for="merchant_id">{{ __('crud.services.fields.merchant') }}</label>
+                        <label class="form-label" for="merchant_id"> <span class="text-danger">*</span> {{ __('crud.services.fields.merchant') }}</label>
                         <select class="form-select js-select2 @error('merchant_id') is-invalid @enderror" 
                                 id="merchant_id" 
                                 wire:model="merchant_id">
@@ -77,7 +77,7 @@
                 <!-- Concentración -->
                 <div class="col-md-3">
                     <div class="mb-4">
-                        <label class="form-label" for="concentration">{{ __('crud.products.fields.concentration') }}</label>
+                        <label class="form-label" for="concentration"> <span class="text-danger">*</span> {{ __('crud.products.fields.concentration') }}</label>
                         <div class="input-group">
                             <input type="number" class="form-control @error('concentration') is-invalid @enderror" 
                                 id="concentration" wire:model="concentration" step="0.01" placeholder="0.00">
@@ -93,7 +93,7 @@
                 <!-- Dosis por Hectárea -->
                 <div class="col-md-3">
                     <div class="mb-4">
-                        <label class="form-label" for="dosage_per_hectare">{{ __('crud.products.fields.dosage_per_hectare') }}</label>
+                        <label class="form-label" for="dosage_per_hectare"> <span class="text-danger">*</span> {{ __('crud.products.fields.dosage_per_hectare') }}</label>
                         <div class="input-group">
                             <input type="number" class="form-control @error('dosage_per_hectare') is-invalid @enderror" 
                                 id="dosage_per_hectare" wire:model="dosage_per_hectare" step="0.01" placeholder="0.00">
@@ -110,7 +110,7 @@
                 <!-- Volumen de Aplicación por Hectárea -->
                 <div class="col-md-3">
                     <div class="mb-4">
-                        <label class="form-label" for="application_volume_per_hectare">
+                        <label class="form-label" for="application_volume_per_hectare"> <span class="text-danger">*</span>
                             {{ __('crud.products.fields.application_volume_per_hectare') }}
                         </label>
                         <div class="input-group">
@@ -128,7 +128,7 @@
                 <!-- Stock -->
                 <div class="col-md-3">
                     <div class="mb-4">
-                        <label class="form-label" for="stock">{{ __('crud.products.fields.stock') }}</label>
+                        <label class="form-label" for="stock"> <span class="text-danger">*</span> {{ __('crud.products.fields.stock') }}</label>
                         <div class="input-group">
                             <input type="number" class="form-control @error('stock') is-invalid @enderror" 
                                 id="stock" wire:model="stock" step="1" placeholder="0">

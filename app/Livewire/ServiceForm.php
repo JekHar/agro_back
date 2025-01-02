@@ -22,7 +22,9 @@ class ServiceForm extends Component
 
     protected function rules()
     {
-        return (new ServiceRequest())->rules();
+        $serviceRequest = new ServiceRequest();
+        $serviceRequest->setServiceId($this->serviceId);
+        return $serviceRequest->rules();
     }
     
     public function mount($serviceId = null)

@@ -58,7 +58,7 @@ class AircraftDataTable extends DataTable
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     //->dom('Bfrtip')
-                    ->orderBy(1, 'desc')
+                    ->orderBy(0, 'asc')
                     ->selectStyleSingle()
                     ->parameters([
                         'dom' => 'Bfrtip',

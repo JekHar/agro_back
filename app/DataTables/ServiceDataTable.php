@@ -60,7 +60,7 @@ class ServiceDataTable extends DataTable
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     //->dom('Bfrtip')
-                    ->orderBy(1, 'desc')
+                    ->orderBy(0, 'asc')
                     ->parameters([
                         'dom' => 'Bfrtip',
                         'drawCallback' => 'function() { initDeleteConfirmation() }',

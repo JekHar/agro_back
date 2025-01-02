@@ -23,7 +23,9 @@ class AircraftForm extends Component
 
     protected function rules()
     {
-        return (new AircraftRequest())->rules();
+        $aircraftRequest = new AircraftRequest();
+        $aircraftRequest->setAircraftId($this->aircraftId);
+        return $aircraftRequest->rules();
     }
 
     public function mount($aircraftId = null)

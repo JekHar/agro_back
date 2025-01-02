@@ -6,9 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryRequest extends FormRequest
 {
-    protected $categoryId = null;
+    protected ?string $categoryId = null;
 
-    public function setCategoryId($categoryId): void
+    public function setCategoryId(?string $categoryId): void
     {
         $this->categoryId = $categoryId;
     }
@@ -22,8 +22,8 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'category_id' => ['nullable', 'exists:categories,id'],
+            'description' => ['nullable', 'string'],
+            'category_id' => ['nullable', 'exists:categories,id'],  
         ];
     }
 

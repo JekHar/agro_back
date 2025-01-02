@@ -6,6 +6,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AircraftRequest extends FormRequest
 {
+    private ?string $aircraftId;
+
+    public function setAircraftId(?string $aircraftId): void
+    {
+        $this->aircraftId = $aircraftId;
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -25,7 +31,7 @@ class AircraftRequest extends FormRequest
             'merchant_id' => 'required|exists:merchants,id',
             'brand' => 'required|string|max:255',
             'models' => 'required|string|max:255',
-            'manufacturing_year' => 'required|numeric|min:0',
+            'manufacturing_year' => 'nullable|numeric|min:0',
             'acquisition_date' => 'required|date',
             'working_width' => 'required|numeric|min:0'
         ];

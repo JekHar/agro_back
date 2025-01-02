@@ -6,6 +6,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ServiceRequest extends FormRequest
 {
+    private ?string $serviceId;
+
+    public function setServiceId(?string $serviceId): void
+    {
+        $this->serviceId = $serviceId;
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
