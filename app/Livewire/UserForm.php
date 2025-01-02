@@ -35,7 +35,7 @@ class UserForm extends Component
 
     public function mount($userId = null)
     {
-        $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
+        $this->merchants = Merchant::where('merchant_type', MerchantType::TENANT)
             ->pluck('business_name', 'id');
         $this->roles = Role::whereIn('name', ['Pilot', 'Ground Support'])
             ->pluck('name', 'id');

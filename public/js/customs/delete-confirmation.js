@@ -8,18 +8,18 @@ function initDeleteConfirmation() {
             const itemTitle = $(this).data('title') || 'this item';
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: `Are you sure you want to delete ${itemTitle}?`,
+                title: '¿Estás seguro?',
+                text: `¿Estás seguro de eliminar ${itemTitle}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
+                confirmButtonText: 'Si, eliminar',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'Deleting...',
+                        title: 'Eliminando...',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
