@@ -8,8 +8,6 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class MerchantsDataTable extends DataTable
@@ -85,11 +83,11 @@ class MerchantsDataTable extends DataTable
         if (request()->routeIs('merchants.tenants.*')) {
             return [
                 Column::make('id')->title('#'),
-                Column::make('business_name')->name('business_name'),
-                Column::make('trade_name')->name('trade name'),
-                Column::make('fiscal_number')->name('fiscal number'),
-                Column::make('email')->name('email'),
-                Column::make('phone')->name('phone'),
+                Column::make('business_name')->title('Razon Social'),
+                Column::make('trade_name')->title('Nombre de Fantasia'),
+                Column::make('fiscal_number')->title('Número Fiscal'),
+                Column::make('email')->title('Email'),
+                Column::make('phone')->title('Telefono'),
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
@@ -100,12 +98,12 @@ class MerchantsDataTable extends DataTable
         if (request()->routeIs('merchants.clients.*')) {
             return [
                 Column::make('id')->title('#'),
-                Column::make('business_name')->name('business_name'),
-                Column::make('trade_name')->name('trade name'),
-                Column::make('fiscal_number')->name('fiscal number'),
-                Column::make('main_activity')->name('main activity'),
-                Column::make('email')->name('email'),
-                Column::make('phone')->name('phone'),
+                Column::make('business_name')->title('Razon Social'),
+                Column::make('trade_name')->title('Nombre de Fantasia'),
+                Column::make('fiscal_number')->title('Numero Fiscal'),
+                Column::make('main_activity')->title('Actividad Principal'),
+                Column::make('email')->title('Email'),
+                Column::make('phone')->title('Telefono'),
                 //Column::Make('lots')->name('lots'),
                 //Column::Make('last_service')->name('last service'),
                 Column::computed('action')
