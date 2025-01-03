@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('business_name');
             $table->string('trade_name')->nullable();
-            $table->integer('fiscal_number');
+            $table->bigInteger('fiscal_number');
             $table->string('main_activity')->nullable();
             $table->string('email');
             $table->string('phone');
