@@ -110,7 +110,7 @@ class MerchantForm extends Component
 
             
             
-            $route = $validated['merchant_type'] === MerchantType::CLIENT->value
+            $route = $validated['merchant_type'] === MerchantType::CLIENT->value || $validated['merchant_type'] === MerchantType::CLIENT
             ? 'merchants.clients.merchants.index'
             : 'merchants.tenants.merchants.index';
 
