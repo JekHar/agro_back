@@ -33,7 +33,6 @@ class MerchantForm extends Component
         $merchantRequest = new MerchantRequest();
         if ($this->merchant && $this->merchant->exists) {
             $merchantRequest->setMerchantId($this->merchant->id);
-
         }
         $merchantRequest->setIsClient($this->isClient);
         return $merchantRequest->rules();
@@ -46,7 +45,6 @@ class MerchantForm extends Component
                 ->pluck('business_name', 'id')->toArray();
         }
     
-
         if ($merchantId) {
             $this->isEditing = true;
             $this->merchantId = $merchantId;
@@ -74,19 +72,15 @@ class MerchantForm extends Component
                 $this->merchant_id = auth()->id();
             }
         }
-
         $this->isClient = $isClient;
         $this->showMainActivity = $isClient;
     }
-
-
+    
     public function save()
     {
-
         $validated = $this->validate();
 
         try {
-
             if (!auth()->user()->can('clients.merchants.create')) {
                 throw new \Exception('No tienes permiso para crear clientes');
             }
@@ -97,23 +91,18 @@ class MerchantForm extends Component
             if (auth()->user()->hasRole('Tenant')) {
                 $validated['merchant_id'] = auth()->user()->id;
                 $validated['merchant_type'] = $this->merchant_type;
-
             }
             if ($this->merchant && $this->merchant->exists) {
                 $this->merchant->update($validated);
                 $message = 'Service created successfully';
             } else {
-
                 Merchant::create($validated);
                 $message = 'Service created successfully';
-            }
-
-            
+            }            
             
             $route = $validated['merchant_type'] === MerchantType::CLIENT->value || $validated['merchant_type'] === MerchantType::CLIENT
             ? 'merchants.clients.merchants.index'
             : 'merchants.tenants.merchants.index';
-
             
             $this->dispatch('swal', [
                 'title' => 'Success',
@@ -121,7 +110,6 @@ class MerchantForm extends Component
                 'icon' => 'success',
                 'redirect' => route($route)
             ]);
-
         } catch (\Exception $e) {
             $this->dispatch('swal', [
                 'title' => ('Error'),
@@ -130,8 +118,6 @@ class MerchantForm extends Component
             ]);
         }
     }
-
-
 
     public function render()
     {
