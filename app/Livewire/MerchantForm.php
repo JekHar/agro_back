@@ -99,7 +99,7 @@ class MerchantForm extends Component
                 $validated['merchant_type'] = $this->merchant_type;
 
             }
-            if ($this->merchant && $this->merchant->exists) {
+            if ($this->merchant) {
                 $this->merchant->update($validated);
                 $message = 'Service created successfully';
             } else {
@@ -107,10 +107,8 @@ class MerchantForm extends Component
                 Merchant::create($validated);
                 $message = 'Service created successfully';
             }
-
-            
-            
-            $route = $validated['merchant_type'] === MerchantType::CLIENT->value || $validated['merchant_type'] === MerchantType::CLIENT
+      
+            $route = $this->isClient
             ? 'merchants.clients.merchants.index'
             : 'merchants.tenants.merchants.index';
 
