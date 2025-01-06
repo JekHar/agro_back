@@ -184,6 +184,7 @@ return [
             'name' => 'Name',
             'description' => 'Description',
             'category_id' => 'Parent Category',
+            'parent_category' => 'Parent Category',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ],

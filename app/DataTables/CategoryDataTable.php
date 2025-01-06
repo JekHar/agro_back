@@ -57,8 +57,8 @@ class CategoryDataTable extends DataTable
         return [
 
             Column::make('id'),
-            Column::make('name'),
-            Column::make('description'),
+            Column::make('name')->title('Nombre'),
+            Column::make('description')->title('Descripción'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')
