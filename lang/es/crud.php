@@ -71,6 +71,49 @@ return [
             'edit' => 'Editar Usuario'
         ],
     ],
+    'lots' => [
+        'singular' => 'Lote',
+        'plural' => 'Lotes',
+        'Lots_list' => 'Lista de Lotes',
+        'add' => 'Añadir Lote',
+        'form' => 'Formulario de Lote',
+        'fields' => [
+            'name' => 'Nombre',
+            'description' => 'Descripción',
+            'lot_id' => 'Lote',
+            'email' => 'Correo Electrónico',
+            'phone' => 'Teléfono',
+            'status' => 'Estado',
+            'commission_rate' => 'Tasa de Comisión',
+            'created_at' => 'Creado En',
+            'updated_at' => 'Actualizado En',
+            'password' => 'Contraseña',
+            'password_confirmation' => 'Confirmar Contraseña',
+            'merchant' => 'Comerciante',
+            'role' => 'Rol',
+        ],
+        'actions' => [
+            'create' => 'Crear Lote',
+            'edit' => 'Editar Lote',
+            'delete' => 'Eliminar Lote',
+            'created' => 'Lote creado exitosamente',
+            'updated' => 'Lote actualizado exitosamente',
+            'deleted' => 'Lote eliminado exitosamente',
+            'error' => 'Ocurrió un error mientras se procesaba su solicitud'
+        ],
+        'select_merchant' => 'Seleccionar Comerciante',
+        'select_role' => 'Seleccionar Rol',
+        'roles' => [
+            'pilot' => 'Piloto',
+            'ground_support' => 'Soporte Terrestre'
+        ],
+        'breadcrumbs' => [
+            'home' => 'Inicio',
+            'users' => 'Lotes',
+            'create' => 'Crear Lote',
+            'edit' => 'Editar Lote'
+        ],
+    ],
     'dashboard' => [
         'singular' => 'Tablero',
         'settings' => 'Configuraciones',

@@ -34,7 +34,9 @@ class LotDataTable extends DataTable
 
     public function query(Lot $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
+            ->select('lots.*', 'merchants.business_name as merchant_name');
     }
 
     public function html(): HtmlBuilder
@@ -53,7 +55,7 @@ class LotDataTable extends DataTable
                         Button::make('excel'),
                         Button::make('csv'),
                         Button::make('pdf'),
-                        // Button::make('print'),
+                        Button::make('print'),
                         // Button::make('reset'),
                         // Button::make('reload')
                     ]);
@@ -63,9 +65,9 @@ class LotDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('number'),
-            Column::make('hectares'),
-            Column::make('merchant_name'),
+            Column::make('number')->title('Numero de Lote'),
+            Column::make('hectares')->title('Hectareas'),
+            Column::make('merchant_name')->title('Nombre del Comerciante'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')
