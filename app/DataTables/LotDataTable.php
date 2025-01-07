@@ -2,63 +2,60 @@
 
 namespace App\DataTables;
 
-use App\Models\User;
+use App\Models\Lot;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
+use Yajra\DataTables\Html\Editor\Editor;
+use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class UserDataTable extends DataTable
+class LotDataTable extends DataTable
 {
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('merchant_name', function ($user) {
-                return $user->merchant->business_name ?? 'N/A';
+            ->addColumn('action', 'pages.lots.action')
+            ->addColumn('merchant_name', function ($row) {
+                return $row->merchant->business_name ?? 'N/A';
             })
             ->filterColumn('merchant_name', function ($query, $keyword) {
                 $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
-            ->addColumn('role', function ($user) {
-                return $user->roles->first()?->name ?? 'N/A';
-            })
+            ->editColumn('updated_at', fn($item) => $item->updated_at->format('d-m-Y H:i:s'))
             ->editColumn('created_at', fn($item) => $item->created_at->format('d-m-Y H:i:s'))
-            ->addColumn('action', 'pages.users.action')
-            ->rawColumns(['image', 'action'])
             ->setRowClass(function () {
                 return 'align-middle position-relative';
             })
             ->setRowId('id');
     }
 
-    public function query(User $model): QueryBuilder
+    public function query(Lot $model): QueryBuilder
     {
-        return $model->newQuery()
-            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->leftjoin('merchants', 'users.merchant_id', '=', 'merchants.id')
-            ->select('users.*', 'roles.name as role_name', 'merchants.business_name as merchant_name');
+        return $model->newQuery();
     }
 
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('user-table')
+                    ->setTableId('lot-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->orderBy(1)
                     ->parameters([
                         'dom' => 'Bfrtip',
                         'drawCallback' => 'function() { initDeleteConfirmation() }',
-                    ])
+                        ])
                     ->selectStyleSingle()
                     ->buttons([
                         Button::make('excel'),
                         Button::make('csv'),
                         Button::make('pdf'),
-                        Button::make('print'),
+                        // Button::make('print'),
+                        // Button::make('reset'),
+                        // Button::make('reload')
                     ]);
     }
 
@@ -66,21 +63,22 @@ class UserDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name'),
-            Column::make('email'),
-            column::make('role'),
+            Column::make('number'),
+            Column::make('hectares'),
             Column::make('merchant_name'),
             Column::make('created_at'),
+            Column::make('updated_at'),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)
                   ->addClass('text-center'),
+            
         ];
     }
 
     protected function filename(): string
     {
-        return 'User_' . date('YmdHis');
+        return 'Lot_' . date('YmdHis');
     }
 }

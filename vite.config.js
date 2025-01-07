@@ -16,6 +16,7 @@ export default defineConfig({
                 'resources/js/oneui/app.js',
                 'resources/js/pages/datatables.js',
                 ...glob.sync('resources/js/input-validators/*.js'),
+                ...glob.sync('/resources/js/map/*.js'),
             ],
             refresh: true,
         }),

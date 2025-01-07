@@ -72,16 +72,59 @@ return [
             'edit' => 'Edit User'
         ],
     ],
+    'lots' => [
+        'singular' => 'Lot',
+        'plural' => 'Lots',
+        'Lots_list' => 'Lots List',
+        'add' => 'Add Lot',
+        'form' => 'Lot Form',
+        'fields' => [
+            'name' => 'Name',
+            'description' => 'Description',
+            'lot_id' => 'Lot',
+            'email' => 'Email',
+            'phone' => 'Phone',
+            'status' => 'Status',
+            'commission_rate' => 'Commission rate',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'password' => 'Password',
+            'password_confirmation' => 'Confirm Password',
+            'merchant' => 'Merchant',
+            'role' => 'Role',
+        ],
+        'actions' => [
+            'create' => 'Create Lot',
+            'edit' => 'Edit Lot',
+            'delete' => 'Delete Lot',
+            'created' => 'Lot created successfully',
+            'updated' => 'Lot updated successfully',
+            'deleted' => 'Lot deleted successfully',
+            'error' => 'An error occurred while processing your request'
+        ],
+        'select_merchant' => 'Select Merchant',
+        'select_role' => 'Select Role',
+        'roles' => [
+            'pilot' => 'Pilot',
+            'ground_support' => 'Ground Support'
+        ],
+        'breadcrumbs' => [
+            'home' => 'Home',
+            'users' => 'Lots',
+            'create' => 'Create Lot',
+            'edit' => 'Edit Lot'
+        ],
     'dashboard' => [
         'singular' => 'Dashboard',
         'settings' => 'Settings',
         'dashboard_subtitle' => 'Here you can view the data and statistics of your merchant',
-        'all_users' => 'See all users',
+        'all_users' => 'See all Lots',
         'all_items' => 'See all items',
         'all_lootboxes' => 'See all lootboxes',
         'all_subsidiaries' => 'See all subsidiaries',
         'all_sales' => 'See all sales',
         'add' => 'Add',
+    ],
     ],
     'services' => [
         'singular' => 'Service',

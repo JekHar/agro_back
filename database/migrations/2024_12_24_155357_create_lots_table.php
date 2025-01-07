@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('lots', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('merchant_id')->nullable();
-            $table->integer('numbering');
+            $table->integer('number');
+            $table->decimal('hectares', 11, 3)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
