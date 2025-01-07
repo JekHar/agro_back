@@ -4,7 +4,7 @@
 
             <div class="col-md-4">
                 <div class="mb-4">
-                    <label class="form-label" for="name">{{ __('crud.categories.fields.name') }}</label>
+                    <label class="form-label" for="name"><span class="text-danger">*</span>  {{ __('crud.categories.fields.name') }}</label>
                     <input type="text"
                         class="form-control @error('name') is-invalid @enderror"
                         id="name"

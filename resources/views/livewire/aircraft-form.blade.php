@@ -50,7 +50,7 @@
             <!-- Working Width -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="working_width">
+                    <label class="form-label" for="working_width"> <span class="text-danger">*</span>
                         {{ __('crud.aircrafts.fields.working_width') }}
                     </label>
                     <div class="input-group">
@@ -81,7 +81,7 @@
             <!-- Acquisition Date -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="acquisition_date">
+                    <label class="form-label" for="acquisition_date"> <span class="text-danger">*</span>
                         {{ __('crud.aircrafts.fields.acquisition_date') }}
                     </label>
                     <input type="date" class="js-flatpickr form-control @error('acquisition_date') is-invalid @enderror" id="acquisition_date" wire:model="acquisition_date" data-date-format="Y-m-d">

@@ -5,7 +5,7 @@
                 <!-- Fila 1: Nombres -->
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Nombre Comercial') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span> {{ __('Nombre Comercial') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-building"></i>
@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Nombre Fiscal') }}</label>
+                        <label class="form-label"> {{ __('Nombre Fiscal') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-file-text"></i>
@@ -42,7 +42,7 @@
                     @if((auth()->user()->hasRole('Admin') && $isClient) || 
                     (!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Empresa') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('Empresa') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-building"></i>
@@ -61,7 +61,7 @@
                     @endif
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('CUIT') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span> {{ __('CUIT') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-id-card"></i>
@@ -98,7 +98,7 @@
                     @endif
 
                     <div class="col-md-4">
-                        <label class="form-label">{{ __('Email') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span> {{ __('Email') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-envelope"></i>
@@ -114,7 +114,7 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">{{ __('Teléfono') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('Teléfono') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-phone"></i>
@@ -133,7 +133,7 @@
                 <!-- Fila 4: Localidad y Dirección -->
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Localidad') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('Localidad') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-map-marker"></i>
@@ -149,7 +149,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Dirección') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('Dirección') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-location-arrow"></i>
