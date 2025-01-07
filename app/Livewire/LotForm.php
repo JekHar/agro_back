@@ -22,7 +22,7 @@ class LotForm extends Component
 
     protected $rules = [
         'merchant_id' => 'required|exists:merchants,id',
-        'number' => 'required|string|max:255',
+        'number' => 'required|numeric|max:255',
         'hectares' => 'required|numeric|min:0',
         'coordinates' => 'required|array|min:3',
         'coordinates.*.lat' => 'required|numeric|between:-90,90',

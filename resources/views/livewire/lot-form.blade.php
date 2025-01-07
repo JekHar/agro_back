@@ -36,7 +36,7 @@
 
         <div class="mb-3">
             <label for="number" class="form-label">Número de Lote</label>
-            <input type="text"
+            <input type="number"
                 wire:model="number"
                 id="number"
                 class="form-control">
