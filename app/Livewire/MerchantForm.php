@@ -98,15 +98,9 @@ class MerchantForm extends Component
             } else {
                 Merchant::create($validated);
                 $message = 'Service created successfully';
-<<<<<<< HEAD
             }
       
             $route = $this->isClient
-=======
-            }            
-            
-            $route = $validated['merchant_type'] === MerchantType::CLIENT->value || $validated['merchant_type'] === MerchantType::CLIENT
->>>>>>> f5a3a6431ad6e58105a216efb077b5d76aa8105c
             ? 'merchants.clients.merchants.index'
             : 'merchants.tenants.merchants.index';
             
