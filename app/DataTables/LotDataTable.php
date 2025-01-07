@@ -65,9 +65,9 @@ class LotDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('number')->title('Numero de Lote'),
-            Column::make('hectares')->title('Hectareas'),
-            Column::make('merchant_name')->title('Nombre del Comerciante'),
+            Column::make('number')->title(__('crud.lots.fields.number')),
+            Column::make('hectares')->title(__('crud.lots.fields.hectares')),
+            Column::make('merchant_name')->title(__('crud.lots.fields.merchant')),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')

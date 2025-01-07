@@ -5,9 +5,9 @@
         <div class="col-md-8">
             <div class="mb-3">
                 <div class="btn-group">
-                    <button onclick="startDrawing()" class="btn btn-primary">Dibujar Lote</button>
-                    <button onclick="exportKML()" class="btn btn-success">Exportar KML</button>
-                    <button onclick="importKML()" class="btn btn-success">Importar KML</button>
+                    <button onclick="startDrawing()" class="btn btn-primary">{{ __('crud.lots.actions.draw') }}</button>
+                    <button onclick="exportKML()" class="btn btn-success">{{ __('crud.lots.actions.export') }}</button>
+                    <button onclick="importKML()" class="btn btn-success">{{ __('crud.lots.actions.import') }}</button>
                 </div>
             </div>
         </div>
@@ -22,9 +22,9 @@
                 class="d-none">
         </div>
         <div class="mb-3">
-            <label for="merchant_id" class="form-label">Merchant</label>
-            <select wire:model="merchant_id" id="merchant_id" class="form-select">
-                <option value="">Seleccione un Merchant</option>
+            <label for="merchant_id" class="form-label">{{ __('crud.lots.fields.merchant') }}</label>
+            <select wire:model="merchant_id" id="merchant_id" class="form-select" placeholder="{{ __('crud.lots.fields.merchant') }}">
+                <option value="">{{ __('crud.lots.select_merchant') }}</option>
                 @foreach($merchants as $merchant)
                 <option value="{{ $merchant->id }}">{{ $merchant->business_name }}</option>
                 @endforeach
@@ -35,7 +35,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="number" class="form-label">Número de Lote</label>
+            <label for="number" class="form-label">{{ __('crud.lots.fields.number') }}</label>
             <input type="number"
                 wire:model="number"
                 id="number"
@@ -46,7 +46,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="hectares" class="form-label">Hectáreas</label>
+            <label for="hectares" class="form-label">{{ __('crud.lots.fields.hectares') }}</label>
             <input type="number"
                 wire:model="hectares"
                 id="hectares"
@@ -57,10 +57,10 @@
             @enderror
         </div>
 
-        <h6 class="card-title">Coordenadas del lote:</h6>
+        <h6 class="card-title">{{ __('crud.lots.fields.coordinates') }}</h6>
         <pre id="coordinates" wire:ignore></pre>
     </div>
     <button wire:click="saveLot" class="btn btn-primary">
-        Guardar Lote
+        {{ __('crud.lots.actions.save') }}
     </button>
 </div>
