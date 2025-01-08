@@ -94,7 +94,7 @@ class MerchantForm extends Component
             }
             if ($this->merchant) {
                 $this->merchant->update($validated);
-                $message = 'Service created successfully';
+                $message = __('Service created successfully');
             } else {
                 Merchant::create($validated);
                 $message = 'Service created successfully';

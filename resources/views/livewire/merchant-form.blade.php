@@ -5,7 +5,7 @@
                 <!-- Fila 1: Nombres -->
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Nombre Comercial') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.business_name') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-building"></i>
@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Nombre Fiscal') }}</label>
+                        <label class="form-label"> {{ __('crud.merchants.fields.trade_name') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-file-text"></i>
@@ -42,13 +42,13 @@
                     @if((auth()->user()->hasRole('Admin') && $isClient) || 
                     (!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Empresa') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.merchant') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-building"></i>
                             </span>
                             <select id="merchant_id" class="form-select @error('merchant_id') is-invalid @enderror" wire:model="merchant_id">
-                                <option value="">{{ __('Seleccione empresa') }}</option>
+                                <option value="">{{ __('crud.merchants.select_merchant') }}</option>
                                 @foreach($tenants as $id => $businessName)
                                 <option value="{{$id}}">{{ $businessName }}</option>
                                 @endforeach
@@ -61,7 +61,7 @@
                     @endif
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('CUIT') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.fiscal_number') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-id-card"></i>
@@ -81,7 +81,7 @@
                 <div class="row mb-4">
                     @if($showMainActivity)
                     <div class="col-md-4">
-                        <label class="form-label">{{ __('Actividad Principal') }}</label>
+                        <label class="form-label">{{ __('crud.merchants.fields.main_activity') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-briefcase"></i>
@@ -98,7 +98,7 @@
                     @endif
 
                     <div class="col-md-4">
-                        <label class="form-label">{{ __('Email') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.email') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-envelope"></i>
@@ -106,7 +106,7 @@
                             <input type="email"
                                 class="form-control @error('email') is-invalid @enderror"
                                 wire:model="email"
-                                placeholder="{{ __('correo@ejemplo.com') }}">
+                                placeholder="{{ __('correo@example.com') }}">
                             @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -114,7 +114,7 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">{{ __('Teléfono') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.phone') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-phone"></i>
@@ -133,7 +133,7 @@
                 <!-- Fila 4: Localidad y Dirección -->
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Localidad') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.locality') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-map-marker"></i>
@@ -149,7 +149,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ __('Dirección') }}</label>
+                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.address') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-location-arrow"></i>
@@ -171,7 +171,7 @@
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary">
                         <i class="fa fa-save me-1"></i>
-                        {{ $isEditing ? __('Actualizar') : __('Crear') }}
+                        {{ $isEditing ? __('crud.merchants.actions.edit') : __('crud.merchants.actions.create') }}
                     </button>
                 </div>
             </div>

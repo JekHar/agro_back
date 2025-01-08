@@ -6,7 +6,7 @@
             <span class="smini-visible">
                 <i class="fa fa-circle-notch text-primary"></i>
             </span>
-            <span class="smini-hide fs-5 tracking-wider">One<span class="fw-normal">UI</span></span>
+            <span class="smini-hide fs-5 tracking-wider">Maq<span class="fw-normal">App</span></span>
         </a>
 
         <!-- Extra -->
@@ -44,70 +44,70 @@
         <!-- Side Navigation -->
         <div class="content-side">
             <ul class="nav-main">
-                <li class="nav-main-item">
+                {{-- <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->routeIs('dashboard') ? ' active' : '' }}" href="{{ route('dashboard') }}">
                         <i class="nav-main-link-icon si si-speedometer"></i>
                         <span class="nav-main-link-name">Dashboard</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <!-- Merchants Section -->
-                <li class="nav-main-heading">Gestión de Clientes</li>
+                <li class="nav-main-heading">{{__('crud.sidebar.customer_managemt')}}</li>
                 <li class="nav-main-item{{ request()->is('clients/*') || request()->is('tenants/*') ? ' open' : '' }}">
                     <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="true" href="#">
                         <i class="nav-main-link-icon si si-users"></i>
-                        <span class="nav-main-link-name">Merchants</span>
+                        <span class="nav-main-link-name">{{__('crud.sidebar.merchants')}}</span>
                     </a>
                     <ul class="nav-main-submenu">
                         <li class="nav-main-item">
                             <a class="nav-main-link{{ request()->is('clients/*') ? ' active' : '' }}" href="{{ route('merchants.clients.merchants.index') }}">
-                                <span class="nav-main-link-name">Clientes</span>
+                                <span class="nav-main-link-name">{{__('crud.sidebar.clients')}}</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
                             <a class="nav-main-link{{ request()->is('tenants/*') ? ' active' : '' }}" href="{{ route('merchants.tenants.merchants.index') }}">
-                                <span class="nav-main-link-name">Tenants</span>
+                                <span class="nav-main-link-name">{{__('crud.sidebar.tenants')}}</span>
                             </a>
                         </li>
                     </ul>
                 </li>
 
                 <!-- Catalog Section -->
-                <li class="nav-main-heading">Catálogo</li>
+                <li class="nav-main-heading">{{__('crud.sidebar.catalog')}}</li>
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('products*') ? ' active' : '' }}" href="{{ route('products.index') }}">
                         <i class="nav-main-link-icon si si-bag"></i>
-                        <span class="nav-main-link-name">Productos</span>
+                        <span class="nav-main-link-name">{{__('crud.sidebar.products')}}</span>
                     </a>
                 </li>
 
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('categories*') ? ' active' : '' }}" href="{{ route('categories.index') }}">
                         <i class="nav-main-link-icon si si-grid"></i>
-                        <span class="nav-main-link-name">Categorías</span>
+                        <span class="nav-main-link-name">{{__('crud.sidebar.categories')}}</span>
                     </a>
                 </li>
 
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('services*') ? ' active' : '' }}" href="{{ route('services.index') }}">
                         <i class="nav-main-link-icon si si-wrench"></i>
-                        <span class="nav-main-link-name">Servicios</span>
+                        <span class="nav-main-link-name">{{__('crud.sidebar.services')}}</span>
                     </a>
                 </li>
 
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('aircrafts*') ? ' active' : '' }}" href="{{ route('aircrafts.index') }}">
                         <i class="nav-main-link-icon si si-plane"></i>
-                        <span class="nav-main-link-name">Aeronaves</span>
+                        <span class="nav-main-link-name">{{__('crud.sidebar.aircrafts')}}</span>
                     </a>
                 </li>
 
                 <!-- Users Section -->
-                <li class="nav-main-heading">Administración</li>
+                <li class="nav-main-heading">{{__('crud.sidebar.admin')}}</li>
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('users*') ? ' active' : '' }}" href="{{ route('users.index') }}">
                         <i class="nav-main-link-icon si si-user"></i>
-                        <span class="nav-main-link-name">Usuarios</span>
+                        <span class="nav-main-link-name">{{__('crud.sidebar.users')}}</span>
                     </a>
                 </li>
             </ul>

@@ -11,7 +11,7 @@
 @section('content')
 <x-hero
     :title="__('crud.merchants.plural')"
-    :subtitle="__('crud.merchants.Merchants list')"
+    :subtitle="__('crud.merchants.Merchants_list')"
     :breadcrumbs="[
             [
                 'label' => 'Home',
@@ -27,7 +27,7 @@
     <div class="block block-rounded">
         <div class="block-header block-header-default">
             <h3 class="block-title">
-                {{ __('crud.merchants.Merchants list') }}
+                {{ __('crud.merchants.Merchants_list') }}
             </h3>
             <div class="block-options">
                 <a href="{{ route(request()->routeIs('merchants.clients.*') ? 'merchants.clients.merchants.create' : 'merchants.tenants.merchants.create') }}" class="btn btn-sm btn-primary">

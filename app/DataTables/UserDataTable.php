@@ -67,10 +67,10 @@ class UserDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name'),
-            Column::make('email'),
-            column::make('role'),
-            Column::make('merchant_name'),
+            Column::make('name')->title('Nombre'),
+            Column::make('email')->title('Correo Electrónico'),
+            column::make('role')->title('Rol'),
+            Column::make('merchant_name')->title('Empresa'),
             Column::make('created_at'),
             Column::computed('action')
                   ->exportable(false)
