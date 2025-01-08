@@ -30,5 +30,4 @@ class CategoryFactory extends Factory
             'category_id' => $parentCategory->id,
         ]);
     }
-
 }

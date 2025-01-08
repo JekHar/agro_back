@@ -12,6 +12,7 @@ class AircraftRequest extends FormRequest
     {
         $this->aircraftId = $aircraftId;
     }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -33,7 +34,7 @@ class AircraftRequest extends FormRequest
             'models' => 'required|string|max:255',
             'manufacturing_year' => 'nullable|numeric|min:0',
             'acquisition_date' => 'required|date',
-            'working_width' => 'required|numeric|min:0'
+            'working_width' => 'required|numeric|min:0',
         ];
     }
 }

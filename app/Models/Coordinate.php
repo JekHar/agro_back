@@ -8,14 +8,13 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class Coordinate extends Model implements Auditable
 {
-    use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
-
+    use SoftDeletes;
 
     protected $fillable = [
         'lot_id',
         'latitude',
-        'longitude'
+        'longitude',
     ];
 
     public function lot()

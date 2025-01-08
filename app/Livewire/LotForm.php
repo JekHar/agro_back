@@ -2,29 +2,35 @@
 
 namespace App\Livewire;
 
+use App\Http\Requests\LotRequest;
 use App\Models\Lot;
 use App\Models\Merchant;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\On;
-use App\Http\Requests\LotRequest;
-use Illuminate\Support\Facades\Log;
 
 class LotForm extends Component
 {
     use WithFileUploads;
 
     public $merchant_id;
+
     public $number;
+
     public $hectares = 0;
+
     public $coordinates = [];
+
     public $kmlFile;
+
     public $currentLotId;
 
     protected function rules()
     {
-        $lotRequest = new LotRequest();
+        $lotRequest = new LotRequest;
         $lotRequest->setLotId($this->currentLotId);
+
         return $lotRequest->rules();
     }
 
@@ -41,7 +47,7 @@ class LotForm extends Component
         $lot = Lot::with('coordinates')->findOrFail($lotId);
         $this->merchant_id = $lot->merchant_id;
         $this->number = $lot->number;
-        
+
         $this->hectares = $lot->hectares;
         $this->coordinates = $lot->coordinates->map(function ($coords) {
             return [
@@ -52,7 +58,7 @@ class LotForm extends Component
 
         $this->dispatch('lot-loaded', [
             'coordinates' => $this->coordinates,
-            'hectares' => $this->hectares
+            'hectares' => $this->hectares,
         ]);
     }
 
@@ -69,7 +75,7 @@ class LotForm extends Component
         try {
             $lot = $this->currentLotId ?
                 Lot::findOrFail($this->currentLotId) :
-                new Lot();
+                new Lot;
 
             $lot->fill([
                 'merchant_id' => $validatedData['merchant_id'],
@@ -87,7 +93,7 @@ class LotForm extends Component
                 $lot->coordinates()->create([
                     'latitude' => $coord['lat'],
                     'longitude' => $coord['lng'],
-                    'sequence_number' => $index
+                    'sequence_number' => $index,
                 ]);
             });
 
@@ -111,7 +117,7 @@ class LotForm extends Component
     public function render()
     {
         return view('livewire.lot-form', [
-            'merchants' => Merchant::all()
+            'merchants' => Merchant::all(),
         ]);
     }
 }

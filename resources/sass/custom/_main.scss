@@ -10,3 +10,51 @@
 // If you have many custom styles, you can create and import additional files
 // For example you can create _component1.scss and include it as follows:
 // @import 'component1';
+
+.dt-search {
+    float: right;
+
+    label {
+        display: none;
+    }
+}
+
+.dt-info {
+    float: left;
+    display: inline-block;
+}
+
+.dt-paging {
+    float: right;
+    display: inline-block;
+}
+
+.dt-container {
+    padding-bottom: 3rem;
+}
+
+.dataTable {
+    margin: 1rem 0 !important;
+
+}
+@media (max-width: 768px) {
+
+    .dt-info {
+        float: none;
+    }
+
+    .dt-paging {
+        float: none;
+        margin: 0 auto;
+        display: block;
+    }
+
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+input[type="date"]::-moz-calendar-picker-indicator {
+    filter: invert(1);
+}

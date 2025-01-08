@@ -3,28 +3,38 @@
 namespace App\Livewire;
 
 use App\Http\Requests\AircraftRequest;
-use Livewire\Component;
 use App\Models\Aircraft;
 use App\Models\Merchant;
 use App\Types\MerchantType;
+use Livewire\Component;
 
 class AircraftForm extends Component
 {
     public $aircraft;
+
     public $aircraftId;
+
     public $merchant_id;
+
     public $brand;
+
     public $models;
+
     public $manufacturing_year;
+
     public $acquisition_date;
+
     public $working_width;
+
     public $merchants;
+
     public $isEditing = false;
 
     protected function rules()
     {
-        $aircraftRequest = new AircraftRequest();
+        $aircraftRequest = new AircraftRequest;
         $aircraftRequest->setAircraftId($this->aircraftId);
+
         return $aircraftRequest->rules();
     }
 
@@ -63,7 +73,7 @@ class AircraftForm extends Component
                 'title' => 'Éxito!',
                 'message' => $message,
                 'icon' => 'success',
-                'redirect' => route('aircrafts.index')
+                'redirect' => route('aircrafts.index'),
             ]);
 
         } catch (\Throwable $th) {

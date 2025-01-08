@@ -3,32 +3,45 @@
 namespace App\Livewire;
 
 use App\Http\Requests\ProductRequest;
-use Livewire\Component;
-use App\Models\Product;
 use App\Models\Category;
 use App\Models\Merchant;
+use App\Models\Product;
 use App\Types\MerchantType;
+use Livewire\Component;
 
 class ProductForm extends Component
 {
     public $product;
+
     public $productId;
+
     public $name;
+
     public $sku;
+
     public $category_id;
+
     public $concentration;
+
     public $dosage_per_hectare;
+
     public $application_volume_per_hectare;
+
     public $stock;
+
     public $categories;
+
     public $merchant_id;
+
     public $merchants;
+
     public $isEditing = false;
 
     protected function rules()
     {
-        $productRequest = new ProductRequest();
+        $productRequest = new ProductRequest;
         $productRequest->setProductId($this->productId);
+
         return $productRequest->rules();
     }
 
@@ -36,7 +49,7 @@ class ProductForm extends Component
     {
         $this->categories = Category::pluck('name', 'id');
         $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
-        ->pluck('business_name', 'id');
+            ->pluck('business_name', 'id');
 
         if ($productId) {
             $this->isEditing = true;
@@ -70,10 +83,9 @@ class ProductForm extends Component
                 'title' => 'Éxito!',
                 'message' => $message,
                 'icon' => 'success',
-                'redirect' => route('products.index')
+                'redirect' => route('products.index'),
             ]);
 
-            
         } catch (\Throwable $th) {
             $this->dispatch('swal', [
                 'title' => ('Error'),

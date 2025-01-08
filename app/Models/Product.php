@@ -9,9 +9,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class Product extends Model implements Auditable
 {
-    use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -21,9 +21,8 @@ class Product extends Model implements Auditable
         'dosage_per_hectare',
         'application_volume_per_hectare',
         'stock',
-        'merchant_id',  
+        'merchant_id',
     ];
-
 
     public function category()
     {

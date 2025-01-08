@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Merchant;
 use App\Models\Product;
-use App\Types\MerchantType;
 use Illuminate\Database\Seeder;
 
 class ProductSeeders extends Seeder
@@ -19,6 +18,7 @@ class ProductSeeders extends Seeder
 
         if ($categories->isEmpty()) {
             $this->command->warn('No categories found. Run CategorySeeder first.');
+
             return;
         }
 
@@ -26,6 +26,7 @@ class ProductSeeders extends Seeder
 
         if ($merchants->isEmpty()) {
             $this->command->warn('No merchants of type "cliente" found. Please seed Merchants first.');
+
             return;
         }
 

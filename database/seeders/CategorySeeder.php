@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
@@ -26,8 +25,8 @@ class CategorySeeder extends Seeder
 
             foreach (range(1, 3) as $index) {
                 Category::create([
-                    'name' => "$name Subcategory $index",
-                    'description' => "Subcategory $index of $name",
+                    'name' => "{$name} Subcategory {$index}",
+                    'description' => "Subcategory {$index} of {$name}",
                     'category_id' => $parentCategory->id,
                 ]);
             }

@@ -8,8 +8,8 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class Lot extends Model implements Auditable
 {
-    use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 
     protected $fillable = [
         'merchant_id',

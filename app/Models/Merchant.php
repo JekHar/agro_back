@@ -11,9 +11,9 @@ use OwenIt\Auditing\Contracts\Auditable as ContractsAuditable;
 
 class Merchant extends Model implements ContractsAuditable
 {
-    use SoftDeletes;
     use Auditable;
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'business_name',
@@ -27,7 +27,7 @@ class Merchant extends Model implements ContractsAuditable
         'merchant_id',
         'locality',
         'address',
-        'merchant_id'
+        'merchant_id',
     ];
 
     protected $casts = [

@@ -8,8 +8,6 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class LotDataTable extends DataTable
@@ -24,8 +22,8 @@ class LotDataTable extends DataTable
             ->filterColumn('merchant_name', function ($query, $keyword) {
                 $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
-            ->editColumn('updated_at', fn($item) => $item->updated_at->format('d-m-Y H:i:s'))
-            ->editColumn('created_at', fn($item) => $item->created_at->format('d-m-Y H:i:s'))
+            ->editColumn('updated_at', fn ($item) => $item->updated_at->format('d-m-Y H:i:s'))
+            ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
             ->setRowClass(function () {
                 return 'align-middle position-relative';
             })
@@ -42,23 +40,24 @@ class LotDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('lot-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->orderBy(1)
-                    ->parameters([
-                        'dom' => 'Bfrtip',
-                        'drawCallback' => 'function() { initDeleteConfirmation() }',
-                        ])
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        // Button::make('reset'),
-                        // Button::make('reload')
-                    ]);
+            ->setTableId('lot-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->orderBy(1)
+            ->parameters([
+                'dom' => 'Bfrtip',
+                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                'drawCallback' => 'function() { initDeleteConfirmation() }',
+            ])
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                // Button::make('reset'),
+                // Button::make('reload')
+            ]);
     }
 
     public function getColumns(): array
@@ -71,11 +70,11 @@ class LotDataTable extends DataTable
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
-            
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
+
         ];
     }
 

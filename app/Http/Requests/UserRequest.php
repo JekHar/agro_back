@@ -33,11 +33,11 @@ class UserRequest extends FormRequest
                     \Spatie\Permission\Models\Role::whereIn('name', ['Pilot', 'Ground Support'])
                         ->pluck('id')
                         ->toArray()
-                )
+                ),
             ],
         ];
 
-        $rules['email'] = ['required', 'email', 'unique:users,email' . ($userId ? ",$userId" : '')];
+        $rules['email'] = ['required', 'email', 'unique:users,email' . ($userId ? ",{$userId}" : '')];
         $rules['password'] = ['required', 'min:8', 'confirmed'];
         if ($userId) {
             $rules['password'] = ['nullable', 'min:8', 'confirmed'];

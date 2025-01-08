@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\DataTables\LotDataTable;
 use App\Models\Lot;
-use Illuminate\Http\Request;
 
 class LotController extends Controller
 {
@@ -26,6 +25,7 @@ class LotController extends Controller
     public function destroy($id)
     {
         Lot::destroy($id);
+
         return redirect()->route('lots.index');
     }
 }

@@ -10,9 +10,9 @@ use OwenIt\Auditing\Contracts\Auditable as ContractsAuditable;
 
 class Service extends Model implements ContractsAuditable
 {
-    use SoftDeletes;
-    use Auditable; 
+    use Auditable;
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'merchant_id',

@@ -10,26 +10,32 @@ use Livewire\Component;
 class CategoryForm extends Component
 {
     public $category;
+
     public $categoryId;
+
     public $name = '';
+
     public $description = '';
+
     public $category_id = '';
+
     public $categories;
+
     public $isEditing = false;
+
     public bool $isModal = false;
 
     protected function rules()
     {
-        $categoryRequest = new CategoryRequest();
+        $categoryRequest = new CategoryRequest;
         $categoryRequest->setCategoryId($this->category_id);
-        return $categoryRequest->rules();
 
+        return $categoryRequest->rules();
 
     }
 
     public function mount($categoryId = null)
     {
-        
 
         if ($categoryId) {
             $this->isEditing = true;
@@ -40,8 +46,8 @@ class CategoryForm extends Component
             $this->category_id = $this->category->category_id;
 
             $this->categories = Category::where('id', '!=', $categoryId)
-            ->whereNotIn('category_id', $this->getDescendantIds($categoryId))
-            ->pluck('name', 'id');
+                ->whereNotIn('category_id', $this->getDescendantIds($categoryId))
+                ->pluck('name', 'id');
 
         } else {
             $this->categories = Category::pluck('name', 'id');
@@ -52,12 +58,12 @@ class CategoryForm extends Component
     {
         $ids = [];
         $children = Category::where('category_id', $categoryId)->pluck('id')->toArray();
-        
+
         foreach ($children as $childId) {
             $ids[] = $childId;
             $ids = array_merge($ids, $this->getDescendantIds($childId));
         }
-        
+
         return $ids;
     }
 
@@ -90,7 +96,7 @@ class CategoryForm extends Component
                 $this->dispatch('close-modal');
             }
 
-            if (!$this->isEditing) {
+            if (! $this->isEditing) {
                 $this->reset(['name', 'description', 'category_id']);
             }
         } catch (\Exception $e) {
@@ -102,6 +108,7 @@ class CategoryForm extends Component
             ]);
         }
     }
+
     public function render()
     {
         return view('livewire.category-form');

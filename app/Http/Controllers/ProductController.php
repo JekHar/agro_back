@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\DataTables\ProductDataTable;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -18,7 +17,6 @@ class ProductController extends Controller
         return view('pages.products.form');
     }
 
-
     public function edit($id)
     {
         return view('pages.products.form', compact('id'));
@@ -27,7 +25,7 @@ class ProductController extends Controller
     public function destroy($id)
     {
         Product::destroy($id);
+
         return redirect()->route('products.index');
     }
-
 }

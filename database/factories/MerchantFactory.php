@@ -26,7 +26,7 @@ class MerchantFactory extends Factory
             'phone' => $this->faker->phoneNumber,
             'merchant_type' => $this->faker->randomElement([MerchantType::CLIENT, MerchantType::TENANT]),
             'disabled_at' => null,
-            'merchant_id' => null, 
+            'merchant_id' => null,
             'locality' => $this->faker->city,
             'address' => $this->faker->address,
         ];
