@@ -60,14 +60,14 @@ class ProductForm extends Component
         try {
             if ($this->isEditing) {
                 $this->product->update($validatedData);
-                $message = __('crud.prducts.updated');
+                $message = __('crud.products.updated');
             } else {
                 Product::create($validatedData);
                 $message = __('crud.products.success');
             }
 
             $this->dispatch('swal', [
-                'title' => 'Success',
+                'title' => 'Éxito!',
                 'message' => $message,
                 'icon' => 'success',
                 'redirect' => route('products.index')
