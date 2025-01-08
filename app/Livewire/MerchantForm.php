@@ -89,6 +89,7 @@ class MerchantForm extends Component
                 $validated['merchant_type'] = $this->merchant_type;
             }
             if (auth()->user()->hasRole('Tenant')) {
+                dd(auth());
                 $validated['merchant_id'] = auth()->user()->id;
                 $validated['merchant_type'] = $this->merchant_type;
             }

@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('lots', LotController::class);
     Route::get('/lots/create', [LotController::class, 'create'])->name('lots.create');
 
-});
+
 
 Route::view('/pages/slick', 'pages.slick');
 Route::view('/pages/datatables', 'pages.datatables');
