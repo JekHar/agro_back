@@ -1,10 +1,10 @@
 <div>
     <form wire:submit.prevent="save">
         <div class="row">
-            <!-- Nombre de la categoria -->
-            <div class="col-md-6">
+
+            <div class="col-md-4">
                 <div class="mb-4">
-                    <label class="form-label" for="name">{{ __('crud.categories.fields.name') }}</label>
+                    <label class="form-label" for="name"><span class="text-danger">*</span>  {{ __('crud.categories.fields.name') }}</label>
                     <input type="text"
                         class="form-control @error('name') is-invalid @enderror"
                         id="name"
@@ -18,8 +18,28 @@
                 </div>
             </div>
 
-            <!-- Descripción -->
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <label class="form-label" for="category_id">{{ __('crud.categories.fields.parent_category') }}</label>
+                    <select class="form-select @error('category_id') is-invalid @enderror"
+                        id="category_id"
+                        wire:model="category_id">
+                        <option value="">{{ __('crud.categories.select_parent') }}</option>
+                        @foreach($categories as $id => $categoryName)
+                            @if(!$isEditing || $id != $categoryId)
+                                <option value="{{ $id }}">{{ $categoryName }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-md-4">
                 <div class="mb-4">
                     <label class="form-label" for="description">{{ __('crud.categories.fields.description') }}</label>
                     <textarea class="form-control @error('description') is-invalid @enderror"

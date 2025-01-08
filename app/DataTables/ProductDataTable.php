@@ -2,7 +2,7 @@
 
 namespace App\DataTables;
 
-use App\Models\Service;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -12,7 +12,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class ServiceDataTable extends DataTable
+class ProductDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -22,32 +22,35 @@ class ServiceDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-        ->addColumn('merchant_name', function ($row) {
-            return $row->merchant->business_name ?? 'N/A';
+            ->editColumn('category_id', function ($product) {
+                return $product->category_name;
             })
-        ->filterColumn('merchant_name', function ($query, $keyword) {
-            $query->where('merchants.business_name', 'like', "%{$keyword}%");
-        })
-        ->editColumn('updated_at', fn ($item) => $item->updated_at->format('d-m-Y H:i:s'))
-        ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
-        ->addColumn('action', 'pages.services.action')
-        ->rawColumns(['image', 'action'])
-        ->setRowClass(function () {
-            return 'align-middle position-relative';
-        })
-        ->setRowId('id');
+            ->filterColumn('category_name', function ($query, $keyword) {
+                $query->where('categories.name', 'like', "%$keyword%");
+            })
+            ->filterColumn('merchant_name', function ($query, $keyword) {
+                $query->where('merchants.business_name', 'like', "%$keyword%");
+            })
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at->format('d-m-Y H:i:s');
+            })
+            ->editColumn('updated_at', function ($row) {
+                return $row->updated_at->format('d-m-Y H:i:s');
+            })
+            ->addColumn('action', 'pages.products.action')
+            ->setRowId('id');
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(Service $model): QueryBuilder
+    public function query(Product $model): QueryBuilder
     {
 
         return $model->newQuery()
-    
-            ->join('merchants', 'services.merchant_id', '=', 'merchants.id')
-            ->select('services.*', 'merchants.business_name as  merchant_name');
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
+            ->select('products.*', 'categories.name as category_name',  'merchants.business_name as merchant_name');
     }
 
     /**
@@ -56,17 +59,16 @@ class ServiceDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('service-table')
+                    ->setTableId('product-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     //->dom('Bfrtip')
                     ->orderBy(0, 'asc')
+                    ->selectStyleSingle()
                     ->parameters([
                         'dom' => 'Bfrtip',
                         'drawCallback' => 'function() { initDeleteConfirmation() }',
-
                     ])
-                    ->selectStyleSingle()
                     ->buttons([
                         Button::make('excel'),
                         Button::make('csv'),
@@ -84,11 +86,14 @@ class ServiceDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name')->title('Nombre del Servicio'),
-            Column::make('description')->title('Descripcion del Servicio'),
-            Column::make('price_per_hectare')->title('Precio por Hectarea'),
-            // Column::make('disabled_at')->title('Disabled At'),
-            Column::make('merchant_name')->title('Nombre de fantasia'),
+            Column::make('name')->title('Nombre'),
+            Column::make('sku')->title('SKU'),
+            Column::make('category_name')->title('Categoría'),
+            Column::make('merchant_name')->title('Nombre del Cliente'),
+            Column::make('concentration')->title('Concentración'),
+            Column::make('dosage_per_hectare')->title('Dosis por hectárea'),
+            Column::make('application_volume_per_hectare')->title('Volumen de aplicación por hectárea'),
+            Column::make('stock')->title('Stock'),
             Column::make('created_at')->title('Fecha creación'),
             Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
@@ -104,6 +109,6 @@ class ServiceDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Service_' . date('YmdHis');
+        return 'Product_' . date('YmdHis');
     }
 }

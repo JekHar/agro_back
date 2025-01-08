@@ -23,7 +23,9 @@ class AircraftForm extends Component
 
     protected function rules()
     {
-        return (new AircraftRequest())->rules();
+        $aircraftRequest = new AircraftRequest();
+        $aircraftRequest->setAircraftId($this->aircraftId);
+        return $aircraftRequest->rules();
     }
 
     public function mount($aircraftId = null)
@@ -51,14 +53,14 @@ class AircraftForm extends Component
         try {
             if ($this->isEditing) {
                 $this->aircraft->update($validatedData);
-                $message = 'Service updated successfully';
+                $message = 'Avion modificado exitosamente';
             } else {
                 Aircraft::create($validatedData);
-                $message = 'Service created successfully';
+                $message = 'Avion creado exitosamente';
             }
 
             $this->dispatch('swal', [
-                'title' => 'Success',
+                'title' => 'Éxito!',
                 'message' => $message,
                 'icon' => 'success',
                 'redirect' => route('aircrafts.index')

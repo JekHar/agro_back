@@ -38,7 +38,7 @@ class CategoryDataTable extends DataTable
                     ->setTableId('category-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->orderBy(1)
+                    ->orderBy(0, 'asc')
                     ->parameters([
                         'dom' => 'Bfrtip',
                         'drawCallback' => 'function() { initDeleteConfirmation() }',
@@ -57,11 +57,11 @@ class CategoryDataTable extends DataTable
         return [
 
             Column::make('id'),
-            Column::make('name'),
-            Column::make('description'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
-            Column::computed('action')
+            Column::make('name')->title('Nombre'),
+            Column::make('description')->title('Descripción'),
+            Column::make('created_at')->title('Fecha creación'),
+            Column::make('updated_at')->title('Fecha modificación'),
+            Column::computed('action')->title('Acciones')
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)

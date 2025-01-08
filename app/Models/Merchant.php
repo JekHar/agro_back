@@ -26,7 +26,8 @@ class Merchant extends Model implements ContractsAuditable
         'disabled_at',
         'merchant_id',
         'locality',
-        'address'
+        'address',
+        'merchant_id'
     ];
 
     protected $casts = [
@@ -52,6 +53,11 @@ class Merchant extends Model implements ContractsAuditable
     public function services()
     {
         return $this->hasMany(Service::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 
     public function aircraft()

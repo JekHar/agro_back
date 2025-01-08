@@ -22,7 +22,9 @@ class ServiceForm extends Component
 
     protected function rules()
     {
-        return (new ServiceRequest())->rules();
+        $serviceRequest = new ServiceRequest();
+        $serviceRequest->setServiceId($this->serviceId);
+        return $serviceRequest->rules();
     }
     
     public function mount($serviceId = null)
@@ -48,14 +50,14 @@ class ServiceForm extends Component
         try {
             if ($this->isEditing) {
                 $this->service->update($validatedData);
-                $message = 'Service updated successfully';
+                $message = 'Servicio modificado exitosamente';
             } else {
                 Service::create($validatedData);
-                $message = 'Service created successfully';
+                $message = 'Servicio creado exitosamente';
             }
 
             $this->dispatch('swal', [
-                'title' => 'Success',
+                'title' => 'Éxito!',
                 'message' => $message,
                 'icon' => 'success',
                 'redirect' => route('services.index')
