@@ -57,8 +57,8 @@ class CategoryDataTable extends DataTable
             Column::make('id'),
             Column::make('name')->title('Nombre'),
             Column::make('description')->title('Descripción'),
-            Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
+            // Column::make('created_at')->title('Fecha creación'),
+            // Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
                 ->exportable(false)
                 ->printable(false)

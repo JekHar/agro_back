@@ -82,13 +82,10 @@ class ServiceDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name')->title('Nombre del Servicio'),
-            Column::make('description')->title('Descripcion del Servicio'),
-            Column::make('price_per_hectare')->title('Precio por Hectarea'),
-            // Column::make('disabled_at')->title('Disabled At'),
+            Column::make('name')->title('Servicio'),
             Column::make('merchant_name')->title('Nombre de fantasia'),
-            Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
+            Column::make('description')->title('Descripcion'),
+            Column::make('price_per_hectare')->title('Precio/Has'),
             Column::computed('action')->title('Acciones')
                 ->exportable(false)
                 ->printable(false)

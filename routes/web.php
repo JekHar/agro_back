@@ -9,6 +9,8 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+require __DIR__ . '/auth.php';
+
 Route::middleware(['auth', 'verified'])->group(function () {
     //Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
     //Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -26,16 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('aircrafts', AircraftController::class);
-    Route::get('/map', function () {
-        return view('pages.map');
-    });
     Route::resource('lots', LotController::class);
-    Route::get('/lots/create', [LotController::class, 'create'])->name('lots.create');
-
-    Route::view('/pages/slick', 'pages.slick');
-    Route::view('/pages/datatables', 'pages.datatables');
-    Route::view('/pages/blank', 'pages.blank');
     Route::resource('products', ProductController::class);
-
 });
-require __DIR__ . '/auth.php';
+
