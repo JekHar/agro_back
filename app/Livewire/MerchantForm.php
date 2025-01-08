@@ -94,18 +94,18 @@ class MerchantForm extends Component
             }
             if ($this->merchant) {
                 $this->merchant->update($validated);
-                $message = __('Service created successfully');
-            } else {
+                $message = $validated['merchant_type'] === 'client' ? 'Cliente modificado exitosamente' : 'Empresa modificada exitosamente';
+             } else {
                 Merchant::create($validated);
-                $message = 'Service created successfully';
-            }
+                $message = $validated['merchant_type'] === 'client' ? 'Cliente creado exitosamente' : 'Empresa creada exitosamente'; 
+             }
       
             $route = $this->isClient
             ? 'merchants.clients.merchants.index'
             : 'merchants.tenants.merchants.index';
             
             $this->dispatch('swal', [
-                'title' => 'Success',
+                'title' => 'Éxito!',
                 'message' => $message,
                 'icon' => 'success',
                 'redirect' => route($route)

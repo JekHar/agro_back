@@ -80,7 +80,7 @@ class CategoryForm extends Component
             }
 
             $this->dispatch('swal', [
-                'title' => __('Success!'),
+                'title' => __('Éxito!'),
                 'message' => __($this->isEditing ? 'crud.categories.actions.updated' : 'crud.categories.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('categories.index'),

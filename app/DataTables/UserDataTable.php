@@ -71,8 +71,8 @@ class UserDataTable extends DataTable
             Column::make('email')->title('Correo Electrónico'),
             column::make('role')->title('Rol'),
             Column::make('merchant_name')->title('Empresa'),
-            Column::make('created_at'),
-            Column::computed('action')
+            Column::make('created_at')->title('Fecha creación'),
+            Column::computed('action')->title('Acciones')
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)

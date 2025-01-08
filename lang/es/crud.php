@@ -184,7 +184,7 @@ return [
         'form' => 'Formulario de Categoría',
         'add' => 'Agregar Categoría',
         'categories_list' => 'Lista de Categorías',
-        'Success!' => '¡Éxito!',
+        'Success!' => 'Éxito!',
         'fields' => [
             'name' => 'Nombre',
             'description' => 'Descripción',
