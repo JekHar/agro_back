@@ -64,7 +64,7 @@ class MerchantForm extends Component
             if (auth()->user()->hasRole('Admin')) {
                 $this->merchant_id = null;
             } elseif (auth()->user()->hasRole('Tenant')) {
-                $this->merchant_id = auth()->id();
+                $this->merchant_id = auth()->user()->merchant_id;
             }
         } else {
             $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
@@ -89,8 +89,7 @@ class MerchantForm extends Component
                 $validated['merchant_type'] = $this->merchant_type;
             }
             if (auth()->user()->hasRole('Tenant')) {
-                dd(auth());
-                $validated['merchant_id'] = auth()->user()->id;
+                $validated['merchant_id'] = auth()->user()->merchant_id;
                 $validated['merchant_type'] = $this->merchant_type;
             }
             if ($this->merchant) {
