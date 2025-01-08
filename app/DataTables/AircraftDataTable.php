@@ -88,9 +88,9 @@ class AircraftDataTable extends DataTable
             Column::make('manufacturing_year')->title('Año de Fabricación'),
             Column::computed('acquisition_date')->title('Fecha de Adquisición'),
             Column::make('working_width')->title('Ancho de Trabajo'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
-            Column::computed('action')
+            Column::make('created_at')->title('Fecha creación'),
+            Column::make('updated_at')->title('Fecha modificación'),
+            Column::computed('action')->title('Acciones')
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)

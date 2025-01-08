@@ -88,7 +88,7 @@ class MerchantsDataTable extends DataTable
                 Column::make('fiscal_number')->title('Número Fiscal'),
                 Column::make('email')->title('Email'),
                 Column::make('phone')->title('Telefono'),
-                Column::computed('action')
+                Column::computed('action')->title('Acciones')
                     ->exportable(false)
                     ->printable(false)
                     ->width(60)
@@ -106,7 +106,7 @@ class MerchantsDataTable extends DataTable
                 Column::make('phone')->title('Telefono'),
                 //Column::Make('lots')->name('lots'),
                 //Column::Make('last_service')->name('last service'),
-                Column::computed('action')
+                Column::computed('action')->title('Acciones')
                     ->exportable(false)
                     ->printable(false)
                     ->width(60)

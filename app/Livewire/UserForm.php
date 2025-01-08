@@ -81,7 +81,7 @@ class UserForm extends Component
             }
 
             $this->dispatch('swal', [
-                'title' => __('Success!'),
+                'title' => 'Éxito!',
                 'message' => __($this->isEditing ? 'crud.users.actions.updated' : 'crud.users.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('users.index'),
