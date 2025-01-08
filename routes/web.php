@@ -20,8 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
     Route::prefix('clients')->name('merchants.clients.')->group(function () {
-        Route::resource('merchants', MerchantController::class); 
-    }); 
+        Route::resource('merchants', MerchantController::class);
+    });
     Route::prefix('tenants')->name('merchants.tenants.')->group(function () {
         Route::resource('merchants', MerchantController::class);
     });
@@ -38,10 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 
-Route::view('/pages/slick', 'pages.slick');
-Route::view('/pages/datatables', 'pages.datatables');
-Route::view('/pages/blank', 'pages.blank');
-Route::resource('products', ProductController::class);
-
+    Route::view('/pages/slick', 'pages.slick');
+    Route::view('/pages/datatables', 'pages.datatables');
+    Route::view('/pages/blank', 'pages.blank');
+    Route::resource('products', ProductController::class);
 });
 require __DIR__ . '/auth.php';

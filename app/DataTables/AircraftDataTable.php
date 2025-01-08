@@ -82,14 +82,12 @@ class AircraftDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('merchant_name')->title('Nombre del Cliente'),
+            Column::make('merchant_name')->title('Cliente'),
             Column::make('brand')->title('Marca'),
             Column::make('models')->title('Modelo'),
             Column::make('manufacturing_year')->title('Año de Fabricación'),
             Column::computed('acquisition_date')->title('Fecha de Adquisición'),
             Column::make('working_width')->title('Ancho de Trabajo'),
-            Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
                   ->exportable(false)
                   ->printable(false)

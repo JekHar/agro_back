@@ -19,6 +19,7 @@ class CategoryDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->editColumn('created_at', fn($item) => $item->created_at->format('d-m-Y H:i:s'))
+            ->editColumn('updated_at', fn($item) => $item->updated_at->format('d-m-Y H:i:s'))
             ->addColumn('action', 'pages.categories.action')
             ->rawColumns(['image', 'action'])
             ->setRowClass(function () {
@@ -59,8 +60,8 @@ class CategoryDataTable extends DataTable
             Column::make('id'),
             Column::make('name')->title('Nombre'),
             Column::make('description')->title('Descripción'),
-            Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
+            // Column::make('created_at')->title('Fecha creación'),
+            // Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
                   ->exportable(false)
                   ->printable(false)
