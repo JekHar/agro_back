@@ -110,7 +110,7 @@ return [
         ],
         'breadcrumbs' => [
             'home' => 'Home',
-            'users' => 'Lots',
+            'lots' => 'Lots',
             'create' => 'Create Lot',
             'edit' => 'Edit Lot'
         ],
@@ -118,7 +118,7 @@ return [
         'singular' => 'Dashboard',
         'settings' => 'Settings',
         'dashboard_subtitle' => 'Here you can view the data and statistics of your merchant',
-        'all_users' => 'See all Lots',
+        'all_lots' => 'See all Lots',
         'all_items' => 'See all items',
         'all_lootboxes' => 'See all lootboxes',
         'all_subsidiaries' => 'See all subsidiaries',

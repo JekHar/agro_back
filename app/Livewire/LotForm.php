@@ -7,6 +7,8 @@ use App\Models\Merchant;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\On;
+use App\Http\Requests\LotRequest;
+use Illuminate\Support\Facades\Log;
 
 class LotForm extends Component
 {
@@ -14,20 +16,17 @@ class LotForm extends Component
 
     public $merchant_id;
     public $number;
-    
     public $hectares = 0;
     public $coordinates = [];
     public $kmlFile;
     public $currentLotId;
 
-    protected $rules = [
-        'merchant_id' => 'required|exists:merchants,id',
-        'number' => 'required|numeric|max:255',
-        'hectares' => 'required|numeric|min:0',
-        'coordinates' => 'required|array|min:3',
-        'coordinates.*.lat' => 'required|numeric|between:-90,90',
-        'coordinates.*.lng' => 'required|numeric|between:-180,180',
-    ];
+    protected function rules()
+    {
+        $lotRequest = new LotRequest();
+        $lotRequest->setLotId($this->currentLotId);
+        return $lotRequest->rules();
+    }
 
     public function mount($lotId = null)
     {
@@ -66,38 +65,47 @@ class LotForm extends Component
 
     public function saveLot()
     {
-        $this->validate();
+        $validatedData = $this->validate();
+        try {
+            $lot = $this->currentLotId ?
+                Lot::findOrFail($this->currentLotId) :
+                new Lot();
 
-        $lot = $this->currentLotId ?
-            Lot::findOrFail($this->currentLotId) :
-            new Lot();
-
-        $lot->fill([
-            'merchant_id' => $this->merchant_id,
-            'number' => $this->number,
-            
-            'hectares' => $this->hectares,
-        ]);
-
-        $lot->save();
-
-        if ($this->currentLotId) {
-            $lot->coordinates()->delete();
-        }
-
-        collect($this->coordinates)->each(function ($coord, $index) use ($lot) {
-            $lot->coordinates()->create([
-                'latitude' => $coord['lat'],
-                'longitude' => $coord['lng'],
-                'sequence_number' => $index
+            $lot->fill([
+                'merchant_id' => $validatedData['merchant_id'],
+                'number' => $validatedData['number'],
+                'hectares' => $validatedData['hectares'],
             ]);
-        });
 
-        session()->flash(
-            'message',
-            $this->currentLotId ? 'Lote actualizado exitosamente.' : 'Lote creado exitosamente.'
-        );
-        return redirect()->route('lots.index');
+            $lot->save();
+
+            if ($this->currentLotId) {
+                $lot->coordinates()->delete();
+            }
+
+            collect($this->coordinates)->each(function ($coord, $index) use ($lot) {
+                $lot->coordinates()->create([
+                    'latitude' => $coord['lat'],
+                    'longitude' => $coord['lng'],
+                    'sequence_number' => $index
+                ]);
+            });
+
+            $this->dispatch('swal', [
+                'title' => __('Success!'),
+                'message' => __($this->currentLotId ? 'crud.lots.actions.updated' : 'crud.lots.actions.created'),
+                'icon' => 'success',
+                'redirect' => route('lots.index'),
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+
+            $this->dispatch('swal', [
+                'title' => __('Error'),
+                'message' => __('crud.lots.actions.error'),
+                'icon' => 'error',
+            ]);
+        }
     }
 
     public function render()

@@ -72,8 +72,6 @@ class ServiceForm extends Component
                 'icon' => 'error',
             ]);
         }
-
-        // return redirect()->route('services.index');
     }
 
     public function render()

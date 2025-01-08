@@ -19,7 +19,7 @@ class LotDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->addColumn('action', 'pages.lots.action')
             ->addColumn('merchant_name', function ($row) {
-                return $row->merchant->business_name ?? 'N/A';
+                return $row->merchant->business_name;
             })
             ->filterColumn('merchant_name', function ($query, $keyword) {
                 $query->where('merchants.business_name', 'like', "%{$keyword}%");
