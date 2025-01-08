@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="name">{{ __('crud.users.fields.name') }}</label>
+                    <label class="form-label" for="name"><span class="text-danger">*</span>  {{ __('crud.users.fields.name') }}</label>
                     <input type="text"
                         class="form-control @error('name') is-invalid @enderror"
                         id="name"
@@ -19,7 +19,7 @@
 
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="email">{{ __('crud.users.fields.email') }}</label>
+                    <label class="form-label" for="email"><span class="text-danger">*</span>  {{ __('crud.users.fields.email') }}</label>
                     <input type="email"
                         class="form-control @error('email') is-invalid @enderror"
                         id="email"
@@ -37,7 +37,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="merchant_id">{{ __('crud.users.fields.merchant') }}</label>
+                    <label class="form-label" for="merchant_id"><span class="text-danger">*</span> {{ __('crud.users.fields.merchant') }}</label>
                     <select class="form-control @error('merchant_id') is-invalid @enderror"
                         id="merchant_id"
                         wire:model="merchant_id">
@@ -56,7 +56,7 @@
 
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="role">{{ __('crud.users.fields.role') }}</label>
+                    <label class="form-label" for="role"><span class="text-danger">*</span> {{ __('crud.users.fields.role') }}</label>
                     <select class="form-control @error('role') is-invalid @enderror"
                         id="role"
                         wire:model="role">
