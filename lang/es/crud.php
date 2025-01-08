@@ -73,6 +73,49 @@ return [
             'edit' => 'Editar Usuario'
         ],
     ],
+    'lots' => [
+        'singular' => 'Lote',
+        'plural' => 'Lotes',
+        'Lots_list' => 'Lista de Lotes',
+        'add' => 'Añadir Lote',
+        'form' => 'Formulario de Lote',
+        'fields' => [
+            'name' => 'Nombre',
+            'number' => 'Número de Lote',
+            'lot_id' => 'Lote',
+            'hectares' => 'Hectáreas',
+            'merchant' => 'Nombre de Empresa',
+            'coordinates' => 'Coordenadas del último lote:',
+            'created_at' => 'Creado En',
+            'updated_at' => 'Actualizado En',
+            'merchant' => 'Comerciante',
+        ],
+        'actions' => [
+            'create' => 'Crear Lote',
+            'edit' => 'Editar Lote',
+            'delete' => 'Eliminar Lote',
+            'created' => 'Lote creado exitosamente',
+            'updated' => 'Lote actualizado exitosamente',
+            'deleted' => 'Lote eliminado exitosamente',
+            'error' => 'Ocurrió un error mientras se procesaba su solicitud',
+            'draw' => 'Dibujar Lote',
+            'import' => 'Importar Lote',
+            'export' => 'Exportar Lote',
+            'save' => 'Guardar Lote',
+        ],
+        'select_merchant' => 'Seleccionar Comerciante',
+        'select_role' => 'Seleccionar Rol',
+        'roles' => [
+            'pilot' => 'Piloto',
+            'ground_support' => 'Soporte Terrestre'
+        ],
+        'breadcrumbs' => [
+            'home' => 'Inicio',
+            'users' => 'Lotes',
+            'create' => 'Crear Lote',
+            'edit' => 'Editar Lote'
+        ],
+    ],
     'dashboard' => [
         'singular' => 'Tablero',
         'settings' => 'Configuraciones',

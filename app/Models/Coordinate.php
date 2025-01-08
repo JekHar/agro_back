@@ -13,12 +13,12 @@ class Coordinate extends Model implements Auditable
 
 
     protected $fillable = [
-        'plot_id',
+        'lot_id',
         'latitude',
         'longitude'
     ];
 
-    public function plot()
+    public function lot()
     {
         return $this->belongsTo(Lot::class);
     }

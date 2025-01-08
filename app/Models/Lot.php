@@ -13,7 +13,8 @@ class Lot extends Model implements Auditable
 
     protected $fillable = [
         'merchant_id',
-        'numbering'
+        'number',
+        'hectares',
     ];
 
     public function merchant()
