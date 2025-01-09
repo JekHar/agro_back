@@ -43,7 +43,7 @@ class LotDataTable extends DataTable
             ->setTableId('lot-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(1)
+            ->orderBy(0, 'asc')
             ->parameters([
                 'dom' => 'Bfrtip',
                 'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],

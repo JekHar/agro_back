@@ -87,7 +87,7 @@ return [
             'coordinates' => 'Coordenadas del último lote:',
             'created_at' => 'Creado En',
             'updated_at' => 'Actualizado En',
-            'merchant' => 'Comerciante',
+            'merchant' => 'Cliente',
         ],
         'actions' => [
             'create' => 'Crear Lote',
@@ -102,7 +102,7 @@ return [
             'export' => 'Exportar Lote',
             'save' => 'Guardar Lote',
         ],
-        'select_merchant' => 'Seleccionar Comerciante',
+        'select_merchant' => 'Seleccionar Cliente',
         'select_role' => 'Seleccionar Rol',
         'roles' => [
             'pilot' => 'Piloto',

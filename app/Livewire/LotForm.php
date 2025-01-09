@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Http\Requests\LotRequest;
 use App\Models\Lot;
 use App\Models\Merchant;
+use App\Types\MerchantType;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -117,7 +118,7 @@ class LotForm extends Component
     public function render()
     {
         return view('livewire.lot-form', [
-            'merchants' => Merchant::all(),
+            'merchants' => Merchant::where('merchant_type', MerchantType::CLIENT)->get(),
         ]);
     }
 }
