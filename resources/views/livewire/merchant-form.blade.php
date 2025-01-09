@@ -59,7 +59,9 @@
                         </div>
                     </div>
                     @endif
-
+                    
+                    @if((auth()->user()->hasRole('Admin') && $isClient) || 
+                    (!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
                     <div class="col-md-6">
                         <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.fiscal_number') }}</label>
                         <div class="input-group">
@@ -75,10 +77,30 @@
                             @enderror
                         </div>
                     </div>
+                    @endif
                 </div>
 
                 <!-- Fila 3: Actividad, Email y Teléfono -->
                 <div class="row mb-4">
+                @if(!(auth()->user()->hasRole('Admin') && $isClient) && 
+                    !(!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
+                    <div class="col-md-4">
+                        <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.fiscal_number') }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa fa-id-card"></i>
+                            </span>
+                            <input type="number"
+                                class="form-control @error('fiscal_number') is-invalid @enderror"
+                                wire:model="fiscal_number"
+                                placeholder="{{ __('Ingrese CUIT') }}">
+                            @error('fiscal_number')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    @endif
+                    
                     @if($showMainActivity)
                     <div class="col-md-4">
                         <label class="form-label">{{ __('crud.merchants.fields.main_activity') }}</label>
@@ -113,7 +135,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 {{auth()->user()->hasRole('Tenant') && $isClient ? 'mt-4' : ''}}">
                         <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.phone') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
