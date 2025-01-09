@@ -14,7 +14,7 @@
     :subtitle="__('crud.merchants.Merchants_list')"
     :breadcrumbs="[
             [
-                'label' => 'Home',
+                'label' => __('crud.merchants.breadcrumbs.management'),
                 'url' => '/',
             ],
             [

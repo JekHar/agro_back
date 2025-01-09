@@ -13,7 +13,7 @@
     :subtitle="__('crud.users.Users_list')"
     :breadcrumbs="[
             [
-                'label' => 'Home',
+                'label' => __('crud.lots.breadcrumbs.home'),
                 'url' => '/',
             ],
             [

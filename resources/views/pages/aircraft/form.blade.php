@@ -1,10 +1,10 @@
 @extends('layouts.backend')
-@section('content')    
-    <x-hero :title="isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add')"
-            :subtitle="isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add')"
-            :breadcrumbs="[
+@section('content')
+<x-hero :title="isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add')"
+    :subtitle="isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add')"
+    :breadcrumbs="[
         [
-            'label' => 'Home',
+            'label' => __('crud.lots.breadcrumbs.home'),
             'url' => '/dashboard',
         ],
         [
@@ -15,16 +15,16 @@
             'label' => isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add'),
         ],
     ]"></x-hero>
-    <div class="content">
-        <div class="block block-rounded">
-            <div class="block-header block-header-default">
-                <h3 class="block-title">
-                    {{ isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add') }}
-                </h3>
-            </div>
-            <div class="block-content block-content-full">
-                <livewire:aircraft-form :aircraftId="$id ?? ''" />
-            </div>
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">
+                {{ isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add') }}
+            </h3>
+        </div>
+        <div class="block-content block-content-full">
+            <livewire:aircraft-form :aircraftId="$id ?? ''" />
         </div>
     </div>
-@endsection 
+</div>
+@endsection
