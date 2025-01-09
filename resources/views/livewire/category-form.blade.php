@@ -39,6 +39,8 @@
                 </div>
             </div>
 
+
+        <div class="row">
             <div class="col-md-4">
                 <div class="mb-4">
                     <label class="form-label" for="description">{{ __('crud.categories.fields.description') }}</label>
