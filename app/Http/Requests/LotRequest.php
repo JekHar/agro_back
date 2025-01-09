@@ -24,7 +24,7 @@ class LotRequest extends FormRequest
     {
         return [
             'merchant_id' => 'required|exists:merchants,id',
-            'number' => 'required|numeric|max:255',
+            'number' => 'required|numeric|min:0|max:255',
             'hectares' => 'required|numeric|min:0',
             'coordinates' => 'required|array|min:3',
             'coordinates.*.lat' => 'required|numeric|between:-90,90',
@@ -40,6 +40,7 @@ class LotRequest extends FormRequest
             'number.required' => 'The number field is required.',
             'number.numeric' => 'The number must be a number.',
             'number.max' => 'The number may not be greater than 255 characters.',
+            'number.min' => 'The number must be at least 0.',
             'hectares.required' => 'The hectares field is required.',
             'hectares.numeric' => 'The hectares must be a number.',
             'hectares.min' => 'The hectares must be at least 0.',

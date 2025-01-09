@@ -20,7 +20,7 @@
     :subtitle="isset($id) ? __('crud.lots.actions.edit') : __('crud.lots.form')"
     :breadcrumbs="[
         [
-            'label' => 'Home',
+            'label' => __('crud.lots.breadcrumbs.home'),
             'url' => '/dashboard',
         ],
         [
