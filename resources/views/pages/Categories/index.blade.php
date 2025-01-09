@@ -13,7 +13,7 @@
     :subtitle="__('crud.categories.categories_list')"
     :breadcrumbs="[
             [
-                'label' => 'Home',
+                'label' => __('crud.categories.breadcrumbs.catalog'),
                 'url' => '/',
             ],
             [

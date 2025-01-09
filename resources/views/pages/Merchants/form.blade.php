@@ -3,10 +3,10 @@
 @section('content')
 <x-hero
     :title="__('Empresas')"
-     :subtitle="isset($id) ? __('Modificar Empresa') : __('Crear nueva Empresa')"
+    :subtitle="isset($id) ? __('Modificar Empresa') : __('Crear nueva Empresa')"
     :breadcrumbs="[
             [
-                'label' => 'Home',
+                'label' => __('crud.merchants.breadcrumbs.management'),
                 'url' => '/',
             ],
             [

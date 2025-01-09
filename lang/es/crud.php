@@ -29,6 +29,13 @@ return [
             'edit' => 'Editar',
             'delete' => 'Eliminar',
         ],
+        'breadcrumbs' => [
+            'home' => 'Inicio',
+            'management' => 'Gestión',
+            'merchants' => 'Empresas',
+            'create' => 'Crear Empresa',
+            'edit' => 'Editar Empresa',
+        ],
     ],
     'users' => [
         'singular' => 'Usuario',
@@ -109,7 +116,7 @@ return [
             'ground_support' => 'Soporte Terrestre',
         ],
         'breadcrumbs' => [
-            'home' => 'Inicio',
+            'home' => 'Administracion',
             'users' => 'Lotes',
             'create' => 'Crear Lote',
             'edit' => 'Editar Lote',
@@ -146,6 +153,13 @@ return [
             'edit' => 'Editar Servicio',
             'delete' => 'Eliminar Servicio',
         ],
+        'breadcrumbs' => [
+            'home' => 'Inicio',
+            'catalog' => 'Catálogo',
+            'services' => 'Servicios',
+            'create' => 'Crear Servicio',
+            'edit' => 'Editar Servicio',
+        ],
     ],
 
     'products' => [
@@ -172,6 +186,13 @@ return [
             'create' => 'Crear productos',
             'edit' => 'Editar productos',
             'delete' => 'Eliminar productos',
+        ],
+        'breadcrumbs' => [
+            'home' => 'Inicio',
+            'catalog' => 'Catálogo',
+            'products' => 'Productos',
+            'create' => 'Crear Producto',
+            'edit' => 'Editar Producto',
         ],
     ],
 
@@ -246,6 +267,7 @@ return [
         'select_parent' => 'Seleccionar Categoría Padre',
         'breadcrumbs' => [
             'home' => 'Inicio',
+            'catalog' => 'Catálogo',
             'categories' => 'Categorías',
             'create' => 'Crear Categoría',
             'edit' => 'Editar Categoría',
