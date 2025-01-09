@@ -31,7 +31,10 @@ class LotForm extends Component
         $lotRequest = new LotRequest;
         $lotRequest->setLotId($this->currentLotId);
 
-        return $lotRequest->rules();
+        return [
+            'rules' => $lotRequest->rules(),
+            'messages' => $lotRequest->messages()
+        ];
     }
 
     public function mount($lotId = null)
@@ -71,7 +74,10 @@ class LotForm extends Component
 
     public function saveLot()
     {
-        $validatedData = $this->validate();
+        $validatedData = $this->validate(
+            $this->rules()['rules'],
+            $this->rules()['messages']
+        );
         try {
             $lot = $this->currentLotId ?
                 Lot::findOrFail($this->currentLotId) :
