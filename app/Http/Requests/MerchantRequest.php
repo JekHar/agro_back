@@ -10,6 +10,7 @@ use Illuminate\Validation\Rules\Enum;
 class MerchantRequest extends FormRequest
 {
     protected ?int $merchantId = null;
+
     protected bool $isClient = false;
 
     public function setMerchantId(?int $merchantId): void
@@ -29,9 +30,9 @@ class MerchantRequest extends FormRequest
             'trade_name' => ['nullable', 'string', 'max:255'],
             'fiscal_number' => [
                 'required',
-                'numeric',  
+                'numeric',
                 Rule::unique('merchants', 'fiscal_number')
-                ->ignore($this->merchantId),
+                    ->ignore($this->merchantId),
             ],
             'merchant_id' => ['required', 'exists:merchants,id'],
             'merchant_type' => ['required', new Enum(MerchantType::class)],
@@ -86,10 +87,11 @@ class MerchantRequest extends FormRequest
     }
 
     private function isClientRoute(): bool
-    {   
+    {
         if ($this->isClient) {
             return true;
         }
+
         return $this->routeIs('merchants.clients.*');
     }
 }

@@ -4,16 +4,13 @@ namespace App\Http\Controllers;
 
 use App\DataTables\CategoryDataTable;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-
     public function index(CategoryDataTable $dataTable)
     {
         return $dataTable->render('pages.categories.index');
     }
-
 
     public function create()
     {
@@ -28,6 +25,7 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         Category::destroy($id);
+
         return redirect()->route('categories.index');
     }
 }

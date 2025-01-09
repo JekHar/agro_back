@@ -59,19 +59,19 @@ return [
             'created' => 'User created successfully',
             'updated' => 'User updated successfully',
             'deleted' => 'User deleted successfully',
-            'error' => 'An error occurred while processing your request'
+            'error' => 'An error occurred while processing your request',
         ],
         'select_merchant' => 'Select Merchant',
         'select_role' => 'Select Role',
         'roles' => [
             'pilot' => 'Pilot',
-            'ground_support' => 'Ground Support'
+            'ground_support' => 'Ground Support',
         ],
         'breadcrumbs' => [
             'home' => 'Home',
             'users' => 'Users',
             'create' => 'Create User',
-            'edit' => 'Edit User'
+            'edit' => 'Edit User',
         ],
     ],
     'lots' => [
@@ -108,25 +108,25 @@ return [
         'select_role' => 'Select Role',
         'roles' => [
             'pilot' => 'Pilot',
-            'ground_support' => 'Ground Support'
+            'ground_support' => 'Ground Support',
         ],
         'breadcrumbs' => [
             'home' => 'Home',
             'lots' => 'Lots',
             'create' => 'Create Lot',
-            'edit' => 'Edit Lot'
+            'edit' => 'Edit Lot',
         ],
-    'dashboard' => [
-        'singular' => 'Dashboard',
-        'settings' => 'Settings',
-        'dashboard_subtitle' => 'Here you can view the data and statistics of your merchant',
-        'all_lots' => 'See all Lots',
-        'all_items' => 'See all items',
-        'all_lootboxes' => 'See all lootboxes',
-        'all_subsidiaries' => 'See all subsidiaries',
-        'all_sales' => 'See all sales',
-        'add' => 'Add',
-    ],
+        'dashboard' => [
+            'singular' => 'Dashboard',
+            'settings' => 'Settings',
+            'dashboard_subtitle' => 'Here you can view the data and statistics of your merchant',
+            'all_lots' => 'See all Lots',
+            'all_items' => 'See all items',
+            'all_lootboxes' => 'See all lootboxes',
+            'all_subsidiaries' => 'See all subsidiaries',
+            'all_sales' => 'See all sales',
+            'add' => 'Add',
+        ],
     ],
     'services' => [
         'singular' => 'Service',
@@ -240,14 +240,14 @@ return [
             'created' => 'Category created successfully',
             'updated' => 'Category updated successfully',
             'deleted' => 'Category deleted successfully',
-            'error' => 'An error occurred while processing your request'
+            'error' => 'An error occurred while processing your request',
         ],
         'select_parent' => 'Select Parent Category',
         'breadcrumbs' => [
             'home' => 'Home',
             'categories' => 'Categories',
             'create' => 'Create Category',
-            'edit' => 'Edit Category'
+            'edit' => 'Edit Category',
         ],
     ],
     'sidebars' => [

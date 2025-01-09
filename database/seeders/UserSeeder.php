@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Merchant;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             if ($merchant->merchant_type === 'tenant') {
                 $tenant = User::create([
                     'name' => "Tenant {$merchant->business_name}",
-                    'email' => "tenant.{$merchant->id}@" . strtolower(str_replace(' ', '', $merchant->business_name)) . ".com",
+                    'email' => "tenant.{$merchant->id}@" . strtolower(str_replace(' ', '', $merchant->business_name)) . '.com',
                     'password' => Hash::make('password'),
                     'merchant_id' => $merchant->id,
                 ]);

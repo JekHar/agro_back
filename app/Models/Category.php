@@ -9,9 +9,9 @@ use OwenIt\Auditing\Contracts\Auditable as Auditable;
 
 class Category extends Model implements Auditable
 {
-    use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

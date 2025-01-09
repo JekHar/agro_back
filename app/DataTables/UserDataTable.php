@@ -24,7 +24,7 @@ class UserDataTable extends DataTable
             ->addColumn('role', function ($user) {
                 return $user->roles->first()?->name ?? 'N/A';
             })
-            ->editColumn('created_at', fn($item) => $item->created_at->format('d-m-Y H:i:s'))
+            ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
             ->addColumn('action', 'pages.users.action')
             ->rawColumns(['image', 'action'])
             ->setRowClass(function () {
@@ -45,21 +45,22 @@ class UserDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('user-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->orderBy(0, 'asc')
-                    ->parameters([
-                        'dom' => 'Bfrtip',
-                        'drawCallback' => 'function() { initDeleteConfirmation() }',
-                    ])
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                    ]);
+            ->setTableId('user-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->orderBy(0, 'asc')
+            ->parameters([
+                'dom' => 'Bfrtip',
+                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                'drawCallback' => 'function() { initDeleteConfirmation() }',
+            ])
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+            ]);
     }
 
     public function getColumns(): array
@@ -72,10 +73,10 @@ class UserDataTable extends DataTable
             Column::make('merchant_name')->title('Empresa'),
             Column::make('created_at')->title('Fecha creación'),
             Column::computed('action')->title('Acciones')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 

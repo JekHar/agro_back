@@ -8,17 +8,14 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class CategoryDataTable extends DataTable
 {
-
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->editColumn('created_at', fn($item) => $item->created_at->format('d-m-Y H:i:s'))
+            ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
             ->addColumn('action', 'pages.categories.action')
             ->rawColumns(['image', 'action'])
             ->setRowClass(function () {
@@ -35,21 +32,22 @@ class CategoryDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('category-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->orderBy(0, 'asc')
-                    ->parameters([
-                        'dom' => 'Bfrtip',
-                        'drawCallback' => 'function() { initDeleteConfirmation() }',
-                    ])
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                    ]);
+            ->setTableId('category-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->orderBy(0, 'asc')
+            ->parameters([
+                'dom' => 'Bfrtip',
+                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                'drawCallback' => 'function() { initDeleteConfirmation() }',
+            ])
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+            ]);
     }
 
     public function getColumns(): array
@@ -59,13 +57,13 @@ class CategoryDataTable extends DataTable
             Column::make('id'),
             Column::make('name')->title('Nombre'),
             Column::make('description')->title('Descripción'),
-            Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
+            // Column::make('created_at')->title('Fecha creación'),
+            // Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 

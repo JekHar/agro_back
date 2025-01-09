@@ -1,10 +1,10 @@
 @extends('layouts.backend')
 
-@section('css')
+@push('css')
     <!-- Page JS Plugins CSS -->
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css') }}">
-@endsection
+@endpush
 
 
 @push('scripts')
@@ -27,7 +27,7 @@
 
         <div class="block block-rounded">
             <div class="block-header block-header-default">
-                <h3 class="block-title">    
+                <h3 class="block-title">
                     {{ __('crud.aircrafts.aircrafts list') }}
                 </h3>
                 <div class="block-options">
@@ -35,7 +35,7 @@
                         <i class="fa fa-plus me-1"></i>
                         {{ __('crud.aircrafts.add') }}
                     </a>
-                </div>  
+                </div>
             </div>
             @include('pages.aircraft.aircraft-datatable')
         </div>

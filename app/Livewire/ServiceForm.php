@@ -3,30 +3,39 @@
 namespace App\Livewire;
 
 use App\Http\Requests\ServiceRequest;
-use Livewire\Component;
-use App\Models\Service;
 use App\Models\Merchant;
+use App\Models\Service;
 use App\Types\MerchantType;
+use Livewire\Component;
 
 class ServiceForm extends Component
 {
     public $service;
+
     public $serviceId;
+
     public $name;
+
     public $description;
+
     public $merchant_id;
+
     public $price_per_hectare;
+
     public bool $isModal = false;
+
     public $merchants;
+
     public $isEditing = false;
 
     protected function rules()
     {
-        $serviceRequest = new ServiceRequest();
+        $serviceRequest = new ServiceRequest;
         $serviceRequest->setServiceId($this->serviceId);
+
         return $serviceRequest->rules();
     }
-    
+
     public function mount($serviceId = null)
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
@@ -60,7 +69,7 @@ class ServiceForm extends Component
                 'title' => 'Éxito!',
                 'message' => $message,
                 'icon' => 'success',
-                'redirect' => route('services.index')
+                'redirect' => route('services.index'),
             ]);
 
             if ($this->isModal) {

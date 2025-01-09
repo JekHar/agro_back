@@ -1,9 +1,9 @@
 @extends('layouts.backend')
-@section('css')
+@push('css')
 <!-- Page JS Plugins CSS -->
 <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
 <link rel="stylesheet" href="{{ asset('js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css') }}">
-@endsection
+@endpush
 @push('scripts')
 @include('partials.datatables-js')
 {{ $dataTable->scripts() }}

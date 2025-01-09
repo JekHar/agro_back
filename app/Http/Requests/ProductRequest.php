@@ -12,6 +12,7 @@ class ProductRequest extends FormRequest
     {
         $this->productId = $productId;
     }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -28,6 +29,7 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         $productId = $this->productId;
+
         return [
             'name' => 'required|string|max:255',
             'sku' => 'required|string|max:255|unique:products,sku,' . $productId,
@@ -36,7 +38,7 @@ class ProductRequest extends FormRequest
             'concentration' => 'required|numeric|min:0, max:100',
             'dosage_per_hectare' => 'required|numeric|min:0',
             'application_volume_per_hectare' => 'required|numeric|min:0',
-            'stock' => 'required|numeric|min:0'
+            'stock' => 'required|numeric|min:0',
         ];
     }
 }

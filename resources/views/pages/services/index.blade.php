@@ -1,10 +1,9 @@
 @extends('layouts.backend')
 
-@section('css')
-    <!-- Page JS Plugins CSS -->
+@push('css')
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css') }}">
-@endsection
+@endpush
 
 
 @push('scripts')
@@ -27,7 +26,7 @@
 
         <div class="block block-rounded">
             <div class="block-header block-header-default">
-                <h3 class="block-title">    
+                <h3 class="block-title">
                     {{ __('crud.services.services_list') }}
                 </h3>
                 <div class="block-options">
@@ -35,7 +34,7 @@
                         <i class="fa fa-plus me-1"></i>
                         {{ __('crud.services.add') }}
                     </a>
-                </div> 
+                </div>
             </div>
             @include('pages.services.service-datatable')
         </div>

@@ -7,7 +7,6 @@ use App\Http\Requests\MerchantRequest;
 use App\Models\Merchant;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
 
 class MerchantController extends Controller
@@ -87,5 +86,4 @@ class MerchantController extends Controller
     {
         return $this->isClientRoute($request) ? 'merchants.clients' : 'merchants.tenants';
     }
-
 }

@@ -3,33 +3,45 @@
 namespace App\Livewire;
 
 use App\Http\Requests\UserRequest;
-use App\Models\User;
 use App\Models\Merchant;
+use App\Models\User;
 use App\Types\MerchantType;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserForm extends Component
 {
     public $user;
+
     public $userId;
+
     public $name = '';
+
     public $email = '';
+
     public $password = '';
+
     public $password_confirmation = '';
+
     public $merchant_id = '';
+
     public $role = '';
+
     public $roles;
+
     public $merchants;
+
     public $isEditing = false;
+
     public bool $isModal = false;
 
     protected function rules()
     {
-        $userRequest = new UserRequest();
+        $userRequest = new UserRequest;
         $userRequest->setuserId($this->userId);
+
         return $userRequest->rules();
     }
 
@@ -61,7 +73,7 @@ class UserForm extends Component
                     'name' => $validatedData['name'],
                     'merchant_id' => $validatedData['merchant_id'],
                     'email' => $validatedData['email'],
-                    'password' => Hash::make($validatedData['password'])
+                    'password' => Hash::make($validatedData['password']),
                 ]);
 
                 if ($validatedData['role']) {
@@ -72,7 +84,7 @@ class UserForm extends Component
                     'name' => $validatedData['name'],
                     'email' => $validatedData['email'],
                     'merchant_id' => $validatedData['merchant_id'],
-                    'password' => Hash::make($validatedData['password'])
+                    'password' => Hash::make($validatedData['password']),
                 ]);
 
                 if ($validatedData['role']) {
@@ -91,7 +103,7 @@ class UserForm extends Component
                 $this->dispatch('close-modal');
             }
 
-            if (!$this->isEditing) {
+            if (! $this->isEditing) {
                 $this->reset(['name', 'email', 'password', 'password_confirmation', 'merchant_id', 'role']);
             }
         } catch (\Exception $e) {

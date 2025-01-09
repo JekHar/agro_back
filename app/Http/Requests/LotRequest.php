@@ -11,6 +11,7 @@ class LotRequest extends FormRequest
     public function setLotId($Id)
     {
         $this->lotId = $Id;
+
         return $this;
     }
 

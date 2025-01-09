@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\DataTables\ServiceDataTable;
 use App\Models\Service;
 
-
 class ServiceController extends Controller
 {
     public function index(ServiceDataTable $dataTable)

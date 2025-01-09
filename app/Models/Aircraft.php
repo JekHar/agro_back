@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as ContractsAuditable;
 
-class Aircraft extends Model  implements ContractsAuditable
+class Aircraft extends Model implements ContractsAuditable
 {
-    use SoftDeletes;
     use Auditable;
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'aircrafts';
 
@@ -22,12 +22,12 @@ class Aircraft extends Model  implements ContractsAuditable
         'models',
         'manufacturing_year',
         'acquisition_date',
-        'working_width'
+        'working_width',
     ];
 
     protected $dates = [
         'manufacturing_year',
-        'acquisition_date'
+        'acquisition_date',
     ];
 
     public function merchant()

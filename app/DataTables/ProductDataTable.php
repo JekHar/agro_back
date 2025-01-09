@@ -8,8 +8,6 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class ProductDataTable extends DataTable
@@ -17,7 +15,7 @@ class ProductDataTable extends DataTable
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
+     * @param  QueryBuilder  $query  Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -26,10 +24,10 @@ class ProductDataTable extends DataTable
                 return $product->category_name;
             })
             ->filterColumn('category_name', function ($query, $keyword) {
-                $query->where('categories.name', 'like', "%$keyword%");
+                $query->where('categories.name', 'like', "%{$keyword}%");
             })
             ->filterColumn('merchant_name', function ($query, $keyword) {
-                $query->where('merchants.business_name', 'like', "%$keyword%");
+                $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d-m-Y H:i:s');
@@ -50,7 +48,7 @@ class ProductDataTable extends DataTable
         return $model->newQuery()
             ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
             ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
-            ->select('products.*', 'categories.name as category_name',  'merchants.business_name as merchant_name');
+            ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name');
     }
 
     /**
@@ -59,24 +57,25 @@ class ProductDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('product-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
+            ->setTableId('product-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
                     //->dom('Bfrtip')
-                    ->orderBy(0, 'asc')
-                    ->selectStyleSingle()
-                    ->parameters([
-                        'dom' => 'Bfrtip',
-                        'drawCallback' => 'function() { initDeleteConfirmation() }',
-                    ])
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        // Button::make('reset'),
-                        // Button::make('reload')
-                    ]);
+            ->orderBy(0, 'asc')
+            ->selectStyleSingle()
+            ->parameters([
+                'dom' => 'Bfrtip',
+                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                'drawCallback' => 'function() { initDeleteConfirmation() }',
+            ])
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                // Button::make('reset'),
+                // Button::make('reload')
+            ]);
     }
 
     /**
@@ -89,18 +88,18 @@ class ProductDataTable extends DataTable
             Column::make('name')->title('Nombre'),
             Column::make('sku')->title('SKU'),
             Column::make('category_name')->title('Categoría'),
-            Column::make('merchant_name')->title('Nombre del Cliente'),
-            Column::make('concentration')->title('Concentración'),
-            Column::make('dosage_per_hectare')->title('Dosis por hectárea'),
-            Column::make('application_volume_per_hectare')->title('Volumen de aplicación por hectárea'),
+            Column::make('merchant_name')->title('Cliente'),
+            Column::make('concentration')->title('Concent'),
+            Column::make('dosage_per_hectare')->title('Dosis/ha'),
+            Column::make('application_volume_per_hectare')->title('Volumen/ha'),
             Column::make('stock')->title('Stock'),
-            Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
+            // Column::make('created_at')->title('Fecha creación'),
+            // Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 

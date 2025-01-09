@@ -15,7 +15,7 @@ class MerchantsDataTable extends DataTable
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
+     * @param  QueryBuilder  $query  Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -29,26 +29,24 @@ class MerchantsDataTable extends DataTable
      * Get the query source of dataTable.
      */
     public function query(Merchant $model)
-{
-   if (request()->routeIs('merchants.clients.*')) {
-       return $model->newQuery()
-           ->select('merchants.*')
-           ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
-           //->leftJoin('orders', 'merchants.id', '=', 'orders.merchant_id')
-           ->where('merchant_type', 'Client')
-           //->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
-           //->selectRaw('COUNT(DISTINCT lots.id) as lots_count, MAX(orders.created_at) as last_service')
-           //->groupBy('merchants.id');
-           ;
-   }
+    {
+        if (request()->routeIs('merchants.clients.*')) {
+            return $model->newQuery()
+                ->select('merchants.*')
+                ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
+                //->leftJoin('orders', 'merchants.id', '=', 'orders.merchant_id')
+                ->where('merchant_type', 'Client');
+            //->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
+            //->selectRaw('COUNT(DISTINCT lots.id) as lots_count, MAX(orders.created_at) as last_service')
+            //->groupBy('merchants.id');
+        }
 
-   if (request()->routeIs('merchants.tenants.*')) {
-       return $model->newQuery()->where('merchant_type', 'Tenant');
-   }
+        if (request()->routeIs('merchants.tenants.*')) {
+            return $model->newQuery()->where('merchant_type', 'Tenant');
+        }
 
-   return $model->newQuery();
-}
-
+        return $model->newQuery();
+    }
 
     /**
      * Optional method if you want to use the html builder.
@@ -62,8 +60,9 @@ class MerchantsDataTable extends DataTable
             ->orderBy(0, 'asc')
             ->parameters([
                 'dom' => 'Bfrtip',
+                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
                 'drawCallback' => 'function() { initDeleteConfirmation() }',
-                
+
             ])
             ->selectStyleSingle()
             ->buttons([
@@ -83,9 +82,8 @@ class MerchantsDataTable extends DataTable
         if (request()->routeIs('merchants.tenants.*')) {
             return [
                 Column::make('id')->title('#'),
-                Column::make('business_name')->title('Razon Social'),
                 Column::make('trade_name')->title('Nombre de Fantasia'),
-                Column::make('fiscal_number')->title('Número Fiscal'),
+                Column::make('fiscal_number')->title('CUIT'),
                 Column::make('email')->title('Email'),
                 Column::make('phone')->title('Telefono'),
                 Column::computed('action')->title('Acciones')
@@ -98,9 +96,8 @@ class MerchantsDataTable extends DataTable
         if (request()->routeIs('merchants.clients.*')) {
             return [
                 Column::make('id')->title('#'),
-                Column::make('business_name')->title('Razon Social'),
                 Column::make('trade_name')->title('Nombre de Fantasia'),
-                Column::make('fiscal_number')->title('Numero Fiscal'),
+                Column::make('fiscal_number')->title('CUIT'),
                 Column::make('main_activity')->title('Actividad Principal'),
                 Column::make('email')->title('Email'),
                 Column::make('phone')->title('Telefono'),

@@ -16,18 +16,18 @@ class AircraftDataTable extends DataTable
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.p
+     * @param  QueryBuilder  $query  Results from query() method.p
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('merchant_name', function ($row) {
                 return $row->merchant->business_name ?? 'N/A';
-                })
+            })
             ->filterColumn('merchant_name', function ($query, $keyword) {
                 $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
-            ->editColumn('acquisition_date', fn ($row) => Carbon::parse($row->acquisition_date)->format('d-m-Y'))            
+            ->editColumn('acquisition_date', fn ($row) => Carbon::parse($row->acquisition_date)->format('d-m-Y'))
             ->editColumn('updated_at', fn ($row) => $row->updated_at->format('d-m-Y H:i:s'))
             ->editColumn('created_at', fn ($row) => $row->created_at->format('d-m-Y H:i:s'))
             ->addColumn('action', 'pages.aircraft.action')
@@ -54,25 +54,25 @@ class AircraftDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('aircroft-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(0, 'asc')
-                    ->selectStyleSingle()
-                    ->parameters([
-                        'dom' => 'Bfrtip',
-                        'drawCallback' => 'function() { initDeleteConfirmation() }',
+            ->setTableId('aircroft-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->orderBy(0, 'asc')
+            ->selectStyleSingle()
+            ->parameters([
+                'dom' => 'Bfrtip',
+                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                'drawCallback' => 'function() { initDeleteConfirmation() }',
 
-                    ])
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        // Button::make('reset'),
-                        // Button::make('reload')
-                    ]);
+            ])
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                // Button::make('reset'),
+                // Button::make('reload')
+            ]);
     }
 
     /**
@@ -82,19 +82,17 @@ class AircraftDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('merchant_name')->title('Nombre del Cliente'),
+            Column::make('merchant_name')->title('Cliente'),
             Column::make('brand')->title('Marca'),
             Column::make('models')->title('Modelo'),
             Column::make('manufacturing_year')->title('Año de Fabricación'),
             Column::computed('acquisition_date')->title('Fecha de Adquisición'),
             Column::make('working_width')->title('Ancho de Trabajo'),
-            Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 

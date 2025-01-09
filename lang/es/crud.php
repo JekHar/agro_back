@@ -58,19 +58,19 @@ return [
             'created' => 'Usuario creado con éxito',
             'updated' => 'Usuario actualizado con éxito',
             'deleted' => 'Usuario eliminado con éxito',
-            'error' => 'Ocurrió un error al procesar tu solicitud'
+            'error' => 'Ocurrió un error al procesar tu solicitud',
         ],
         'select_merchant' => 'Seleccionar Comerciante',
         'select_role' => 'Seleccionar Rol',
         'roles' => [
             'pilot' => 'Piloto',
-            'ground_support' => 'Soporte en Tierra'
+            'ground_support' => 'Soporte en Tierra',
         ],
         'breadcrumbs' => [
             'home' => 'Inicio',
             'users' => 'Usuarios',
             'create' => 'Crear Usuario',
-            'edit' => 'Editar Usuario'
+            'edit' => 'Editar Usuario',
         ],
     ],
     'lots' => [
@@ -84,7 +84,6 @@ return [
             'number' => 'Número de Lote',
             'lot_id' => 'Lote',
             'hectares' => 'Hectáreas',
-            'merchant' => 'Nombre de Empresa',
             'coordinates' => 'Coordenadas del último lote:',
             'created_at' => 'Creado En',
             'updated_at' => 'Actualizado En',
@@ -107,13 +106,13 @@ return [
         'select_role' => 'Seleccionar Rol',
         'roles' => [
             'pilot' => 'Piloto',
-            'ground_support' => 'Soporte Terrestre'
+            'ground_support' => 'Soporte Terrestre',
         ],
         'breadcrumbs' => [
             'home' => 'Inicio',
             'users' => 'Lotes',
             'create' => 'Crear Lote',
-            'edit' => 'Editar Lote'
+            'edit' => 'Editar Lote',
         ],
     ],
     'dashboard' => [
@@ -202,7 +201,6 @@ return [
         ],
     ],
 
-
     'subsidiaries' => [
         'singular' => 'Subsidiaria',
         'plural' => 'Subsidiarias',
@@ -243,14 +241,14 @@ return [
             'created' => 'Categoría creada con éxito',
             'updated' => 'Categoría actualizada con éxito',
             'deleted' => 'Categoría eliminada con éxito',
-            'error' => 'Ocurrió un error al procesar tu solicitud'
+            'error' => 'Ocurrió un error al procesar tu solicitud',
         ],
         'select_parent' => 'Seleccionar Categoría Padre',
         'breadcrumbs' => [
             'home' => 'Inicio',
             'categories' => 'Categorías',
             'create' => 'Crear Categoría',
-            'edit' => 'Editar Categoría'
+            'edit' => 'Editar Categoría',
         ],
     ],
     'sidebar' => [
@@ -267,5 +265,5 @@ return [
         'aircrafts' => 'Aeronaves',
         'admin' => 'Administración',
         'users' => 'Usuarios',
-    ]
+    ],
 ];
