@@ -1,3 +1,4 @@
+@can('users.index')
 @extends('layouts.backend')
 @push('css')
 <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
@@ -28,13 +29,16 @@
                 {{ __('crud.users.Users_list') }}
             </h3>
             <div class="block-options">
+                @can('users.create')
                 <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.users.add') }}
                 </a>
+                @endcan
             </div>
         </div>
         @include('pages.users.user-datatable')
     </div>
 </div>
 @endsection
+@endcan

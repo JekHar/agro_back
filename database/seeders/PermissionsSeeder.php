@@ -18,7 +18,7 @@ class PermissionsSeeder extends Seeder
             ['id' => 5, 'name' => 'merchants.show'],
             ['id' => 6, 'name' => 'merchants.store'],
 
-            // CRUD Clients' Merchants
+            // CRUD Clients
             ['id' => 7, 'name' => 'clients.merchants.create'],
             ['id' => 8, 'name' => 'clients.merchants.edit'],
             ['id' => 9, 'name' => 'clients.merchants.delete'],
@@ -26,7 +26,7 @@ class PermissionsSeeder extends Seeder
             ['id' => 11, 'name' => 'clients.merchants.show'],
             ['id' => 12, 'name' => 'clients.merchants.store'],
 
-            // CRUD Tenants' Merchants
+            // CRUD Tenants
             ['id' => 13, 'name' => 'tenants.merchants.create'],
             ['id' => 14, 'name' => 'tenants.merchants.edit'],
             ['id' => 15, 'name' => 'tenants.merchants.delete'],

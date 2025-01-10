@@ -1,3 +1,4 @@
+@can('clients.merchants.edit')
 @extends('layouts.backend')
 @section('content')
     <x-hero

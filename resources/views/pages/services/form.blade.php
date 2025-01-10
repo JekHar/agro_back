@@ -1,3 +1,4 @@
+@can('services.create')
 @extends('layouts.backend')
 @section('content')
 <x-hero :title="isset($id) ? __('crud.services.actions.edit') : __('crud.services.add')"
@@ -28,3 +29,4 @@
     </div>
 </div>
 @endsection
+@endcan

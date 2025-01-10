@@ -1,3 +1,4 @@
+@can('clients.merchants.edit')
 <div class="btn-group">
     <a href="{{ route(request()->routeIs('merchants.clients.*') ? 'merchants.clients.merchants.edit' : 'merchants.tenants.merchants.edit', $id) }}" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Edit" data-bs-original-title="{{ __('crud.merchants.actions.create') }}"> <i class="fa fa-fw fa-pencil-alt text-primary"></i>
     </a>
@@ -7,3 +8,4 @@
         :title="$model->amount ?? 'no tene titulo'"
         :model="$model::class" />
 </div>
+@endcan

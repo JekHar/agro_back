@@ -1,3 +1,4 @@
+@can('users.create')
 @extends('layouts.backend')
 @section('content')
 
@@ -29,3 +30,4 @@
     </div>
 </div>
 @endsection
+@endcan

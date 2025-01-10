@@ -1,3 +1,4 @@
+@can('services.index')
 @extends('layouts.backend')
 
 @push('css')
@@ -30,13 +31,16 @@
                 {{ __('crud.services.services_list') }}
             </h3>
             <div class="block-options">
+                @can('services.create')
                 <a href="{{ route('services.create') }}" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.services.add') }}
                 </a>
+                @endcan
             </div>
         </div>
         @include('pages.services.service-datatable')
     </div>
 </div>
 @endsection
+@endcan
