@@ -11,7 +11,7 @@
             ],
             [
                 'label' => __('Empresas'),
-                'url' => route('merchants.tenants.merchants.index'),
+                'url' => route('tenants.merchants.index'),
             ],
             [
                 'label' => __('Agregar Empresa'),

@@ -115,8 +115,8 @@ class MerchantForm extends Component
             }
 
             $route = $this->isClient
-            ? 'merchants.clients.merchants.index'
-            : 'merchants.tenants.merchants.index';
+            ? 'clients.merchants.index'
+            : 'tenants.merchants.index';
 
             $this->dispatch('swal', [
                 'title' => 'Éxito!',

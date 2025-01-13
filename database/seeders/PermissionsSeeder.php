@@ -11,28 +11,28 @@ class PermissionsSeeder extends Seeder
     {
         $permissions = [
             // CRUD Merchants
-            ['id' => 1, 'name' => 'merchants.create'],
-            ['id' => 2, 'name' => 'merchants.edit'],
-            ['id' => 3, 'name' => 'merchants.delete'],
-            ['id' => 4, 'name' => 'merchants.index'],
-            ['id' => 5, 'name' => 'merchants.show'],
-            ['id' => 6, 'name' => 'merchants.store'],
+            //['id' => 1, 'name' => 'merchants.create'],
+            //['id' => 2, 'name' => 'merchants.edit'],
+            //['id' => 3, 'name' => 'merchants.delete'],
+            //['id' => 4, 'name' => 'merchants.index'],
+            //['id' => 5, 'name' => 'merchants.show'],
+            //['id' => 6, 'name' => 'merchants.store'],
 
             // CRUD Clients
-            ['id' => 7, 'name' => 'clients.merchants.create'],
-            ['id' => 8, 'name' => 'clients.merchants.edit'],
-            ['id' => 9, 'name' => 'clients.merchants.delete'],
-            ['id' => 10, 'name' => 'clients.merchants.index'],
-            ['id' => 11, 'name' => 'clients.merchants.show'],
-            ['id' => 12, 'name' => 'clients.merchants.store'],
+            ['id' => 7, 'name' => 'clients.merchants.index'],
+            ['id' => 8, 'name' => 'clients.merchants.create'],
+            ['id' => 9, 'name' => 'clients.merchants.store'],
+            ['id' => 10, 'name' => 'clients.merchants.show'],
+            ['id' => 11, 'name' => 'clients.merchants.edit'],
+            ['id' => 12, 'name' => 'clients.merchants.destroy'],
 
             // CRUD Tenants
-            ['id' => 13, 'name' => 'tenants.merchants.create'],
-            ['id' => 14, 'name' => 'tenants.merchants.edit'],
-            ['id' => 15, 'name' => 'tenants.merchants.delete'],
-            ['id' => 16, 'name' => 'tenants.merchants.index'],
-            ['id' => 17, 'name' => 'tenants.merchants.show'],
-            ['id' => 18, 'name' => 'tenants.merchants.store'],
+            ['id' => 13, 'name' => 'tenants.merchants.index'],
+            ['id' => 14, 'name' => 'tenants.merchants.create'],
+            ['id' => 15, 'name' => 'tenants.merchants.store'],
+            ['id' => 16, 'name' => 'tenants.merchants.show'],
+            ['id' => 17, 'name' => 'tenants.merchants.edit'],
+            ['id' => 18, 'name' => 'tenants.merchants.destroy'],
 
             // CRUD Products
             ['id' => 19, 'name' => 'products.create'],

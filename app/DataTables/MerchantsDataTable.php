@@ -79,7 +79,7 @@ class MerchantsDataTable extends DataTable
     public function getColumns(): array
     {
 
-        if (request()->routeIs('merchants.tenants.*')) {
+        if (request()->routeIs('tenants.*')) {
             return [
                 Column::make('id')->title('#'),
                 Column::make('trade_name')->title('Nombre de Fantasia'),
@@ -93,7 +93,7 @@ class MerchantsDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         }
-        if (request()->routeIs('merchants.clients.*')) {
+        if (request()->routeIs('clients.*')) {
             return [
                 Column::make('id')->title('#'),
                 Column::make('trade_name')->title('Nombre de Fantasia'),

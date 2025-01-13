@@ -63,7 +63,7 @@
                 @can('clients.merchants.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('clients/*') ? ' active' : '' }}"
-                        href="{{ route('merchants.clients.merchants.index') }}">
+                        href="{{ route('clients.merchants.index') }}">
                         <i class="nav-main-link-icon fa fa-building-user"></i>
                         <span class="nav-main-link-name">{{ __('crud.sidebar.clients') }}</span>
                     </a>
@@ -72,7 +72,7 @@
                 @can('tenants.merchants.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('tenants/*') ? ' active' : '' }}"
-                        href="{{ route('merchants.tenants.merchants.index') }}">
+                        href="{{ route('tenants.merchants.index') }}">
                         <i class="nav-main-link-icon fa fa-building-wheat"></i>
                         <span class="nav-main-link-name">{{ __('crud.sidebar.tenants') }}</span>
                     </a>

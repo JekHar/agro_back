@@ -1,3 +1,4 @@
+
 @extends('layouts.backend')
 @push('css')
 <!-- Page JS Plugins CSS -->
@@ -31,7 +32,7 @@
             </h3>
             <div class="block-options">
                 @can('clients.merchants.create')
-                <a href="{{ route(request()->routeIs('merchants.clients.*') ? 'merchants.clients.merchants.create' : 'merchants.tenants.merchants.create') }}" class="btn btn-sm btn-primary">
+                <a href="{{ route(request()->routeIs('merchants.clients.*') ? 'clients.merchants.create' : 'tenants.merchants.create') }}" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.merchants.add') }}
                 </a>
