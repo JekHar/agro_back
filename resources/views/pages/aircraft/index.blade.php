@@ -1,4 +1,4 @@
-@can('aircraft.index')
+@can('aircrafts.index')
 @extends('layouts.backend')
 
 @push('css')

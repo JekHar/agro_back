@@ -76,7 +76,7 @@ class MerchantController extends Controller
      */
     private function isClientRoute(Request $request): bool
     {
-        return $request->routeIs('merchants.clients.*');
+        return $request->routeIs('clients.merchants.*');
     }
 
     /**
@@ -84,6 +84,6 @@ class MerchantController extends Controller
      */
     private function getRedirectRoute(Request $request): string
     {
-        return $this->isClientRoute($request) ? 'merchants.clients' : 'merchants.tenants';
+        return $this->isClientRoute($request) ? 'clients.merchants' : 'tenants.merchants';
     }
 }

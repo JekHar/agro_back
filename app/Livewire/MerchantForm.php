@@ -83,7 +83,7 @@ class MerchantForm extends Component
         } else {
             $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
             if (auth()->user()->hasRole('Tenant')) {
-                $this->merchant_id = auth()->id();
+                $this->merchant_id = auth()->user()->merchant_id;
             }
         }
         $this->isClient = $isClient;
@@ -91,9 +91,9 @@ class MerchantForm extends Component
     }
 
     public function save()
-    {
+    {   
         $validated = $this->validate();
-
+        
         try {
             if (! auth()->user()->can('clients.merchants.create')) {
                 throw new \Exception('No tienes permiso para crear clientes');

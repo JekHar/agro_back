@@ -11,12 +11,12 @@ class PermissionsSeeder extends Seeder
     {
         $permissions = [
             // CRUD Merchants
-            //['id' => 1, 'name' => 'merchants.create'],
-            //['id' => 2, 'name' => 'merchants.edit'],
-            //['id' => 3, 'name' => 'merchants.delete'],
-            //['id' => 4, 'name' => 'merchants.index'],
-            //['id' => 5, 'name' => 'merchants.show'],
-            //['id' => 6, 'name' => 'merchants.store'],
+            ['id' => 1, 'name' => 'merchants.create'],
+            ['id' => 2, 'name' => 'merchants.edit'],
+            ['id' => 3, 'name' => 'merchants.delete'],
+            ['id' => 4, 'name' => 'merchants.index'],
+            ['id' => 5, 'name' => 'merchants.show'],
+            ['id' => 6, 'name' => 'merchants.store'],
 
             // CRUD Clients
             ['id' => 7, 'name' => 'clients.merchants.index'],
@@ -43,12 +43,12 @@ class PermissionsSeeder extends Seeder
             ['id' => 24, 'name' => 'products.store'],
 
             // CRUD Aircrafts
-            ['id' => 25, 'name' => 'aircraft.create'],
-            ['id' => 26, 'name' => 'aircraft.edit'],
-            ['id' => 27, 'name' => 'aircraft.delete'],
-            ['id' => 28, 'name' => 'aircraft.index'],
-            ['id' => 29, 'name' => 'aircraft.show'],
-            ['id' => 30, 'name' => 'aircraft.store'],
+            ['id' => 25, 'name' => 'aircrafts.create'],
+            ['id' => 26, 'name' => 'aircrafts.edit'],
+            ['id' => 27, 'name' => 'aircrafts.delete'],
+            ['id' => 28, 'name' => 'aircrafts.index'],
+            ['id' => 29, 'name' => 'aircrafts.show'],
+            ['id' => 30, 'name' => 'aircrafts.store'],
 
             // CRUD Orders
             ['id' => 31, 'name' => 'orders.create'],

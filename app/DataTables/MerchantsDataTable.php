@@ -30,7 +30,7 @@ class MerchantsDataTable extends DataTable
      */
     public function query(Merchant $model)
     {
-        if (request()->routeIs('merchants.clients.*')) {
+        if (request()->routeIs('clients.merchants.*')) {
             return $model->newQuery()
                 ->select('merchants.*')
                 ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
@@ -41,7 +41,7 @@ class MerchantsDataTable extends DataTable
             //->groupBy('merchants.id');
         }
 
-        if (request()->routeIs('merchants.tenants.*')) {
+        if (request()->routeIs('tenants.merchants.*')) {
             return $model->newQuery()->where('merchant_type', 'Tenant');
         }
 
