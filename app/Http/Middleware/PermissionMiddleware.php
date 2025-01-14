@@ -21,8 +21,7 @@ class PermissionMiddleware
 
         return Cache::remember($cacheKey, now()->addHours(2), function () use ($userId) {
             $user = \App\Models\User::findOrFail($userId);
-
-            return $user->permissions->pluck('name')->toArray();
+            return $user->getAllPermissions()->pluck('name')->toArray();
         });
     }
 
@@ -44,7 +43,6 @@ class PermissionMiddleware
     private function userHasPermission($userId, $routeName): bool
     {
         $userPermissions = $this->getUserPermissions($userId);
-
         return in_array($routeName, $userPermissions);
     }
 
@@ -57,8 +55,8 @@ class PermissionMiddleware
             return $next($request);
         }
 
-        if ($this->userHasPermission(Auth::id(), $routeName)) {
-            throw new UnauthorizedException(403, trans('error.permission').' <b>'.$routeName.'</b>');
+        if (!$this->userHasPermission(Auth::id(), $routeName)) {
+            throw new UnauthorizedException(403, trans('errors.forbidden_route').$routeName);
         }
 
         return $next($request);

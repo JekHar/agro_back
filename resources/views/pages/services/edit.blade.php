@@ -1,4 +1,3 @@
-@can('services.edit')
 @extends('layouts.backend')
 @section('content')
     <x-hero
@@ -31,4 +30,3 @@
         </div>
     </div>
 @endsection
-@endcan

@@ -18,14 +18,10 @@ Route::middleware(['auth', 'verified', 'permissions'])->group(function () {
     Route::view('/', 'dashboard')->name('dashboard');
 
     Route::prefix('clients')->name('clients.')->group(function () {
-        Route::middleware('can:clients.merchants.index')->group(function () {
             Route::resource('merchants', MerchantController::class);
-        });
     });
     Route::prefix('tenants')->name('tenants.')->group(function () {
-        Route::middleware('can:tenants.merchants.index')->group(function () {
             Route::resource('merchants', MerchantController::class);
-        });
     });
 
     Route::resource('services', ServiceController::class);

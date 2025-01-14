@@ -1,4 +1,3 @@
-@can('products.index')
 @extends('layouts.backend')
 
 @push('css')
@@ -44,4 +43,3 @@
     </div>
 </div>
 @endsection
-@endcan

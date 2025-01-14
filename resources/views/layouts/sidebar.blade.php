@@ -58,8 +58,10 @@
                 </li> --}}
 
                 <!-- Merchants Section -->
+                 @can('clients.merchants.index')
                 <li class="nav-main-heading">{{ __('crud.sidebar.managemt') }}</li>
                 <li class="nav-main-item{{ request()->is('clients/*') || request()->is('tenants/*') ? ' open' : '' }}">
+                @endcan
                 @can('clients.merchants.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('clients/*') ? ' active' : '' }}"

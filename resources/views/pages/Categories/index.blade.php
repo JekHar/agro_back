@@ -1,4 +1,3 @@
-@can('categories.index')
 @extends('layouts.backend')
 @push('css')
 <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
@@ -41,4 +40,3 @@
     </div>
 </div>
 @endsection
-@endcan

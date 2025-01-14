@@ -1,4 +1,3 @@
-@can('products.create')
 @extends('layouts.backend')
 @section('content')
 <x-hero :title="isset($id) ? __('crud.products.actions.edit') : __('crud.products.add')"
@@ -29,4 +28,3 @@
     </div>
 </div>
 @endsection
-@endcan

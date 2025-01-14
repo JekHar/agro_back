@@ -1,4 +1,3 @@
-@can('services.index')
 @extends('layouts.backend')
 
 @push('css')
@@ -43,4 +42,3 @@
     </div>
 </div>
 @endsection
-@endcan
