@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('sku');
+            $table->string('sku')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
             $table->decimal('concentration', 11, 2);
             $table->decimal('dosage_per_hectare', 11, 2);

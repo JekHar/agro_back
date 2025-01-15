@@ -32,7 +32,6 @@ class ProductRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:255|unique:products,sku,' . $productId,
             'category_id' => 'required|exists:categories,id',
             'merchant_id' => 'required|exists:merchants,id',
             'concentration' => 'required|numeric|min:0, max:100',
