@@ -44,7 +44,7 @@ class ProductDataTable extends DataTable
      */
     public function query(Product $model): QueryBuilder
     {
-        if (auth()->user()->hasRole('admin')) {
+        if (auth()->user()->hasRole('Admin')) {
             return $model->newQuery()
                 ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
                 ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
