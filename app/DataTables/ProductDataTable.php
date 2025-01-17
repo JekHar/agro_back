@@ -86,7 +86,6 @@ class ProductDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('name')->title('Nombre'),
-            Column::make('sku')->title('SKU'),
             Column::make('category_name')->title('Categoría'),
             Column::make('merchant_name')->title('Cliente'),
             Column::make('concentration')->title('Concent'),

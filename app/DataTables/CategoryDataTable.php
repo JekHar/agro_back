@@ -35,7 +35,7 @@ class CategoryDataTable extends DataTable
             ->setTableId('category-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(0, 'asc')
+            ->orderBy(0, 'asc') 
             ->parameters([
                 'dom' => 'Bfrtip',
                 'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],

@@ -1,1 +1,1 @@
-<strong><a href="https://afantec.com/" target="_blank">AFANTEC</a></strong> &copy; <span data-toggle="year-copy"></span>
+<strong><a href="" target="_blank">MaqApp</a></strong> &copy; <span data-toggle="year-copy"></span>
