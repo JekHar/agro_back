@@ -30,7 +30,8 @@ class MerchantsDataTable extends DataTable
      */
     public function query(Merchant $model)
     {
-        if (request()->routeIs('merchants.clients.*')) {
+
+        if (request()->routeIs('clients.merchants.*')) {
             if (auth()->user()->hasRole('Admin')){
             return $model->newQuery()
                 ->select('merchants.*')
@@ -48,8 +49,9 @@ class MerchantsDataTable extends DataTable
                 ->where('merchants.merchant_id', auth()->user()->merchant_id);
                 //->selectRaw('COUNT(DISTINCT lots.id) as lots_count');
         }
-    }
-        if (request()->routeIs('merchants.tenants.*')) {
+
+
+        if (request()->routeIs('tenants.merchants.*')) {
             return $model->newQuery()->where('merchant_type', 'Tenant');
         }
 
@@ -87,7 +89,7 @@ class MerchantsDataTable extends DataTable
     public function getColumns(): array
     {
 
-        if (request()->routeIs('merchants.tenants.*')) {
+        if (request()->routeIs('tenants.*')) {
             return [
                 Column::make('id')->title('#'),
                 Column::make('trade_name')->title('Nombre de Fantasia'),
@@ -101,7 +103,7 @@ class MerchantsDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         }
-        if (request()->routeIs('merchants.clients.*')) {
+        if (request()->routeIs('clients.*')) {
             return [
                 Column::make('id')->title('#'),
                 Column::make('trade_name')->title('Nombre de Fantasia'),

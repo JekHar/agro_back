@@ -31,10 +31,12 @@
                 {{ __('crud.products.products list') }}
             </h3>
             <div class="block-options">
+                @can('products.create')
                 <a href="{{ route('products.create') }}" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.products.add') }}
                 </a>
+                @endcan
             </div>
         </div>
         @include('pages.products.product-datatable')

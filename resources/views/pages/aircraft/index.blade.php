@@ -31,10 +31,12 @@
                 {{ __('crud.aircrafts.aircrafts list') }}
             </h3>
             <div class="block-options">
+                @can('aircrafts.create')
                 <a href="{{ route('aircrafts.create') }}" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.aircrafts.add') }}
                 </a>
+                @endcan
             </div>
         </div>
         @include('pages.aircraft.aircraft-datatable')

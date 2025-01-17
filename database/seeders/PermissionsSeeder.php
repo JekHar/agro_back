@@ -18,21 +18,21 @@ class PermissionsSeeder extends Seeder
             ['id' => 5, 'name' => 'merchants.show'],
             ['id' => 6, 'name' => 'merchants.store'],
 
-            // CRUD Clients' Merchants
-            ['id' => 7, 'name' => 'clients.merchants.create'],
-            ['id' => 8, 'name' => 'clients.merchants.edit'],
-            ['id' => 9, 'name' => 'clients.merchants.delete'],
-            ['id' => 10, 'name' => 'clients.merchants.index'],
-            ['id' => 11, 'name' => 'clients.merchants.show'],
-            ['id' => 12, 'name' => 'clients.merchants.store'],
+            // CRUD Clients
+            ['id' => 7, 'name' => 'clients.merchants.index'],
+            ['id' => 8, 'name' => 'clients.merchants.create'],
+            ['id' => 9, 'name' => 'clients.merchants.store'],
+            ['id' => 10, 'name' => 'clients.merchants.show'],
+            ['id' => 11, 'name' => 'clients.merchants.edit'],
+            ['id' => 12, 'name' => 'clients.merchants.destroy'],
 
-            // CRUD Tenants' Merchants
-            ['id' => 13, 'name' => 'tenants.merchants.create'],
-            ['id' => 14, 'name' => 'tenants.merchants.edit'],
-            ['id' => 15, 'name' => 'tenants.merchants.delete'],
-            ['id' => 16, 'name' => 'tenants.merchants.index'],
-            ['id' => 17, 'name' => 'tenants.merchants.show'],
-            ['id' => 18, 'name' => 'tenants.merchants.store'],
+            // CRUD Tenants
+            ['id' => 13, 'name' => 'tenants.merchants.index'],
+            ['id' => 14, 'name' => 'tenants.merchants.create'],
+            ['id' => 15, 'name' => 'tenants.merchants.store'],
+            ['id' => 16, 'name' => 'tenants.merchants.show'],
+            ['id' => 17, 'name' => 'tenants.merchants.edit'],
+            ['id' => 18, 'name' => 'tenants.merchants.destroy'],
 
             // CRUD Products
             ['id' => 19, 'name' => 'products.create'],
@@ -43,12 +43,12 @@ class PermissionsSeeder extends Seeder
             ['id' => 24, 'name' => 'products.store'],
 
             // CRUD Aircrafts
-            ['id' => 25, 'name' => 'aircraft.create'],
-            ['id' => 26, 'name' => 'aircraft.edit'],
-            ['id' => 27, 'name' => 'aircraft.delete'],
-            ['id' => 28, 'name' => 'aircraft.index'],
-            ['id' => 29, 'name' => 'aircraft.show'],
-            ['id' => 30, 'name' => 'aircraft.store'],
+            ['id' => 25, 'name' => 'aircrafts.create'],
+            ['id' => 26, 'name' => 'aircrafts.edit'],
+            ['id' => 27, 'name' => 'aircrafts.delete'],
+            ['id' => 28, 'name' => 'aircrafts.index'],
+            ['id' => 29, 'name' => 'aircrafts.show'],
+            ['id' => 30, 'name' => 'aircrafts.store'],
 
             // CRUD Orders
             ['id' => 31, 'name' => 'orders.create'],

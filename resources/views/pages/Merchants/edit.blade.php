@@ -10,7 +10,7 @@
             ],
             [
                 'label' => __('crud.merchants.plural'),
-                'url' => route('merchants.tenants.merchants.index'),
+                'url' => route('tenants.merchants.index'),
             ],
             [
                 'label' => __('crud.merchants.actions.edit'),

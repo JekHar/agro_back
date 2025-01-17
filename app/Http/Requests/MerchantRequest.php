@@ -35,7 +35,9 @@ class MerchantRequest extends FormRequest
                 Rule::unique('merchants', 'fiscal_number')
                     ->ignore($this->merchantId),
             ],
-            'merchant_id' => ['required', 'exists:merchants,id'],
+            'merchant_id' => $this->isClientRoute()
+                ? ['required', 'exists:merchants,id']
+                : ['nullable', 'exists:merchants,id'],
             'merchant_type' => ['required', new Enum(MerchantType::class)],
             'email' => ['required', 'email', 'max:80'],
             'phone' => ['required', 'string', 'max:20'],
@@ -93,6 +95,6 @@ class MerchantRequest extends FormRequest
             return true;
         }
 
-        return $this->routeIs('merchants.clients.*');
+        return $this->routeIs('clients.merchants.*');
     }
 }

@@ -86,7 +86,7 @@ class MerchantForm extends Component
         } else {
             $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
             if (auth()->user()->hasRole('Tenant')) {
-                $this->merchant_id = auth()->id();
+                $this->merchant_id = auth()->user()->merchant_id;
             }
         }
         $this->isClient = $isClient;
@@ -94,7 +94,8 @@ class MerchantForm extends Component
     }
 
     public function save()
-    {
+
+    {   
         $validatedData = $this->validate(
             $this->rules()['rules'],
             $this->rules()['messages']
@@ -121,8 +122,8 @@ class MerchantForm extends Component
             }
 
             $route = $this->isClient
-            ? 'merchants.clients.merchants.index'
-            : 'merchants.tenants.merchants.index';
+            ? 'clients.merchants.index'
+            : 'tenants.merchants.index';
 
             $this->dispatch('swal', [
                 'title' => 'Éxito!',
