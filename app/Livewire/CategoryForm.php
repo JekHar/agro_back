@@ -30,7 +30,10 @@ class CategoryForm extends Component
         $categoryRequest = new CategoryRequest;
         $categoryRequest->setCategoryId($this->category_id);
 
-        return $categoryRequest->rules();
+        return [
+            'rules' => $categoryRequest->rules(),
+            'messages' => $categoryRequest->messages()
+        ];
 
     }
 
@@ -69,7 +72,11 @@ class CategoryForm extends Component
 
     public function save()
     {
-        $validatedData = $this->validate();
+        $validatedData = $this->validate(
+            $this->rules()['rules'],
+            $this->rules()['messages']
+        );
+        
         try {
             if ($this->isEditing) {
                 $this->category->update([

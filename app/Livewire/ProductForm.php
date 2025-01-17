@@ -17,8 +17,6 @@ class ProductForm extends Component
 
     public $name;
 
-    public $sku;
-
     public $category_id;
 
     public $concentration;
@@ -42,7 +40,10 @@ class ProductForm extends Component
         $productRequest = new ProductRequest;
         $productRequest->setProductId($this->productId);
 
-        return $productRequest->rules();
+        return [
+            'rules' => $productRequest->rules(),
+            'messages' => $productRequest->messages()
+        ];
     }
 
     public function mount($productId = null)
@@ -56,7 +57,6 @@ class ProductForm extends Component
             $this->productId = $productId;
             $this->product = Product::find($productId);
             $this->name = $this->product->name;
-            $this->sku = $this->product->sku;
             $this->category_id = $this->product->category_id;
             $this->merchant_id = $this->product->merchant_id;
             $this->concentration = $this->product->concentration;
@@ -68,7 +68,10 @@ class ProductForm extends Component
 
     public function save()
     {
-        $validatedData = $this->validate();
+        $validatedData = $this->validate(
+            $this->rules()['rules'],
+            $this->rules()['messages']
+        );
 
         try {
             if ($this->isEditing) {

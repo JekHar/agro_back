@@ -35,12 +35,20 @@ class UserDataTable extends DataTable
 
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()
+        if (auth()->user()->hasRole('Admin')) {
+            return $model->newQuery()
+                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->leftjoin('merchants', 'users.merchant_id', '=', 'merchants.id')
+                ->select('users.*', 'roles.name as role_name', 'merchants.business_name as merchant_name');
+        }elseif(auth()->user()->hasRole('Tenant')){
+            return $model->newQuery()
             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->leftjoin('merchants', 'users.merchant_id', '=', 'merchants.id')
-            ->select('users.*', 'roles.name as role_name', 'merchants.business_name as merchant_name');
-    }
+            ->select('users.*', 'roles.name as role_name', 'merchants.business_name as merchant_name')
+            ->where('users.merchant_id', auth()->user()->merchant_id);
+    }}
 
     public function html(): HtmlBuilder
     {

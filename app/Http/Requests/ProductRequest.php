@@ -32,13 +32,31 @@ class ProductRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:255|unique:products,sku,' . $productId,
             'category_id' => 'required|exists:categories,id',
             'merchant_id' => 'required|exists:merchants,id',
             'concentration' => 'required|numeric|min:0, max:100',
             'dosage_per_hectare' => 'required|numeric|min:0',
             'application_volume_per_hectare' => 'required|numeric|min:0',
             'stock' => 'required|numeric|min:0',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre del producto es obligatorio.',
+            'name.max' => 'El nombre del producto no puede tener más de 255 caracteres.', 
+            'category_id.required' => 'La categoría es obligatoria.',
+            'merchant_id.required' => 'El campo Empresa es obligatorio.',
+            'concentration.required' => 'La concentración es obligatoria.',
+            'concentration.min' => 'La concentración no puede ser menor que 0.',
+            'concentration.max' => 'La concentración no puede ser mayor que 100.',
+            'dosage_per_hectare.required' => 'La dosis por hectárea es obligatoria.',
+            'dosage_per_hectare.min' => 'La dosis por hectárea no puede ser menor que 0.',
+            'application_volume_per_hectare.required' => 'El volumen de aplicación por hectárea es obligatorio.',
+            'application_volume_per_hectare.min' => 'El volumen de aplicación por hectárea no puede ser menor que 0.',
+            'stock.required' => 'El stock es obligatorio.',
+            'stock.min' => 'El stock no puede ser menor que 0.',
         ];
     }
 }

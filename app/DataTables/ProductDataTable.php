@@ -44,12 +44,19 @@ class ProductDataTable extends DataTable
      */
     public function query(Product $model): QueryBuilder
     {
-
+        if (auth()->user()->hasRole('Admin')) {
+            return $model->newQuery()
+                ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
+                ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name');
+        }elseif(auth()->user()->hasRole('Tenant')){
         return $model->newQuery()
             ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
             ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
-            ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name');
-    }
+            ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name')
+            ->whereColumn('products.merchant_id', 'merchants.id')
+            ->where('merchants.merchant_id', auth()->user()->merchant_id);
+    }}
 
     /**
      * Optional method if you want to use the html builder.
@@ -86,7 +93,6 @@ class ProductDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('name')->title('Nombre'),
-            Column::make('sku')->title('SKU'),
             Column::make('category_name')->title('Categoría'),
             Column::make('merchant_name')->title('Cliente'),
             Column::make('concentration')->title('Concent'),

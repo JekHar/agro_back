@@ -33,7 +33,10 @@ class ServiceForm extends Component
         $serviceRequest = new ServiceRequest;
         $serviceRequest->setServiceId($this->serviceId);
 
-        return $serviceRequest->rules();
+        return [
+            'rules' => $serviceRequest->rules(),
+            'messages' => $serviceRequest->messages()
+        ];
     }
 
     public function mount($serviceId = null)
@@ -54,7 +57,10 @@ class ServiceForm extends Component
 
     public function save()
     {
-        $validatedData = $this->validate();
+        $validatedData = $this->validate(
+            $this->rules()['rules'],
+            $this->rules()['messages']
+        );
 
         try {
             if ($this->isEditing) {
