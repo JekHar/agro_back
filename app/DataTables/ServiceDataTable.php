@@ -42,11 +42,18 @@ class ServiceDataTable extends DataTable
     public function query(Service $model): QueryBuilder
     {
 
-        return $model->newQuery()
-
+        
+        if(auth()->user()->hasRole('Admin')){
+            return $model->newQuery()
             ->join('merchants', 'services.merchant_id', '=', 'merchants.id')
             ->select('services.*', 'merchants.business_name as  merchant_name');
-    }
+        }elseif(auth()->user()->hasRole('Tenant')){
+            return $model->newQuery()
+            ->join('merchants', 'services.merchant_id', '=', 'merchants.id')
+            ->select('services.*', 'merchants.business_name as  merchant_name')
+            ->whereColumn('services.merchant_id', 'merchants.id')
+            ->where('merchants.merchant_id', auth()->user()->merchant_id);
+    }}
 
     /**
      * Optional method if you want to use the html builder.

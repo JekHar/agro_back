@@ -31,6 +31,7 @@ class MerchantsDataTable extends DataTable
     public function query(Merchant $model)
     {
         if (request()->routeIs('merchants.clients.*')) {
+            if (auth()->user()->hasRole('Admin')){
             return $model->newQuery()
                 ->select('merchants.*')
                 ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
@@ -39,8 +40,15 @@ class MerchantsDataTable extends DataTable
             //->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
             //->selectRaw('COUNT(DISTINCT lots.id) as lots_count, MAX(orders.created_at) as last_service')
             //->groupBy('merchants.id');
+        } elseif(auth()->user()->hasRole('Tenant')){
+            return $model->newQuery()
+                ->select('merchants.*')
+                //->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
+                ->where('merchant_type', 'Client')
+                ->where('merchants.merchant_id', auth()->user()->merchant_id);
+                //->selectRaw('COUNT(DISTINCT lots.id) as lots_count');
         }
-
+    }
         if (request()->routeIs('merchants.tenants.*')) {
             return $model->newQuery()->where('merchant_type', 'Tenant');
         }

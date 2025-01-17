@@ -44,12 +44,19 @@ class ProductDataTable extends DataTable
      */
     public function query(Product $model): QueryBuilder
     {
-
+        if (auth()->user()->hasRole('Admin')) {
+            return $model->newQuery()
+                ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
+                ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name');
+        }elseif(auth()->user()->hasRole('Tenant')){
         return $model->newQuery()
             ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
             ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
-            ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name');
-    }
+            ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name')
+            ->whereColumn('products.merchant_id', 'merchants.id')
+            ->where('merchants.merchant_id', auth()->user()->merchant_id);
+    }}
 
     /**
      * Optional method if you want to use the html builder.

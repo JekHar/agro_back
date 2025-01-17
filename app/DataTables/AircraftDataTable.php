@@ -43,10 +43,16 @@ class AircraftDataTable extends DataTable
      */
     public function query(Aircraft $model): QueryBuilder
     {
+        if(auth()->user()->hasRole('Admin')){
+            return $model->newQuery()
+                ->join('merchants', 'aircrafts.merchant_id', '=', 'merchants.id')
+                ->select('aircrafts.*', 'merchants.business_name as  merchant_name');
+        }elseif(auth()->user()->hasRole('Tenant')){
         return $model->newQuery()
             ->join('merchants', 'aircrafts.merchant_id', '=', 'merchants.id')
-            ->select('aircrafts.*', 'merchants.business_name as  merchant_name');
-    }
+            ->select('aircrafts.*', 'merchants.business_name as  merchant_name')
+            ->where('aircrafts.merchant_id', auth()->user()->merchant_id);
+    }}
 
     /**
      * Optional method if you want to use the html builder.
