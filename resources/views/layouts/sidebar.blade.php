@@ -123,7 +123,7 @@
                     </a>
                 </li>
                 @endcan
-                @can('aircraft.index')
+                @can('aircrafts.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('aircrafts*') ? ' active' : '' }}"
                         href="{{ route('aircrafts.index') }}">
