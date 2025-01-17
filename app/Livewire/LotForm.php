@@ -122,9 +122,15 @@ class LotForm extends Component
     }
 
     public function render()
-    {
+    {   
+        $merchantsQuery = Merchant::where('merchant_type', MerchantType::CLIENT);
+        
+        if (auth()->user()->hasRole('Tenant')) {
+            $merchantsQuery->where('merchant_id', auth()->user()->merchant_id);
+        }
+
         return view('livewire.lot-form', [
-            'merchants' => Merchant::where('merchant_type', MerchantType::CLIENT)->get(),
+            'merchants' => $merchantsQuery->get()
         ]);
     }
 }

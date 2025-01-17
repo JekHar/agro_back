@@ -107,6 +107,6 @@ class AircraftDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Aircroft_' . date('YmdHis');
+        return 'Aircraft_' . date('YmdHis');
     }
 }
