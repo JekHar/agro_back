@@ -30,11 +30,27 @@ class AircraftRequest extends FormRequest
     {
         return [
             'merchant_id' => 'required|exists:merchants,id',
-            'brand' => 'required|string|max:255',
-            'models' => 'required|string|max:255',
+            'brand' => 'required|string|max:100',
+            'models' => 'required|string|max:100',
             'manufacturing_year' => 'nullable|numeric|min:0',
             'acquisition_date' => 'required|date',
             'working_width' => 'required|numeric|min:0',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'merchant_id.required' => 'El campo Empresa es obligatorio.',
+            'brand.required' => 'El campo Marca es obligatorio.',
+            'brand.max' => 'El campo Marca debe tener como máximo 100 caracteres.',
+            'models.required' => 'El campo Modelo es obligatorio.',
+            'models.max' => 'El campo Modelo debe tener como máximo 100 caracteres.',
+            'manufacturing_year.min' => 'El campo Año de Fabricación debe ser como mínimo 0.',
+            'acquisition_date.required' => 'El campo Fecha de Adquisición es obligatorio.',
+            'working_width.required' => 'El campo Ancho de Trabajo es obligatorio.',
+            'working_width.min' => 'El campo Ancho de Trabajo debe ser mayor que 0.',
+            ];
+    }
+
 }

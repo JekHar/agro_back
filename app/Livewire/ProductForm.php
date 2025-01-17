@@ -42,7 +42,10 @@ class ProductForm extends Component
         $productRequest = new ProductRequest;
         $productRequest->setProductId($this->productId);
 
-        return $productRequest->rules();
+        return [
+            'rules' => $productRequest->rules(),
+            'messages' => $productRequest->messages()
+        ];
     }
 
     public function mount($productId = null)
@@ -68,7 +71,10 @@ class ProductForm extends Component
 
     public function save()
     {
-        $validatedData = $this->validate();
+        $validatedData = $this->validate(
+            $this->rules()['rules'],
+            $this->rules()['messages']
+        );
 
         try {
             if ($this->isEditing) {

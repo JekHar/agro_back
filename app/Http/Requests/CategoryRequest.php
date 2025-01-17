@@ -30,10 +30,8 @@ class CategoryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => __('crud.categories.validation.name_required'),
-            'name.max' => __('crud.categories.validation.name_max'),
-            'description.required' => __('crud.categories.validation.description_required'),
-            'category_id.exists' => __('crud.categories.validation.category_exists'),
+            'name.required' => 'El campo nombre es obligatorio',
+            'name.max' => 'El campo nombre debe tener como máximo 255 caracteres',
         ];
     }
 }
