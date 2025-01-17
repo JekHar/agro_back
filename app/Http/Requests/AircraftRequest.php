@@ -41,7 +41,7 @@ class AircraftRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'merchant_id.required' => 'La campo Empresa es obligatorio.',
+            'merchant_id.required' => 'El campo Empresa es obligatorio.',
             'brand.required' => 'El campo Marca es obligatorio.',
             'brand.max' => 'El campo Marca debe tener como máximo 100 caracteres.',
             'models.required' => 'El campo Modelo es obligatorio.',
