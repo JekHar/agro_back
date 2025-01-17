@@ -49,7 +49,10 @@ class MerchantForm extends Component
         }
         $merchantRequest->setIsClient($this->isClient);
 
-        return $merchantRequest->rules();
+        return [
+            'rules' => $merchantRequest->rules(),
+            'messages' => $merchantRequest->messages()
+        ];
     }
 
     public function mount(bool $isClient = false, $merchantId = null)
@@ -92,7 +95,10 @@ class MerchantForm extends Component
 
     public function save()
     {
-        $validated = $this->validate();
+        $validatedData = $this->validate(
+            $this->rules()['rules'],
+            $this->rules()['messages']
+        );
 
         try {
             if (! auth()->user()->can('clients.merchants.create')) {

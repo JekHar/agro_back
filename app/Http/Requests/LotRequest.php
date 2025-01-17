@@ -25,7 +25,7 @@ class LotRequest extends FormRequest
         return [
             'merchant_id' => 'required|exists:merchants,id',
             'number' => 'required|numeric|min:0|max:255',
-            'hectares' => 'required|numeric|min:0',
+            'hectares' => 'required|numeric|min:0, max:100',
             'coordinates' => 'required|array|min:3',
             'coordinates.*.lat' => 'required|numeric|between:-90,90',
             'coordinates.*.lng' => 'required|numeric|between:-180,180',
@@ -35,24 +35,19 @@ class LotRequest extends FormRequest
     public function messages()
     {
         return [
-            'merchant_id.required' => 'Please select a merchant.',
-            'merchant_id.exists' => 'The selected merchant is invalid.',
-            'number.required' => 'The number field is required.',
-            'number.numeric' => 'The number must be a number.',
-            'number.max' => 'The number may not be greater than 255 characters.',
-            'number.min' => 'The number must be at least 0.',
-            'hectares.required' => 'The hectares field is required.',
-            'hectares.numeric' => 'The hectares must be a number.',
-            'hectares.min' => 'The hectares must be at least 0.',
-            'coordinates.required' => 'The coordinates field is required.',
-            'coordinates.array' => 'The coordinates must be an array.',
-            'coordinates.min' => 'The coordinates must have at least 3 items.',
-            'coordinates.*.lat.required' => 'The coordinates.lat field is required.',
-            'coordinates.*.lat.numeric' => 'The coordinates.lat must be a number.',
-            'coordinates.*.lat.between' => 'The coordinates.lat must be between -90 and 90.',
-            'coordinates.*.lng.required' => 'The coordinates.lng field is required.',
-            'coordinates.*.lng.numeric' => 'The coordinates.lng must be a number.',
-            'coordinates.*.lng.between' => 'The coordinates.lng must be between -180 and 180.',
+            'merchant_id.required' => 'Por favor, elija un cliente.',
+            'number.required' => 'El número de Lote es requerido.',
+            'number.max' => 'El número no debe se mayor a 255 caracteres.',
+            'number.min' => 'El número debe se mayor que 0.',
+            'hectares.required' => 'La cantidad de hectáreas es requerida.',
+            'hectares.min' => 'La cantidad de hectáreas debe ser mayor que 0.',
+            'hectares.max' => 'La cantidad de hectáreas debe ser menor que 100.',
+            'coordinates.required' => 'El campo de Coordenadas es requerido',
+            'coordinates.min' => 'El campo de coordenadas debe tener al menos 3 puntos.',
+            'coordinates.*.lat.required' => 'El campo de Latitud es requerido',
+            'coordinates.*.lat.between' => 'La latitud debe ser un número entre -90 y 90.',
+            'coordinates.*.lng.required' => 'El campo de Longitud es requerido',
+            'coordinates.*.lng.between' => 'La longitud debe ser un número entre -180 y 180.',
         ];
     }
 }

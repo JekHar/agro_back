@@ -35,4 +35,15 @@ class ServiceRequest extends FormRequest
             'price_per_hectare' => 'required|numeric|min:0',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre es obligatorio',
+            'name.max' => 'El campo nombre no puede tener más de 255 caracteres',
+            'merchant_id.required' => 'La empresa es obligatoria',
+            'price_per_hectare.required' => 'El precio por hectárea es obligatorio',
+            'price_per_hectare.min' => 'El precio por hectárea debe ser mayor que 0',
+        ];
+        }
 }

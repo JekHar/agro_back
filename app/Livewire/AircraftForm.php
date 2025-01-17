@@ -35,7 +35,10 @@ class AircraftForm extends Component
         $aircraftRequest = new AircraftRequest;
         $aircraftRequest->setAircraftId($this->aircraftId);
 
-        return $aircraftRequest->rules();
+        return [
+            'rules' => $aircraftRequest->rules(),
+            'messages' => $aircraftRequest->messages()
+        ];
     }
 
     public function mount($aircraftId = null)
@@ -58,8 +61,11 @@ class AircraftForm extends Component
 
     public function save()
     {
-        $validatedData = $this->validate();
-
+        $validatedData = $this->validate(
+            $this->rules()['rules'],
+            $this->rules()['messages']
+        );
+        
         try {
             if ($this->isEditing) {
                 $this->aircraft->update($validatedData);
