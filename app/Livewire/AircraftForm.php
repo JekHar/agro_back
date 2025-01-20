@@ -60,19 +60,15 @@ class AircraftForm extends Component
     }
 
     public function save()
-{
+{   
+    if (auth()->user()->hasRole('Tenant')) {
+        $this->merchant_id = auth()->user()->merchant_id;
+    }
     $validatedData = $this->validate(
         $this->rules()['rules'],
         $this->rules()['messages']
     );
-    
     try {
-        if (auth()->user()->hasRole('Tenant')) {
-            $validatedData['merchant_id'] = Merchant::where('merchant_type', 'client')
-                ->where('merchant_id', auth()->user()->merchant_id)
-                ->firstOrFail()->id;
-        }
-
         if ($this->isEditing) {
             $this->aircraft->update($validatedData);
             $message = 'Aeronave modificado exitosamente';

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'success' => 'Success!',
     'merchants' => [
         'singular' => 'Merchant',
         'plural' => 'Merchants',

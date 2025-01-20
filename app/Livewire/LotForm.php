@@ -105,7 +105,7 @@ class LotForm extends Component
             });
 
             $this->dispatch('swal', [
-                'title' => __('Success!'),
+                'title' => __('crud.success'),
                 'message' => __($this->currentLotId ? 'crud.lots.actions.updated' : 'crud.lots.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('lots.index'),
