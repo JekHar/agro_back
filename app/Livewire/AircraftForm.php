@@ -75,10 +75,10 @@ class AircraftForm extends Component
 
         if ($this->isEditing) {
             $this->aircraft->update($validatedData);
-            $message = 'Avion modificado exitosamente';
+            $message = 'Aeronave modificado exitosamente';
         } else {
             Aircraft::create($validatedData);
-            $message = 'Avion creado exitosamente';
+            $message = 'Aeronave creado exitosamente';
         }
 
         $this->dispatch('swal', [
