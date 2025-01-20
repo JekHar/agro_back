@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'success' => 'Éxito!',
     'merchants' => [
         'singular' => 'Empresa',
         'plural' => 'Empresas',
@@ -55,7 +56,7 @@ return [
             'updated_at' => 'Actualizado En',
             'password' => 'Contraseña',
             'password_confirmation' => 'Confirmar Contraseña',
-            'merchant' => 'Comerciante',
+            'merchant' => 'Empresa',
             'role' => 'Rol',
         ],
         'actions' => [
@@ -67,7 +68,7 @@ return [
             'deleted' => 'Usuario eliminado con éxito',
             'error' => 'Ocurrió un error al procesar tu solicitud',
         ],
-        'select_merchant' => 'Seleccionar Comerciante',
+        'select_merchant' => 'Seleccionar Empresa',
         'select_role' => 'Seleccionar Rol',
         'roles' => [
             'pilot' => 'Piloto',
@@ -125,7 +126,7 @@ return [
     'dashboard' => [
         'singular' => 'Tablero',
         'settings' => 'Configuraciones',
-        'dashboard subtitle' => 'Aquí puedes ver los datos y estadísticas de tu comerciante',
+        'dashboard subtitle' => 'Aquí puedes ver los datos y estadísticas de tu empresa',
         'all_users' => 'Ver todos los usuarios',
         'all_items' => 'Ver todos los artículos',
         'all_lootboxes' => 'Ver todas las lootboxes',

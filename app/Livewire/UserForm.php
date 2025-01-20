@@ -65,12 +65,13 @@ class UserForm extends Component
     }
 
     public function save()
-{
+{   
+    if (auth()->user()->hasRole('Tenant')) {
+        $this->merchant_id = auth()->user()->merchant_id;
+    }
+
     $validatedData = $this->validate();
     try {
-        if (auth()->user()->hasRole('Tenant')) {
-            $validatedData['merchant_id'] = auth()->user()->merchant_id;
-        }
 
         if ($this->isEditing) {
             $this->user->update([
