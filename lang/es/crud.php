@@ -172,7 +172,6 @@ return [
         'select_category' => 'Seleccionar Categoría',
         'fields' => [
             'name' => 'Nombre',
-            'sku' => 'SKU',
             'category' => 'Categoría',
             'concentration' => 'Concentración',
             'dosage_per_hectare' => 'Dosis por hectárea',

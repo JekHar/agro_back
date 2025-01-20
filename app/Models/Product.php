@@ -15,7 +15,6 @@ class Product extends Model implements Auditable
 
     protected $fillable = [
         'name',
-        'sku',
         'category_id',
         'concentration',
         'dosage_per_hectare',
