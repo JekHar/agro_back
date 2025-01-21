@@ -41,6 +41,7 @@ class LotRequest extends FormRequest
             'number.min' => 'El número debe se mayor que 0.',
             'hectares.required' => 'La cantidad de hectáreas es requerida.',
             'hectares.min' => 'La cantidad de hectáreas debe ser mayor que 0.',
+            'hectares.max' => 'La cantidad de hectáreas debe ser menor que 100.',
             'coordinates.required' => 'El campo de Coordenadas es requerido',
             'coordinates.min' => 'El campo de coordenadas debe tener al menos 3 puntos.',
             'coordinates.*.lat.required' => 'El campo de Latitud es requerido',
