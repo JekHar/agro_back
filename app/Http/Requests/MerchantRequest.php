@@ -57,7 +57,7 @@ class MerchantRequest extends FormRequest
             'business_name.max' => 'La razón social no puede tener más de 80 caracteres.',
             'fiscal_number.required' => 'El CUIT/CUIL es requerido.',
             'fiscal_number.unique' => 'Este CUIT/CUIL ya está registrado.',
-            'fiscal_number.max' => 'El CUIT/CUIL no puede tener más de 50 caracteres.',
+            'fiscal_number.max' => 'El CUIT/CUIL no puede ser mayor a 999999999999.',
             'email.required' => 'El correo electrónico es requerido.',
             'email.email' => 'Por favor ingrese una dirección de correo electrónico válida.',
             'email.max' => 'El correo electrónico no puede tener más de 80 caracteres.',
