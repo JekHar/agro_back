@@ -32,9 +32,18 @@ class LotDataTable extends DataTable
 
     public function query(Lot $model): QueryBuilder
     {
-        return $model->newQuery()
-            ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
-            ->select('lots.*', 'merchants.business_name as merchant_name');
+        if (auth()->user()->hasRole('Admin')) {
+            return $model->newQuery()
+                ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
+                ->where('merchants.merchant_type', 'client')
+                ->select('lots.*', 'merchants.business_name as merchant_name');
+        } elseif (auth()->user()->hasRole('Tenant')) {
+            return $model->newQuery()
+                ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
+                ->select('lots.*', 'merchants.business_name as merchant_name')
+                ->where('merchants.merchant_type', 'client')
+                ->where('merchants.merchant_id', auth()->user()->merchant_id);
+        }
     }
 
     public function html(): HtmlBuilder

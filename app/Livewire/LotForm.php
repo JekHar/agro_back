@@ -105,7 +105,7 @@ class LotForm extends Component
             });
 
             $this->dispatch('swal', [
-                'title' => __('Success!'),
+                'title' => __('crud.success'),
                 'message' => __($this->currentLotId ? 'crud.lots.actions.updated' : 'crud.lots.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('lots.index'),
@@ -122,9 +122,15 @@ class LotForm extends Component
     }
 
     public function render()
-    {
+    {   
+        $merchantsQuery = Merchant::where('merchant_type', MerchantType::CLIENT);
+        
+        if (auth()->user()->hasRole('Tenant')) {
+            $merchantsQuery->where('merchant_id', auth()->user()->merchant_id);
+        }
+
         return view('livewire.lot-form', [
-            'merchants' => Merchant::where('merchant_type', MerchantType::CLIENT)->get(),
+            'merchants' => $merchantsQuery->get()
         ]);
     }
 }

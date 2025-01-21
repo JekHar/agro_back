@@ -17,8 +17,6 @@ class ProductForm extends Component
 
     public $name;
 
-    public $sku;
-
     public $category_id;
 
     public $concentration;
@@ -51,15 +49,21 @@ class ProductForm extends Component
     public function mount($productId = null)
     {
         $this->categories = Category::pluck('name', 'id');
-        $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
-            ->pluck('business_name', 'id');
+        
+        if (auth()->user()->hasRole('Admin')) {
+            $this->merchants = Merchant::where('merchant_type', 'client')
+                ->pluck('business_name', 'id');
+        } elseif (auth()->user()->hasRole('Tenant')) {
+            $this->merchants = Merchant::where('merchant_type', 'client')
+                ->where('merchant_id', auth()->user()->merchant_id)
+                ->pluck('business_name', 'id');
+        }
 
         if ($productId) {
             $this->isEditing = true;
             $this->productId = $productId;
             $this->product = Product::find($productId);
             $this->name = $this->product->name;
-            $this->sku = $this->product->sku;
             $this->category_id = $this->product->category_id;
             $this->merchant_id = $this->product->merchant_id;
             $this->concentration = $this->product->concentration;

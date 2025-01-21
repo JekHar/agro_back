@@ -1,3 +1,4 @@
+@can('lots.create')
 @extends('layouts.backend')
 
 @push('styles')
@@ -44,3 +45,4 @@
     </div>
 </div>
 @endsection
+@endcan

@@ -52,32 +52,39 @@
             <ul class="nav-main">
                 {{-- <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->routeIs('dashboard') ? ' active' : '' }}" href="{{ route('dashboard') }}">
-                        <i class="nav-main-link-icon si si-speedometer"></i>
-                        <span class="nav-main-link-name">Dashboard</span>
-                    </a>
+                <i class="nav-main-link-icon si si-speedometer"></i>
+                <span class="nav-main-link-name">Dashboard</span>
+                </a>
                 </li> --}}
 
                 <!-- Merchants Section -->
+                 @can('clients.merchants.index')
                 <li class="nav-main-heading">{{ __('crud.sidebar.managemt') }}</li>
                 <li class="nav-main-item{{ request()->is('clients/*') || request()->is('tenants/*') ? ' open' : '' }}">
+                @endcan
+                @can('clients.merchants.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('clients/*') ? ' active' : '' }}"
-                        href="{{ route('merchants.clients.merchants.index') }}">
+                        href="{{ route('clients.merchants.index') }}">
                         <i class="nav-main-link-icon fa fa-building-user"></i>
                         <span class="nav-main-link-name">{{ __('crud.sidebar.clients') }}</span>
                     </a>
                 </li>
+                @endcan
+                @can('tenants.merchants.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('tenants/*') ? ' active' : '' }}"
-                        href="{{ route('merchants.tenants.merchants.index') }}">
+                        href="{{ route('tenants.merchants.index') }}">
                         <i class="nav-main-link-icon fa fa-building-wheat"></i>
                         <span class="nav-main-link-name">{{ __('crud.sidebar.tenants') }}</span>
                     </a>
                 </li>
                 </li>
+                @endcan
 
                 <!-- Catalog Section -->
                 <li class="nav-main-heading">{{ __('crud.sidebar.catalog') }}</li>
+                @can('products.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('products*') ? ' active' : '' }}"
                         href="{{ route('products.index') }}">
@@ -85,7 +92,8 @@
                         <span class="nav-main-link-name">{{ __('crud.sidebar.products') }}</span>
                     </a>
                 </li>
-
+                @endcan
+                @can('categories.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('categories*') ? ' active' : '' }}"
                         href="{{ route('categories.index') }}">
@@ -93,7 +101,8 @@
                         <span class="nav-main-link-name">{{ __('crud.sidebar.categories') }}</span>
                     </a>
                 </li>
-
+                @endcan
+                @can('services.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('services*') ? ' active' : '' }}"
                         href="{{ route('services.index') }}">
@@ -101,11 +110,11 @@
                         <span class="nav-main-link-name">{{ __('crud.sidebar.services') }}</span>
                     </a>
                 </li>
-
-
+                @endcan
 
                 <!-- Users Section -->
                 <li class="nav-main-heading">{{ __('crud.sidebar.admin') }}</li>
+                @can('users.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('users*') ? ' active' : '' }}"
                         href="{{ route('users.index') }}">
@@ -113,6 +122,8 @@
                         <span class="nav-main-link-name">{{ __('crud.sidebar.users') }}</span>
                     </a>
                 </li>
+                @endcan
+                @can('aircrafts.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('aircrafts*') ? ' active' : '' }}"
                         href="{{ route('aircrafts.index') }}">
@@ -120,6 +131,8 @@
                         <span class="nav-main-link-name">{{ __('crud.sidebar.aircrafts') }}</span>
                     </a>
                 </li>
+                @endcan
+                @can('lots.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('lots*') ? ' active' : '' }}"
                         href="{{ route('lots.index') }}">
@@ -127,6 +140,7 @@
                         <span class="nav-main-link-name">{{ __('crud.sidebar.lots') }}</span>
                     </a>
                 </li>
+                @endcan
             </ul>
         </div>
     </div>

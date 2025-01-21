@@ -9,7 +9,7 @@
     <title>MaqApp</title>
 
     <meta name="description" content="Sistema de gestion para ventas mayoristas">
-    <meta name="author" content="AFANTEC">
+    <meta name="author" content="MaqApp">
     <meta name="robots" content="index, follow">
 
     <!-- Icons -->

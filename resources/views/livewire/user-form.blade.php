@@ -37,25 +37,6 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="merchant_id"><span class="text-danger">*</span> {{ __('crud.users.fields.merchant') }}</label>
-                    <select class="form-control @error('merchant_id') is-invalid @enderror"
-                        id="merchant_id"
-                        wire:model="merchant_id">
-                        <option value="">{{ __('crud.users.select_merchant') }}</option>
-                        @foreach ($merchants as $id => $businessName)
-                        <option value="{{ $id }}">{{ $businessName }}</option>
-                        @endforeach
-                    </select>
-                    @error('merchant_id')
-                    <span class="invalid-feedback d-block" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="mb-4">
                     <label class="form-label" for="role"><span class="text-danger">*</span> {{ __('crud.users.fields.role') }}</label>
                     <select class="form-control @error('role') is-invalid @enderror"
                         id="role"
@@ -66,6 +47,28 @@
                         @endforeach
                     </select>
                     @error('role')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-4">
+                    @if(auth()->user()->hasRole('Admin'))
+                        <label class="form-label" for="merchant_id">
+                            <span class="text-danger">*</span> {{ __('crud.users.fields.merchant') }}
+                        </label>
+                        <select class="form-control @error('merchant_id') is-invalid @enderror"
+                            id="merchant_id"
+                            wire:model="merchant_id">
+                            <option value="">{{ __('crud.users.select_merchant') }}</option>
+                            @foreach ($merchants as $id => $businessName)
+                                <option value="{{ $id }}">{{ $businessName }}</option>
+                            @endforeach
+                        </select>
+                    @endif
+                    @error('merchant_id')
                     <span class="invalid-feedback d-block" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>

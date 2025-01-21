@@ -1,3 +1,4 @@
+@can('lots.index')
 @extends('layouts.backend')
 @push('css')
 <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
@@ -28,13 +29,16 @@
                 {{ __('crud.lots.Lots_list') }}
             </h3>
             <div class="block-options">
+                @can('lots.create')
                 <a href="{{ route('lots.create') }}" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.lots.add') }}
                 </a>
+                @endcan
             </div>
         </div>
         @include('pages.lots.lot-datatable')
     </div>
 </div>
 @endsection
+@endcan

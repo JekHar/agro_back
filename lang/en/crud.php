@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'success' => 'Success!',
     'merchants' => [
         'singular' => 'Merchant',
         'plural' => 'Merchants',
@@ -184,7 +185,6 @@ return [
         'select_category' => 'Select Category',
         'fields' => [
             'name' => 'Name',
-            'sku' => 'SKU',
             'category' => 'Category',
             'concentration' => 'Concentration',
             'dosage_per_hectare' => 'Dosage per hectare',
