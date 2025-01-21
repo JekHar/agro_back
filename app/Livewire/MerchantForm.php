@@ -97,6 +97,7 @@ class MerchantForm extends Component
 
     {   
         $validatedData = $this->validate(
+
             $this->rules()['rules'],
             $this->rules()['messages']
         );
