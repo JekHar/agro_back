@@ -49,8 +49,15 @@ class ProductForm extends Component
     public function mount($productId = null)
     {
         $this->categories = Category::pluck('name', 'id');
-        $this->merchants = Merchant::where('merchant_type', MerchantType::CLIENT)
-            ->pluck('business_name', 'id');
+        
+        if (auth()->user()->hasRole('Admin')) {
+            $this->merchants = Merchant::where('merchant_type', 'client')
+                ->pluck('business_name', 'id');
+        } elseif (auth()->user()->hasRole('Tenant')) {
+            $this->merchants = Merchant::where('merchant_type', 'client')
+                ->where('merchant_id', auth()->user()->merchant_id)
+                ->pluck('business_name', 'id');
+        }
 
         if ($productId) {
             $this->isEditing = true;

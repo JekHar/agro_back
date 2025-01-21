@@ -29,9 +29,9 @@ class MerchantRequest extends FormRequest
             'business_name' => ['required', 'string', 'max:80'],
             'trade_name' => ['nullable', 'string', 'max:80'],
             'fiscal_number' => [
+                'max:999999999999',
                 'required',
                 'numeric',
-                'max:30',
                 Rule::unique('merchants', 'fiscal_number')
                     ->ignore($this->merchantId),
             ],
@@ -59,7 +59,7 @@ class MerchantRequest extends FormRequest
             'business_name.max' => 'La razón social no puede tener más de 80 caracteres.',
             'fiscal_number.required' => 'El CUIT/CUIL es requerido.',
             'fiscal_number.unique' => 'Este CUIT/CUIL ya está registrado.',
-            'fiscal_number.max' => 'El CUIT/CUIL no puede tener más de 30 caracteres.',
+            'fiscal_number.max' => 'El CUIT/CUIL no puede ser mas de 13 caracteres.',
             'email.required' => 'El correo electrónico es requerido.',
             'email.email' => 'Por favor ingrese una dirección de correo electrónico válida.',
             'email.max' => 'El correo electrónico no puede tener más de 80 caracteres.',

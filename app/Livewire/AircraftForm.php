@@ -60,38 +60,38 @@ class AircraftForm extends Component
     }
 
     public function save()
-    {
-        $validatedData = $this->validate(
-            $this->rules()['rules'],
-            $this->rules()['messages']
-        );
-        
-        try {
-            if ($this->isEditing) {
-                $this->aircraft->update($validatedData);
-                $message = 'Avion modificado exitosamente';
-            } else {
-                Aircraft::create($validatedData);
-                $message = 'Avion creado exitosamente';
-            }
-
-            $this->dispatch('swal', [
-                'title' => 'Éxito!',
-                'message' => $message,
-                'icon' => 'success',
-                'redirect' => route('aircrafts.index'),
-            ]);
-
-        } catch (\Throwable $th) {
-            $this->dispatch('swal', [
-                'title' => ('Error'),
-                'message' => ('Ocurrió un error al procesar la solicitud'),
-                'icon' => 'error',
-            ]);
+{   
+    if (auth()->user()->hasRole('Tenant')) {
+        $this->merchant_id = auth()->user()->merchant_id;
+    }
+    $validatedData = $this->validate(
+        $this->rules()['rules'],
+        $this->rules()['messages']
+    );
+    try {
+        if ($this->isEditing) {
+            $this->aircraft->update($validatedData);
+            $message = 'Aeronave modificado exitosamente';
+        } else {
+            Aircraft::create($validatedData);
+            $message = 'Aeronave creado exitosamente';
         }
 
-        // return redirect()->route('aircrafts.index');
+        $this->dispatch('swal', [
+            'title' => 'Éxito!',
+            'message' => $message,
+            'icon' => 'success',
+            'redirect' => route('aircrafts.index'),
+        ]);
+
+    } catch (\Throwable $th) {
+        $this->dispatch('swal', [
+            'title' => ('Error'),
+            'message' => ('Ocurrió un error al procesar la solicitud'),
+            'icon' => 'error',
+        ]);
     }
+}
 
     public function render()
     {

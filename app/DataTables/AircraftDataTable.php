@@ -88,7 +88,7 @@ class AircraftDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('merchant_name')->title('Cliente'),
+            Column::make('merchant_name')->title('Empresa'),
             Column::make('brand')->title('Marca'),
             Column::make('models')->title('Modelo'),
             Column::make('manufacturing_year')->title('Año de Fabricación'),
@@ -107,6 +107,6 @@ class AircraftDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Aircroft_' . date('YmdHis');
+        return 'Aircraft_' . date('YmdHis');
     }
 }

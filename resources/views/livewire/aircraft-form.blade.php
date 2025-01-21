@@ -1,19 +1,14 @@
 <div>
     <form wire:submit.prevent="save">
-        <div class="row push">
-            <!-- Merchant -->
+        <div class="row">
+            <!-- Model -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="merchant_id">
-                        <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.merchant') }}
+                    <label class="form-label" for="models">
+                        <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.model') }}
                     </label>
-                    <select class="form-select @error('merchant_id') is-invalid @enderror" id="merchant_id" wire:model="merchant_id">
-                        <option value="">{{ __('crud.aircrafts.select_merchant') }}</option>
-                        @foreach ($merchants as $id => $businessName)
-                            <option value="{{ $id }}">{{ $businessName }}</option>
-                        @endforeach
-                    </select>
-                    @error('merchant_id')
+                    <input type="text" class="form-control @error('models') is-invalid @enderror" id="models" wire:model="models">
+                    @error('models')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div>
@@ -34,19 +29,6 @@
         </div>
 
         <div class="row">
-            <!-- Model -->
-            <div class="col-md-6">
-                <div class="mb-4">
-                    <label class="form-label" for="models">
-                        <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.model') }}
-                    </label>
-                    <input type="text" class="form-control @error('models') is-invalid @enderror" id="models" wire:model="models">
-                    @error('models')
-                        <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-
             <!-- Working Width -->
             <div class="col-md-6">
                 <div class="mb-4">
@@ -58,6 +40,26 @@
                         <span class="input-group-text">m</span>
                     </div>
                     @error('working_width')
+                        <span class="invalid-feedback">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Merchant -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    @if(auth()->user()->hasRole('Admin'))
+                    <label class="form-label" for="merchant_id">
+                        <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.merchant') }}
+                    </label>
+                    <select class="form-select @error('merchant_id') is-invalid @enderror" id="merchant_id" wire:model="merchant_id">
+                        <option value="">{{ __('crud.aircrafts.select_merchant') }}</option>
+                        @foreach ($merchants as $id => $businessName)
+                            <option value="{{ $id }}">{{ $businessName }}</option>
+                        @endforeach
+                    </select>
+                    @endif
+                    @error('merchant_id')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div>
