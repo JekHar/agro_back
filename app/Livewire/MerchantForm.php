@@ -94,8 +94,8 @@ class MerchantForm extends Component
     }
 
     public function save()
-    {
-        $validatedData = $this->validate(
+    {   //dd($this->fiscal_number);
+        $validated= $this->validate(
             $this->rules()['rules'],
             $this->rules()['messages']
         );
