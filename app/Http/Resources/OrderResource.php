@@ -11,8 +11,8 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'orderNumber' => $this->order_number,
-            'totalHectares' => $this->total_hectares,
-            'totalAmount' => $this->total_amount,
+            'totalHectares' => (double) $this->total_hectares,
+            'totalAmount' => (double) $this->total_amount,
             'status' => $this->status,
             'scheduledDate' => $this->scheduled_date,
             'service' => [
