@@ -17,7 +17,12 @@ class LoginApiController extends Controller
 
         if (Auth::attempt($credentials)) {
             return response()->json([
-                'token' => $request->user()->createToken('api-token')->plainTextToken,
+                'success' => true,
+                'message' => 'Login successful',
+                'data' => [
+                    'token' => auth()->user()->createToken('authToken')->plainTextToken,
+                    'user' => auth()->user()
+                ]
             ]);
         }
 

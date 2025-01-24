@@ -1,4 +1,3 @@
-// C:\repos\AFANTEC\agro_back\routes\api.php
 <?php
 
 use Illuminate\Http\Request;
@@ -12,4 +11,3 @@ Route::get('/user', function (Request $request) {
 
 Route::post('login', [LoginApiController::class, 'Login']);
 Route::post('password/email', [PasswordResetController::class, 'sendResetLink']);
-
