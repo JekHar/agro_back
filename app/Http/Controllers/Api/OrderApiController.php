@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Http\Resources\OrdersResource;
+use App\Http\Resources\OrderResource;
 
 class OrderApiController extends Controller
 {
@@ -72,7 +74,7 @@ class OrderApiController extends Controller
             'success' => true,
             'message' => 'Listado de órdenes recuperado exitosamente.',
             'data' => [
-                'orders' => $orders->items(),
+                'orders' => OrdersResource::collection($orders),
                 'total' => $orders->total(),
                 'current_page' => $orders->currentPage(),
                 'per_page' => $orders->perPage()
@@ -154,7 +156,7 @@ class OrderApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Orden encontrada exitosamente.',
-            'data' => $order
+            'data' => new OrderResource($order),
         ]);
     }
 }
