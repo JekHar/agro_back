@@ -49,7 +49,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CategorySeeders::class,
             ProductSeeders::class,
-
+            LotSeeder::class,
+            OrderSeeder::class,
+            FlightSeeder::class
         ]);
         $user1->assignRole('Admin');
         $user2->assignRole('Tenant');
