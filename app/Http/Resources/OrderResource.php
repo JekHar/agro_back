@@ -19,13 +19,13 @@ class OrderResource extends JsonResource
                 'id' => $this->service->id,
                 'name' => $this->service->name,
                 'description' => $this->service->description,
-                'pricePerHectare' => $this->service->price_per_hectare,
+                'pricePerHectare' => (double) $this->service->price_per_hectare,
             ],
             'client' => [
                 'id' => $this->client->id,
                 'businessName' => $this->client->business_name,
                 'mainActivity' => $this->client->main_activity,
-                'fiscalNumber' => $this->client->fiscal_number,
+                'fiscalNumber' => (double) $this->client->fiscal_number,
                 'email' => $this->client->email,
                 'phone' => $this->client->phone,
             ],
@@ -51,7 +51,7 @@ class OrderResource extends JsonResource
                     'id' => $flight->id,
                     'orderId' => $flight->order_id,
                     'flightNumber' => $flight->flight_number,
-                    'totalHectares' => $flight->total_hectares,
+                    'totalHectares' => (double) $flight->total_hectares,
                     'status' => $flight->status,
                     'startedAt' => $flight->started_at,
                     'completedAt' => $flight->completed_at,
@@ -61,7 +61,7 @@ class OrderResource extends JsonResource
                             'id' => $product->id,
                             'flightId' => $product->flight_id,
                             'productId' => $product->product_id,
-                            'quantity' => $product->quantity,
+                            'quantity' => (double) $product->quantity,
                             'product' => [
                                 'id' => $product->product->id,
                                 'name' => $product->product->name,
@@ -77,7 +77,7 @@ class OrderResource extends JsonResource
                             'lot' => [
                                 'id' => $lot->lot->id,
                                 'number' => $lot->lot->number,
-                                'hectares' => $lot->lot->hectares,
+                                'hectares' => (double) $lot->lot->hectares,
                             ],
                         ];
                     }),
@@ -88,8 +88,8 @@ class OrderResource extends JsonResource
                     'id' => $orderProduct->id,
                     'orderId' => $orderProduct->order_id,
                     'productId' => $orderProduct->product_id,
-                    'clientProvidedQuantity' => $orderProduct->client_provided_quantity,
-                    'totalQuantityToUse' => $orderProduct->total_quantity_to_use,
+                    'clientProvidedQuantity' => (double) $orderProduct->client_provided_quantity,
+                    'totalQuantityToUse' => (double) $orderProduct->total_quantity_to_use,
                     'product' => [
                         'id' => $orderProduct->product->id,
                         'name' => $orderProduct->product->name,
@@ -101,11 +101,11 @@ class OrderResource extends JsonResource
                     'id' => $orderLot->id,
                     'orderId' => $orderLot->order_id,
                     'lotId' => $orderLot->lot_id,
-                    'hectares' => $orderLot->hectares,
+                    'hectares' => (double) $orderLot->hectares,
                     'lot' => [
                         'id' => $orderLot->lot->id,
                         'number' => $orderLot->lot->number,
-                        'hectares' => $orderLot->lot->hectares,
+                        'hectares' => (double) $orderLot->lot->hectares,
                     ],
                 ];
             }),
