@@ -107,6 +107,10 @@ class OrderResource extends JsonResource
                     'productId' => $orderProduct->product_id,
                     'clientProvidedQuantity' => (double) $orderProduct->client_provided_quantity,
                     'totalQuantityToUse' => (double) $orderProduct->total_quantity_to_use,
+                    'manualTotalQuantity' => (double) $orderProduct->manual_total_quantity,
+                    'calculatedDosage' => (double) $orderProduct->calculated_dosage,
+                    'productDifference' => (double) $orderProduct->product_difference,
+                    'differenceObservation' => $orderProduct->difference_observation,
                     'product' => [
                         'id' => $orderProduct->product->id,
                         'name' => $orderProduct->product->name,

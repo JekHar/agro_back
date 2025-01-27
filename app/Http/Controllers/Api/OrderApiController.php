@@ -138,7 +138,12 @@ class OrderApiController extends Controller
                     'order_id',
                     'product_id',
                     'client_provided_quantity',
-                    'total_quantity_to_use'
+                    'total_quantity_to_use',
+                    'manual_total_quantity',
+                    'calculated_dosage',
+                    'product_difference',
+                    'difference_observation'
+
                 ])->with('product:id,name,category_id,merchant_id,concentration,dosage_per_hectare,application_volume_per_hectare,stock');
             },
             'orderLots' => function ($query) {
