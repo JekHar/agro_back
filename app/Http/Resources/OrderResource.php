@@ -37,24 +37,26 @@ class OrderResource extends JsonResource
                 'id' => $this->aircraft->id,
                 'models' => $this->aircraft->models,
                 'brand' => $this->aircraft->brand,
+                'workingWidth' => (double) $this->aircraft->working_width,
             ],
             'pilot' => [
                 'id' => $this->pilot->id,
                 'name' => $this->pilot->name,
+                'email' => $this->pilot->email,
             ],
             'groundSupport' => [
-                'id' => $this->groundsupport->id,
+                'id' => (int) $this->groundsupport->id,
                 'name' => $this->groundsupport->name,
+                'email' => $this->groundsupport->email,
             ],
             'flights' => $this->flights->map(function ($flight) {
                 return [
-                    'id' => $flight->id,
-                    'orderId' => $flight->order_id,
-                    'flightNumber' => $flight->flight_number,
+                    'id' => (int) $flight->id,
+                    'orderId' => (int) $flight->order_id,
+                    'flightNumber' => (int) $flight->flight_number,
                     'totalHectares' => (double) $flight->total_hectares,
                     'status' => $flight->status,
-                    'startedAt' => $flight->started_at,
-                    'completedAt' => $flight->completed_at,
+                    'weatherConditions' => $flight->weather_conditions,
                     'observations' => $flight->observations,
                     'flightProducts' => $flight->flightProducts->map(function ($product) {
                         return [
@@ -65,6 +67,12 @@ class OrderResource extends JsonResource
                             'product' => [
                                 'id' => $product->product->id,
                                 'name' => $product->product->name,
+                                'categoryId' => $product->product->category_id,
+                                'merchantId' => $product->product->merchant_id,
+                                'concentration' => (double) $product->product->concentration,
+                                'dosagePerHectare' => (double) $product->product->dosage_per_hectare,
+                                'applicationVolumePerHectare' => (double) $product->product->application_volume_per_hectare,
+                                'stock' => (double) $product->product->stock,
                             ],
                         ];
                     }),
@@ -73,11 +81,20 @@ class OrderResource extends JsonResource
                             'id' => $lot->id,
                             'flightId' => $lot->flight_id,
                             'lotId' => $lot->lot_id,
-                            'hectaresToApply' => $lot->hectares_to_apply,
+                            'hectaresToApply' => (double) $lot->hectares_to_apply,
+                            'lotTotalHectares' => (double) $lot->lot_total_hectares,
                             'lot' => [
                                 'id' => $lot->lot->id,
                                 'number' => $lot->lot->number,
                                 'hectares' => (double) $lot->lot->hectares,
+                                'merchantId' => $lot->lot->merchant_id,
+                                'coordinates' => $lot->lot->coordinates->map(function ($coordinate) {
+                                    return [
+                                        'id' => $coordinate->id,
+                                        'latitude' => (double) $coordinate->latitude,
+                                        'longitude' => (double) $coordinate->longitude,
+                                    ];
+                                }),
                             ],
                         ];
                     }),
@@ -93,6 +110,12 @@ class OrderResource extends JsonResource
                     'product' => [
                         'id' => $orderProduct->product->id,
                         'name' => $orderProduct->product->name,
+                        'categoryId' => $orderProduct->product->category_id,
+                        'merchantId' => $orderProduct->product->merchant_id,
+                        'concentration' => (double) $orderProduct->product->concentration,
+                        'dosagePerHectare' => (double) $orderProduct->product->dosage_per_hectare,
+                        'applicationVolumePerHectare' => (double) $orderProduct->product->application_volume_per_hectare,
+                        'stock' => (double) $orderProduct->product->stock,
                     ],
                 ];
             }),
@@ -106,6 +129,14 @@ class OrderResource extends JsonResource
                         'id' => $orderLot->lot->id,
                         'number' => $orderLot->lot->number,
                         'hectares' => (double) $orderLot->lot->hectares,
+                        'merchantId' => $orderLot->lot->merchant_id,
+                        'coordinates' => $orderLot->lot->coordinates->map(function ($coordinate) {
+                            return [
+                                'id' => $coordinate->id,
+                                'latitude' => (double) $coordinate->latitude,
+                                'longitude' => (double) $coordinate->longitude,
+                            ];
+                        }),
                     ],
                 ];
             }),

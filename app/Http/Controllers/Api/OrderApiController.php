@@ -106,9 +106,9 @@ class OrderApiController extends Controller
             'service:id,name,description,price_per_hectare',
             'client:id,business_name,main_activity,fiscal_number,email,phone',
             'tenant:id,business_name',
-            'aircraft:id,models,brand',
-            'pilot:id,name',
-            'groundsupport:id,name',
+            'aircraft:id,models,brand,working_width',
+            'pilot:id,name,email',
+            'groundsupport:id,name,email',
             'flights' => function ($query) {
                 $query->select([
                     'id',
@@ -116,17 +116,19 @@ class OrderApiController extends Controller
                     'flight_number',
                     'total_hectares',
                     'status',
-                    'started_at',
-                    'completed_at',
+                    'weather_conditions',
                     'observations'
                 ])->with([
                     'flightProducts' => function ($q) {
                         $q->select(['id', 'flight_id', 'product_id', 'quantity'])
-                            ->with('product:id,name');
+                            ->with('product:id,name,category_id,merchant_id,concentration,dosage_per_hectare,application_volume_per_hectare,stock');
                     },
                     'flightLots' => function ($q) {
-                        $q->select(['id', 'flight_id', 'lot_id', 'hectares_to_apply'])
-                            ->with('lot:id,number,hectares');
+                        $q->select(['id', 'flight_id', 'lot_id', 'hectares_to_apply', 'lot_total_hectares'])
+                            ->with([
+                                'lot:id,number,hectares,merchant_id',
+                                'lot.coordinates:id,lot_id,latitude,longitude'
+                            ]);
                     }
                 ]);
             },
@@ -137,11 +139,14 @@ class OrderApiController extends Controller
                     'product_id',
                     'client_provided_quantity',
                     'total_quantity_to_use'
-                ])->with('product:id,name');
+                ])->with('product:id,name,category_id,merchant_id,concentration,dosage_per_hectare,application_volume_per_hectare,stock');
             },
             'orderLots' => function ($query) {
                 $query->select(['id', 'order_id', 'lot_id', 'hectares'])
-                    ->with('lot:id,number,hectares');
+                    ->with([
+                        'lot:id,number,hectares,merchant_id',
+                        'lot.coordinates:id,lot_id,latitude,longitude'
+                    ]);
             }
         ])->find($id);
 
