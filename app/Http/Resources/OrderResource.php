@@ -35,7 +35,7 @@ class OrderResource extends JsonResource
             ],
             'aircraft' => [
                 'id' => $this->aircraft->id,
-                'models' => $this->aircraft->models,
+                'model' => $this->aircraft->models,
                 'brand' => $this->aircraft->brand,
                 'workingWidth' => (double) $this->aircraft->working_width,
             ],
@@ -70,8 +70,8 @@ class OrderResource extends JsonResource
                                 'categoryId' => $product->product->category_id,
                                 'merchantId' => $product->product->merchant_id,
                                 'concentration' => (double) $product->product->concentration,
-                                'dosagePerHectare' => (double) $product->product->dosage_per_hectare,
-                                'applicationVolumePerHectare' => (double) $product->product->application_volume_per_hectare,
+                                'recommendedDosagePerHectare' => (double) $product->product->dosage_per_hectare,
+                                'recommendedApplicationVolumePerHectare' => (double) $product->product->application_volume_per_hectare,
                                 'stock' => (double) $product->product->stock,
                             ],
                         ];
@@ -113,8 +113,8 @@ class OrderResource extends JsonResource
                         'categoryId' => $orderProduct->product->category_id,
                         'merchantId' => $orderProduct->product->merchant_id,
                         'concentration' => (double) $orderProduct->product->concentration,
-                        'dosagePerHectare' => (double) $orderProduct->product->dosage_per_hectare,
-                        'applicationVolumePerHectare' => (double) $orderProduct->product->application_volume_per_hectare,
+                        'recommendedDosagePerHectare' => (double) $orderProduct->product->dosage_per_hectare,
+                        'recommendedApplicationVolumePerHectare' => (double) $orderProduct->product->application_volume_per_hectare,
                         'stock' => (double) $orderProduct->product->stock,
                     ],
                 ];
