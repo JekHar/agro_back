@@ -142,7 +142,8 @@ class OrderApiController extends Controller
                     'manual_total_quantity',
                     'calculated_dosage',
                     'product_difference',
-                    'difference_observation'
+                    'difference_observation',
+                    'manual_dosage_per_hectare',
 
                 ])->with('product:id,name,category_id,merchant_id,concentration,dosage_per_hectare,application_volume_per_hectare,stock');
             },

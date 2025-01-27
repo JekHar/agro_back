@@ -111,6 +111,7 @@ class OrderResource extends JsonResource
                     'calculatedDosage' => (double) $orderProduct->calculated_dosage,
                     'productDifference' => (double) $orderProduct->product_difference,
                     'differenceObservation' => $orderProduct->difference_observation,
+                    'manualDosagePerHectare' => (double) $orderProduct->manual_dosage_per_hectare,
                     'product' => [
                         'id' => $orderProduct->product->id,
                         'name' => $orderProduct->product->name,
