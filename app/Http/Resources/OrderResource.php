@@ -58,7 +58,7 @@ class OrderResource extends JsonResource
                     'status' => $flight->status,
                     'weatherConditions' => $flight->weather_conditions,
                     'observations' => $flight->observations,
-                    'flightProducts' => $flight->flightProducts->map(function ($product) {
+                    'products' => $flight->flightProducts->map(function ($product) {
                         return [
                             'id' => $product->id,
                             'flightId' => $product->flight_id,
@@ -76,7 +76,7 @@ class OrderResource extends JsonResource
                             ],
                         ];
                     }),
-                    'flightLots' => $flight->flightLots->map(function ($lot) {
+                    'lots' => $flight->flightLots->map(function ($lot) {
                         return [
                             'id' => $lot->id,
                             'flightId' => $lot->flight_id,
@@ -85,7 +85,7 @@ class OrderResource extends JsonResource
                             'lotTotalHectares' => (double) $lot->lot_total_hectares,
                             'lot' => [
                                 'id' => $lot->lot->id,
-                                'number' => $lot->lot->number,
+                                'numbering' => $lot->lot->number,
                                 'hectares' => (double) $lot->lot->hectares,
                                 'merchantId' => $lot->lot->merchant_id,
                                 'coordinates' => $lot->lot->coordinates->map(function ($coordinate) {
@@ -132,7 +132,7 @@ class OrderResource extends JsonResource
                     'hectares' => (double) $orderLot->hectares,
                     'lot' => [
                         'id' => $orderLot->lot->id,
-                        'number' => $orderLot->lot->number,
+                        'numbering' => $orderLot->lot->number,
                         'hectares' => (double) $orderLot->lot->hectares,
                         'merchantId' => $orderLot->lot->merchant_id,
                         'coordinates' => $orderLot->lot->coordinates->map(function ($coordinate) {
