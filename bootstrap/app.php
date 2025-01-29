@@ -4,6 +4,7 @@ use App\Http\Middleware\PermissionMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\HandleCors;
 use OwenIt\Auditing\AuditingServiceProvider;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -17,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'permissions' => 
                 PermissionMiddleware::class,  
-                AuditingServiceProvider::class,             
+                AuditingServiceProvider::class,
+                HandleCors::class          
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {})->create();

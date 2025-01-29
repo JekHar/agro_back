@@ -82,6 +82,7 @@ class MerchantsDataTable extends DataTable
             ]);
     }
 
+
     /**
      * Get the dataTable columns definition.
      */
