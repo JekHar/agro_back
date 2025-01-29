@@ -31,7 +31,7 @@ class OrderApiController extends Controller
             'client:id,business_name'
         ]);
 
-        if ($request->has('status')) {
+        if ($request->has('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
