@@ -22,6 +22,9 @@
                                 @endif
                                 <form class="js-validation-reset mt-4" action="{{ route('password.store') }}" method="POST">
                                     @csrf
+                                    <!-- Campo oculto para el token -->
+                                    <input type="hidden" name="token" value="{{ request()->token }}">
+
                                     <div class="mb-4">
                                         <input type="text" class="form-control form-control-lg form-control-alt @error('email') is-invalid @enderror" id="email" name="email" placeholder="{{ __('Email') }}" value="{{ old('email') }}" required autocomplete="email" autofocus>
                                         @error('email')
@@ -62,4 +65,3 @@
         </div>
     </div>
 @endsection
-
