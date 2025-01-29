@@ -25,11 +25,21 @@ class OrderApiController extends Controller
             'status',
             'scheduled_date',
             'service_id',
-            'client_id'
+            'client_id',
+            /* 'pilot_id',
+            'ground_support_id' */
         ])->with([
             'service:id,name',
             'client:id,business_name'
         ]);
+
+        /* if (auth()->user()->hasRole('Pilot')) {
+            $query->where('pilot_id', auth()->user()->id);
+        }
+
+        if (auth()->user()->hasRole('Ground Support')) {
+            $query->where('ground_support_id', auth()->user()->id);
+        } */
 
         if ($request->has('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
@@ -59,8 +69,7 @@ class OrderApiController extends Controller
             });
         }
 
-        $orders = $query->orderBy('scheduled_date', 'desc')
-            ->paginate($request->get('per_page', 15));
+        $orders = $query->orderBy('scheduled_date', 'desc')->get();
 
         if ($orders->isEmpty()) {
             return response()->json([
@@ -74,10 +83,7 @@ class OrderApiController extends Controller
             'success' => true,
             'message' => 'Listado de órdenes recuperado exitosamente.',
             'data' => [
-                'orders' => OrdersResource::collection($orders),
-                'total' => $orders->total(),
-                'current_page' => $orders->currentPage(),
-                'per_page' => $orders->perPage()
+                'orders' => OrdersResource::collection($orders)
             ]
         ]);
     }
