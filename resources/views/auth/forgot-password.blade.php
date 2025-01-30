@@ -11,7 +11,7 @@
                     <!-- Reminder Block -->
                     <div class="block block-rounded mb-0">
                         <div class="block-header block-header-default">
-                            <h3 class="block-title">{{ __('Reset Password') }}</h3>
+                            <h3 class="block-title">{{ __('Recuperar contraseña') }}</h3>
                             <div class="block-options">
                                 <a class="btn-block-option" href="{{ route('login') }}" data-bs-toggle="tooltip" data-bs-placement="left" title="Sign In">
                                     <i class="fa fa-sign-in-alt"></i>
@@ -22,7 +22,7 @@
                             <div class="p-sm-3 px-lg-4 px-xxl-5 py-lg-5">
                                 <h1 class="h2 mb-1">{{ config('app.name') }}</h1>
                                 <p class="fw-medium text-muted">
-                                    {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+                                    {{ __('¿Olvidó su contraseña? No hay problema. Ingrese su correo electrónico y le enviaremos un enlace para restablecer la contraseña.') }}
                                 </p>
                                 @if (session('status'))
                                     <div class="alert alert-success" role="alert">
@@ -42,7 +42,7 @@
                                     <div class="row mb-4">
                                         <div class="col-md-12">
                                             <button type="submit" class="btn w-100 btn-alt-primary">
-                                                <i class="fa fa-fw fa-envelope me-1 opacity-50"></i> {{ __('Request password reset') }}
+                                                <i class="fa fa-fw fa-envelope me-1 opacity-50"></i> {{ __('Recuperar contraseña') }}
                                             </button>
                                         </div>
                                     </div>

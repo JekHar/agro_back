@@ -11,7 +11,7 @@
                     <!-- Reminder Block -->
                     <div class="block block-rounded mb-0">
                         <div class="block-header block-header-default">
-                            <h3 class="block-title">{{ __('Reset Password') }}</h3>
+                            <h3 class="block-title">{{ __('Restablecer contraseña') }}</h3>
                         </div>
                         <div class="block-content">
                             <div class="p-sm-3 px-lg-4 px-xxl-5 py-lg-5">
@@ -44,7 +44,7 @@
                                     <div class="row mb-4">
                                         <div class="col-md-12">
                                             <button type="submit" class="btn w-100 btn-alt-primary">
-                                                <i class="fa fa-fw fa-envelope me-1 opacity-50"></i> {{ __('Reset password') }}
+                                                <i class="fa fa-fw fa-envelope me-1 opacity-50"></i> {{ __('Restablecer contraseña') }}
                                             </button>
                                         </div>
                                     </div>
