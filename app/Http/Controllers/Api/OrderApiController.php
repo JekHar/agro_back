@@ -176,4 +176,37 @@ class OrderApiController extends Controller
             'data' => new OrderResource($order),
         ]);
     }
+
+    public function updateStatus(Request $request, $orderId)
+    {
+        try {
+
+            $order = Order::find($orderId);
+
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Orden no encontrada.',
+                    'data' => null
+                ], 404);
+            }
+
+            $order->status = $request->status;
+            $order->update();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado de la orden actualizado exitosamente.',
+                'data' => [
+                    'status' => $order->status
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado de la orden.',
+                'data' => null
+            ], 500);
+        }
+    }
 }
