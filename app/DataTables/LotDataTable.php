@@ -60,12 +60,10 @@ class LotDataTable extends DataTable
             ])
             ->selectStyleSingle()
             ->buttons([
-                Button::make('excel'),
-                Button::make('csv'),
-                Button::make('pdf'),
-                Button::make('print'),
-                // Button::make('reset'),
-                // Button::make('reload')
+                Button::make('excel')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                Button::make('csv')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                Button::make('pdf')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                Button::make('print')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
             ]);
     }
 

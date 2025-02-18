@@ -1,0 +1,52 @@
+//
+// Maqapp Theme
+// --------------------------------------------------
+
+// Include base files
+@import 'base';
+
+// Generate color theme
+@include color-theme(
+  $theme-maqapp-primary,
+  $theme-maqapp-light,
+  $theme-maqapp-lighter,
+  $theme-maqapp-dark,
+  $theme-maqapp-darker,
+  $theme-maqapp-body-bg,
+  $theme-maqapp-body-bg-dark,
+  $theme-maqapp-body-bg-light,
+  $theme-maqapp-body-color,
+  $theme-maqapp-body-color-dark,
+  $theme-maqapp-body-color-light,
+  $theme-maqapp-link-color,
+  $theme-maqapp-link-hover-color,
+  $theme-maqapp-input-btn-focus-color,
+  $theme-maqapp-input-btn-focus-box-shadow,
+  $theme-maqapp-input-bg,
+  $theme-maqapp-input-color,
+  $theme-maqapp-input-border-color,
+  $theme-maqapp-input-focus-bg,
+  $theme-maqapp-input-focus-color,
+  $theme-maqapp-input-focus-border-color,
+  $theme-maqapp-header-bg,
+  $theme-maqapp-header-dark-bg,
+  $theme-maqapp-sidebar-bg,
+  $theme-maqapp-sidebar-dark-bg,
+  $theme-maqapp-side-overlay-bg
+);
+
+@include color-theme-dark(
+  $theme-maqapp-primary,
+  $theme-maqapp-light,
+  $theme-maqapp-lighter,
+  $theme-maqapp-dark,
+  $theme-maqapp-darker,
+  $theme-maqapp-body-bg,
+  $theme-maqapp-body-bg-dark,
+  $theme-maqapp-body-bg-light,
+  $theme-maqapp-body-color,
+  $theme-maqapp-body-color-dark,
+  $theme-maqapp-body-color-light,
+  $theme-maqapp-link-color,
+  $theme-maqapp-link-hover-color
+);
