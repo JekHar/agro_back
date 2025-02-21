@@ -22,7 +22,7 @@ class LoginApiController extends Controller
                 'data' => [
                     'token' => auth()->user()->createToken('authToken')->plainTextToken,
                     'user' => auth()->user(),
-                    'role' => auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Pilot') 
+                    'role' => auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Pilot') || auth()->user()->hasRole('Tenant')
                 ]
             ]);
         }
