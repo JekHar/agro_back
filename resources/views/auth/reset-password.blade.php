@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="row mb-4">
                                         <div class="col-md-12">
-                                            <button type="submit" class="btn w-100 btn-alt-primary">
+                                            <button type="submit" class="btn btn-sm btn-primary p-2 rounded-pill text-white" style="background-color: #FF6600; border: none; outline: none;">
                                                 <i class="fa fa-fw fa-envelope me-1 opacity-50"></i> {{ __('Restablecer contraseña') }}
                                             </button>
                                         </div>
