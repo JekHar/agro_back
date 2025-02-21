@@ -22,7 +22,6 @@
                                 @endif
                                 <form class="js-validation-reset mt-4" action="{{ route('password.store') }}" method="POST">
                                     @csrf
-                                    <!-- Campo oculto para el token -->
                                     <input type="hidden" name="token" value="{{ request()->token }}">
 
                                     <div class="mb-4">
