@@ -29,7 +29,7 @@
             </h3>
             <div class="block-options">
                 @can('categories.create')
-                <a href="{{ route('categories.create') }}" class="btn btn-sm btn-primary">
+                <a href="{{ route('categories.create') }}" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.categories.add') }}
                 </a>

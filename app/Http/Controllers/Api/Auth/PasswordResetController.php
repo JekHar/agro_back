@@ -18,6 +18,14 @@ class PasswordResetController extends Controller
             $request->only('email')
         );
 
+        if (!$status) {
+            return response()->json([
+                'message' => 'No se ha podido enviar el enlace de recuperación',
+                'status' => 'error'
+            ], 200);
+        }
+
+
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([
                 'message' => 'Se ha enviado el enlace de recuperación a tu correo',
@@ -26,8 +34,8 @@ class PasswordResetController extends Controller
         }
 
         return response()->json([
-            'message' => __($status),
-            'status' => 'error'
-        ], 400);
+            'message' =>  'Se ha enviado el enlace de recuperación a tu correo',
+            'status' => 'success'
+        ], 200);
     }
 }

@@ -210,3 +210,44 @@ $theme-smooth-header-dark-bg: rgba($theme-smooth-darker, 1) !default;
 $theme-smooth-sidebar-bg: $white !default;
 $theme-smooth-sidebar-dark-bg: $theme-smooth-darker !default;
 $theme-smooth-side-overlay-bg: $white !default;
+
+
+// Maqapp Theme
+
+$theme-maqapp-primary:  #FF6600 !default;
+$theme-maqapp-light: lighten($theme-maqapp-primary, 20%) !default;
+$theme-maqapp-lighter: lighten($theme-maqapp-primary, 40%) !default;
+$theme-maqapp-dark:  #1d1a18 !default;
+$theme-maqapp-darker:  #1d1a18 !default;
+
+$theme-maqapp-body-bg: #f0f1f2 !default;
+$theme-maqapp-body-bg-dark: darken($theme-maqapp-body-bg, 4.5%) !default;
+$theme-maqapp-body-bg-light: lighten($theme-maqapp-body-bg, 3%) !default;
+
+$theme-maqapp-body-color: $theme-maqapp-dark !default;
+$theme-maqapp-body-color-dark: $theme-maqapp-darker !default;
+$theme-maqapp-body-color-light: $theme-maqapp-body-bg-dark !default;
+
+$theme-maqapp-link-color: $theme-maqapp-primary !default;
+$theme-maqapp-link-hover-color: darken($theme-maqapp-link-color, 20%) !default;
+
+$theme-maqapp-input-btn-focus-color: rgba($theme-maqapp-primary, 0.25) !default;
+$theme-maqapp-input-btn-focus-box-shadow: 0 0 0 $input-btn-focus-width
+  $theme-maqapp-input-btn-focus-color !default;
+
+$theme-maqapp-input-bg: $white !default;
+$theme-maqapp-input-color: $theme-maqapp-body-color !default;
+$theme-maqapp-input-border-color: darken($theme-maqapp-body-bg, 8%) !default;
+
+$theme-maqapp-input-focus-bg: $white !default;
+$theme-maqapp-input-focus-color: $theme-maqapp-body-color-dark !default;
+$theme-maqapp-input-focus-border-color: lighten(
+  $theme-maqapp-primary,
+  25%
+) !default;
+
+$theme-maqapp-header-bg: rgba($white, 0.75) !default;
+$theme-maqapp-header-dark-bg: rgba($theme-maqapp-darker, 1) !default;
+$theme-maqapp-sidebar-bg: $white !default;
+$theme-maqapp-sidebar-dark-bg: $theme-maqapp-darker !default;
+$theme-maqapp-side-overlay-bg: $white !default;

@@ -149,7 +149,7 @@
 
             <div class="row">
                 <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
                         <i class="fa fa-fw fa-{{ $isEditing ? 'save' : 'plus' }} me-1"></i>
                         {{ $isEditing ? __('crud.products.actions.edit') : __('crud.products.add') }}
                     </button>

@@ -21,11 +21,22 @@ class LoginApiController extends Controller
                 'message' => 'Login successful',
                 'data' => [
                     'token' => auth()->user()->createToken('authToken')->plainTextToken,
-                    'user' => auth()->user()
+                    'user' => auth()->user(),
+                    'role' => auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Pilot') || auth()->user()->hasRole('Tenant')
                 ]
             ]);
         }
 
         return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    public function logout(Request $request) 
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout successful',
+            'data' => null
+        ]);
     }
 }

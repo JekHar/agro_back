@@ -191,7 +191,7 @@
 
                 <!-- Botones -->
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
                         <i class="fa fa-save me-1"></i>
                         {{ $isEditing ? __('crud.merchants.actions.edit') : __('crud.merchants.actions.create') }}
                     </button>

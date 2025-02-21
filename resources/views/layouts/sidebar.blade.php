@@ -6,7 +6,12 @@
             <span class="smini-visible">
                 <i class="fa fa-circle-notch text-primary"></i>
             </span>
-            <span class="smini-hide fs-5 tracking-wider">Maq<span class="fw-normal">App</span></span>
+            <div>
+                <span class="smini-hide w-100 d-block">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo" class="w-100 h-auto" style="max-width: 200px;">
+                </span>
+            </div>
+
         </a>
 
         <!-- Extra -->
@@ -58,11 +63,11 @@
                 </li> --}}
 
                 <!-- Merchants Section -->
-                 @can('clients.merchants.index')
+                @can('clients.merchants.index')
                 <li class="nav-main-heading">{{ __('crud.sidebar.managemt') }}</li>
                 <li class="nav-main-item{{ request()->is('clients/*') || request()->is('tenants/*') ? ' open' : '' }}">
-                @endcan
-                @can('clients.merchants.index')
+                    @endcan
+                    @can('clients.merchants.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('clients/*') ? ' active' : '' }}"
                         href="{{ route('clients.merchants.index') }}">

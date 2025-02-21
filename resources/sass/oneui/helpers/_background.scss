@@ -182,3 +182,12 @@
 @include bg-variant(".bg-smooth-darker", $theme-smooth-darker);
 @include bg-variant(".bg-smooth-light", $theme-smooth-light);
 @include bg-variant(".bg-smooth-lighter", $theme-smooth-lighter);
+
+// Maqapp Color Theme
+@include bg-variant(".bg-smooth", $theme-smooth-primary);
+@include bg-variant(".bg-smooth-op", rgba($theme-smooth-primary, 0.75));
+@include bg-variant(".bg-smooth-dark", $theme-smooth-dark);
+@include bg-variant(".bg-smooth-dark-op", rgba($theme-smooth-dark, 0.8));
+@include bg-variant(".bg-smooth-darker", $theme-smooth-darker);
+@include bg-variant(".bg-smooth-light", $theme-smooth-light);
+@include bg-variant(".bg-smooth-lighter", $theme-smooth-lighter);

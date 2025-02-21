@@ -60,7 +60,7 @@
         <h6 class="card-title">{{ __('crud.lots.fields.coordinates') }}</h6>
         <pre id="coordinates" wire:ignore></pre>
     </div>
-    <button wire:click="saveLot" class="btn btn-primary">
+    <button wire:click="saveLot" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
         {{ __('crud.lots.actions.save') }}
     </button>
 </div>
