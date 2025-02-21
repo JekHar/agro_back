@@ -32,7 +32,7 @@
             </h3>
             <div class="block-options">
                 @can('products.create')
-                <a href="{{ route('products.create') }}" class="btn btn-sm btn-primary">
+                <a href="{{ route('products.create') }}" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
                     <i class="fa fa-plus me-1"></i>
                     {{ __('crud.products.add') }}
                 </a>

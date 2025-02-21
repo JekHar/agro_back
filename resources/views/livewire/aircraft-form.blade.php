@@ -95,7 +95,7 @@
         </div>
 
         <div class="text-end">
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
                 <i class="fa fa-fw fa-{{ $isEditing ? 'save' : 'plus' }} me-1"></i>
                 {{ $isEditing ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add') }}
             </button>

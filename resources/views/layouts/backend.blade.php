@@ -1,29 +1,31 @@
 <!doctype html>
 <html lang="{{ config('app.locale') }}">
 
+
 <head>
     <meta charset="utf-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
-    <title>MaqApp</title>
+    <title>Maqapp</title>
 
     <meta name="description" content="Sistema de gestion para ventas mayoristas">
     <meta name="author" content="MaqApp">
     <meta name="robots" content="index, follow">
 
     <!-- Icons -->
-    <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.png') }}">
-    <link rel="icon" sizes="192x192" type="image/png" href="{{ asset('media/favicons/favicon-192x192.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('media/favicons/apple-touch-icon-180x180.png') }}">
+    <link rel="shortcut icon" href="{{ asset('media/favicons/isotype.png') }}">
+    <link rel="icon" sizes="192x192" type="image/png" href="{{ asset('media/favicons/isotype.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('media/favicons/isotype.png') }}">
 
 
     <!-- Modules -->
-    @vite(['resources/sass/main.scss'])
+    @vite(['resources/sass/main.scss', 'resources/sass/oneui/themes/maqapp.scss'])
+
     <link rel="stylesheet" href="{{ asset('js/plugins/sweetalert2/sweetalert2.min.css') }}">
     @livewireStyles
     @stack('styles')
-    <link rel="stylesheet" href="{{ asset('js/plugins/sweetalert2/sweetalert2.min.css') }}">
+    
 </head>
 
 <body>
@@ -169,7 +171,7 @@
                         </div>
                     </div>
                     <!-- END User Dropdown -->
-
+                    
                     <!-- Notifications Dropdown -->
                     {{-- <div class="dropdown d-inline-block ms-2">--}}
                     {{-- <button type="button" class="btn btn-sm btn-alt-secondary" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
@@ -308,11 +310,8 @@
         <footer id="page-footer" class="bg-body-light">
             <div class="content py-3">
                 <div class="row fs-sm">
-                    <div class="col-sm-6 order-sm-2 py-1 text-center text-sm-end">
+                    <div class="col-12 py-1 text-end">
                         @include('partials.copyright')
-                    </div>
-                    <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-start">
-                        <b>{{ config('app.name') }}</b> &copy; <span data-toggle="year-copy"></span>
                     </div>
                 </div>
             </div>

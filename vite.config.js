@@ -8,11 +8,12 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/main.scss',
-                'resources/sass/oneui/themes/amethyst.scss',
-                'resources/sass/oneui/themes/city.scss',
-                'resources/sass/oneui/themes/flat.scss',
-                'resources/sass/oneui/themes/modern.scss',
-                'resources/sass/oneui/themes/smooth.scss',
+                 'resources/sass/oneui/themes/amethyst.scss',
+                 'resources/sass/oneui/themes/city.scss',
+                 'resources/sass/oneui/themes/flat.scss',
+                 'resources/sass/oneui/themes/modern.scss',
+                 'resources/sass/oneui/themes/smooth.scss',
+                'resources/sass/oneui/themes/maqapp.scss',
                 'resources/js/oneui/app.js',
                 'resources/js/pages/datatables.js',
                 ...glob.sync('resources/js/input-validators/*.js'),
