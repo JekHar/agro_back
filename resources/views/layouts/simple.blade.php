@@ -15,7 +15,7 @@
   <link rel="icon" sizes="192x192" type="image/png" href="{{ asset('media/favicons/isotype.png') }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('media/favicons/isotype.png') }}">
   @yield('css')
-  @vite(['resources/sass/main.scss', 'resources/js/oneui/app.js'])
+  @vite(['resources/sass/main.scss', 'resources/sass/oneui/themes/maqapp.scss'])
   <script src="{{ asset('js/lib/jquery.min.js') }}"></script>
   <script src="{{ asset('js/setTheme.js') }}"></script>
   @yield('js')
