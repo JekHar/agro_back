@@ -79,13 +79,8 @@ class MerchantForm extends Component
             $this->address = $this->merchant->address;
 
             if (auth()->user()->hasRole('Admin')) {
-                $this->merchant_id = null;
+                $this->merchant_id = $this->merchant->merchant_id;
             } elseif (auth()->user()->hasRole('Tenant')) {
-                $this->merchant_id = auth()->user()->merchant_id;
-            }
-        } else {
-            $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
-            if (auth()->user()->hasRole('Tenant')) {
                 $this->merchant_id = auth()->user()->merchant_id;
             }
         }
@@ -94,52 +89,62 @@ class MerchantForm extends Component
     }
 
     public function save()
-
-    {   
-        $validatedData = $this->validate(
-
+{   
+    try {
+        if ($this->isClient && !auth()->user()->can('clients.merchants.create')) {
+            throw new \Exception('No tienes permiso para crear clientes');
+        } elseif (!$this->isClient && !auth()->user()->can('tenants.merchants.create')) {
+            throw new \Exception('No tienes permiso para crear empresas');
+        }
+        
+        $validated = $this->validate(
             $this->rules()['rules'],
             $this->rules()['messages']
         );
+        
+        $validated['business_name'] = $this->business_name;
+        $validated['trade_name'] = $this->trade_name;
+        $validated['fiscal_number'] = $this->fiscal_number;
+        $validated['main_activity'] = $this->main_activity;
+        $validated['email'] = $this->email;
+        $validated['phone'] = $this->phone;
+        $validated['locality'] = $this->locality;
+        $validated['address'] = $this->address;
 
-        try {
-            if (! auth()->user()->can('clients.merchants.create')) {
-                throw new \Exception('No tienes permiso para crear clientes');
-            }
-            if (auth()->user()->hasRole('Admin')) {
-                $validated['merchant_id'] = $this->merchant_id;
-                $validated['merchant_type'] = $this->merchant_type;
-            }
-            if (auth()->user()->hasRole('Tenant')) {
-                $validated['merchant_id'] = auth()->user()->merchant_id;
-                $validated['merchant_type'] = $this->merchant_type;
-            }
-            if ($this->merchant) {
-                $this->merchant->update($validated);
-                $message = $validated['merchant_type'] === 'client' ? 'Cliente modificado exitosamente' : 'Empresa modificada exitosamente';
-            } else {
-                Merchant::create($validated);
-                $message = $validated['merchant_type'] === 'client' ? 'Cliente creado exitosamente' : 'Empresa creada exitosamente';
-            }
+        if (auth()->user()->hasRole('Admin')) {
+            $validated['merchant_id'] = $this->merchant_id;
+            $validated['merchant_type'] = $this->merchant_type;
+        } elseif (auth()->user()->hasRole('Tenant')) {
+            $validated['merchant_id'] = auth()->user()->merchant_id;
+            $validated['merchant_type'] = $this->merchant_type;
+        }
+        
+        if ($this->merchant) {
+            $this->merchant->update($validated);
+            $message = $validated['merchant_type'] === 'client' ? 'Cliente modificado exitosamente' : 'Empresa modificada exitosamente';
+        } else {
+            Merchant::create($validated);
+            $message = $validated['merchant_type'] === 'client' ? 'Cliente creado exitosamente' : 'Empresa creada exitosamente';
+        }
 
-            $route = $this->isClient
+        $route = $this->isClient
             ? 'clients.merchants.index'
             : 'tenants.merchants.index';
 
-            $this->dispatch('swal', [
-                'title' => 'Éxito!',
-                'message' => $message,
-                'icon' => 'success',
-                'redirect' => route($route),
-            ]);
-        } catch (\Exception $e) {
-            $this->dispatch('swal', [
-                'title' => ('Error'),
-                'message' => $e->getMessage(),
-                'icon' => 'error',
-            ]);
-        }
+        $this->dispatch('swal', [
+            'title' => 'Éxito!',
+            'message' => $message,
+            'icon' => 'success',
+            'redirect' => route($route),
+        ]);
+    } catch (\Exception $e) {
+        $this->dispatch('swal', [
+            'title' => ('Error'),
+            'message' => $e->getMessage(),
+            'icon' => 'error',
+        ]);
     }
+}
 
     public function render()
     {
