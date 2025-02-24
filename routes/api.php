@@ -11,13 +11,14 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+
     Route::get('orders', [OrderApiController::class, 'index']);
     Route::get('orders/{order}', [OrderApiController::class, 'show']);
     Route::put('orders/{orderId}', [OrderApiController::class, 'updateStatus']);
 
+
     Route::post('logout', [LoginApiController::class, 'logout']);
 });
-
 Route::post('login', [LoginApiController::class, 'Login']);
-Route::post('password/email', [PasswordResetController::class, 'sendResetLink']);
 
+Route::post('password/email', [PasswordResetController::class, 'sendResetLink']);
