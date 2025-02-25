@@ -82,6 +82,11 @@ class MerchantForm extends Component
                 $this->merchant_id = $this->merchant->merchant_id;
             } elseif (auth()->user()->hasRole('Tenant')) {
                 $this->merchant_id = auth()->user()->merchant_id;
+            } 
+        } else {
+            $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
+            if (auth()->user()->hasRole('Tenant')) {
+                $this->merchant_id = auth()->user()->merchant_id;
             }
         }
         $this->isClient = $isClient;

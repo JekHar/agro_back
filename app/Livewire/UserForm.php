@@ -49,9 +49,13 @@ class UserForm extends Component
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::TENANT)
             ->pluck('business_name', 'id');
-        $this->roles = Role::whereIn('name', ['Pilot', 'Ground Support'])
+        if (auth()->user()->hasRole('Admin')) {
+        $this->roles = Role::whereIn('name', ['Tenant', 'Pilot', 'Ground Support'])
             ->pluck('name', 'id');
-
+        } else {
+            $this->roles = Role::whereIn('name', ['Pilot', 'Ground Support'])
+            ->pluck('name', 'id');
+        }
         if ($userId) {
             $this->isEditing = true;
             $this->userId = $userId;

@@ -30,7 +30,7 @@ class UserRequest extends FormRequest
                 'required',
                 'exists:roles,id',
                 Rule::in(
-                    \Spatie\Permission\Models\Role::whereIn('name', ['Pilot', 'Ground Support'])
+                    \Spatie\Permission\Models\Role::whereIn('name', ['Tenant', 'Pilot', 'Ground Support'])
                         ->pluck('id')
                         ->toArray()
                 ),
