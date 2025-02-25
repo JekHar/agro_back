@@ -68,7 +68,7 @@ class MerchantController extends Controller
     {
         $merchant->delete();
 
-        return redirect()->route($this->getRedirectRoute(request()) . '.merchants.index')->with('success', 'Merchant deleted successfully.');
+        return redirect()->route($this->getRedirectRoute(request()) . '.index')->with('success', 'Merchant deleted successfully.');
     }
 
     /**
