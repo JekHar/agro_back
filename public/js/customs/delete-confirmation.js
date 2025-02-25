@@ -12,8 +12,8 @@ function initDeleteConfirmation() {
                 text: `¿Estás seguro de eliminar ${itemTitle}?`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#ff6600',
+                cancelButtonColor: '#231f1d',
                 confirmButtonText: 'Si, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
