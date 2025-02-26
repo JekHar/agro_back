@@ -4,8 +4,11 @@ namespace App\Livewire;
 
 use App\Http\Requests\MerchantRequest;
 use App\Models\Merchant;
+use App\Models\User;
 use App\Types\MerchantType;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Spatie\Permission\Models\Role;
 
 class MerchantForm extends Component
 {
@@ -94,62 +97,90 @@ class MerchantForm extends Component
     }
 
     public function save()
-{   
-    try {
-        if ($this->isClient && !auth()->user()->can('clients.merchants.create')) {
-            throw new \Exception('No tienes permiso para crear clientes');
-        } elseif (!$this->isClient && !auth()->user()->can('tenants.merchants.create')) {
-            throw new \Exception('No tienes permiso para crear empresas');
-        }
-        
-        $validated = $this->validate(
-            $this->rules()['rules'],
-            $this->rules()['messages']
-        );
-        
-        $validated['business_name'] = $this->business_name;
-        $validated['trade_name'] = $this->trade_name;
-        $validated['fiscal_number'] = $this->fiscal_number;
-        $validated['main_activity'] = $this->main_activity;
-        $validated['email'] = $this->email;
-        $validated['phone'] = $this->phone;
-        $validated['locality'] = $this->locality;
-        $validated['address'] = $this->address;
+    {   
+        try {
+            if ($this->isClient && !auth()->user()->can('clients.merchants.create')) {
+                throw new \Exception('No tienes permiso para crear clientes');
+            } elseif (!$this->isClient && !auth()->user()->can('tenants.merchants.create')) {
+                throw new \Exception('No tienes permiso para crear empresas');
+            }
+            
+            $validated = $this->validate(
+                $this->rules()['rules'],
+                $this->rules()['messages']
+            );
+            
+            $validated['business_name'] = $this->business_name;
+            $validated['trade_name'] = $this->trade_name;
+            $validated['fiscal_number'] = $this->fiscal_number;
+            $validated['main_activity'] = $this->main_activity;
+            $validated['email'] = $this->email;
+            $validated['phone'] = $this->phone;
+            $validated['locality'] = $this->locality;
+            $validated['address'] = $this->address;
 
-        if (auth()->user()->hasRole('Admin')) {
-            $validated['merchant_id'] = $this->merchant_id;
-            $validated['merchant_type'] = $this->merchant_type;
-        } elseif (auth()->user()->hasRole('Tenant')) {
-            $validated['merchant_id'] = auth()->user()->merchant_id;
-            $validated['merchant_type'] = $this->merchant_type;
-        }
-        
-        if ($this->merchant) {
-            $this->merchant->update($validated);
-            $message = $validated['merchant_type'] === 'client' ? 'Cliente modificado exitosamente' : 'Empresa modificada exitosamente';
-        } else {
-            Merchant::create($validated);
-            $message = $validated['merchant_type'] === 'client' ? 'Cliente creado exitosamente' : 'Empresa creada exitosamente';
-        }
+            if (auth()->user()->hasRole('Admin')) {
+                $validated['merchant_id'] = $this->merchant_id;
+                $validated['merchant_type'] = $this->merchant_type;
+            } elseif (auth()->user()->hasRole('Tenant')) {
+                $validated['merchant_id'] = auth()->user()->merchant_id;
+                $validated['merchant_type'] = $this->merchant_type;
+            }
+            
+            if ($this->merchant) {
+                $this->merchant->update($validated);
+                $merchant = $this->merchant;
+                $message = $validated['merchant_type'] === 'client' ? 'Cliente modificado exitosamente' : 'Empresa modificada exitosamente';
+            } else {
+                $merchant = Merchant::create($validated);
 
-        $route = $this->isClient
-            ? 'clients.merchants.index'
-            : 'tenants.merchants.index';
+                if ($validated['email']) {
+                    $existingUser = User::where('email', $validated['email'])->first();
+                    
+                    if (!$existingUser) {
 
-        $this->dispatch('swal', [
-            'title' => 'Éxito!',
-            'message' => $message,
-            'icon' => 'success',
-            'redirect' => route($route),
-        ]);
-    } catch (\Exception $e) {
-        $this->dispatch('swal', [
-            'title' => ('Error'),
-            'message' => $e->getMessage(),
-            'icon' => 'error',
-        ]);
+                        $roleName = 'Tenant';
+                        if ($validated['merchant_type'] === 'client') {
+                            $roleName = 'Client';
+                        }
+                        
+                        $role = Role::where('name', $roleName)->first();
+                        
+                        if ($role) {
+                            $user = User::create([
+                                'name' => $validated['business_name'], 
+                                'email' => $validated['email'],
+                                'password' => Hash::make('password'), 
+                                'merchant_id' => $merchant->id,
+                            ]);
+                            
+
+                            $user->assignRole($role);
+                        }
+                    }
+                }
+                
+                $message = $validated['merchant_type'] === 'client' ? 'Cliente creado exitosamente' : 'Empresa creada exitosamente';
+            }
+
+            $route = $this->isClient
+                ? 'clients.merchants.index'
+                : 'tenants.merchants.index';
+
+            $this->dispatch('swal', [
+                'title' => 'Éxito!',
+                'message' => $message,
+                'icon' => 'success',
+                'redirect' => route($route),
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('swal', [
+                'title' => ('Error'),
+                'message' => $e->getMessage(),
+                'icon' => 'error',
+            ]);
+        }
     }
-}
 
     public function render()
     {
