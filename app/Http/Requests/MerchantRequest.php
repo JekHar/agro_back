@@ -39,8 +39,8 @@ class MerchantRequest extends FormRequest
                 ? ['required', 'exists:merchants,id']
                 : ['nullable', 'exists:merchants,id'],
             'merchant_type' => ['required', new Enum(MerchantType::class)],
-            'email' => ['required', 'email', 'max:80'],
-            'phone' => ['required', 'string', 'max:20'],
+            'email' => ['required', 'email', 'max:80', Rule::unique('merchants', 'email')->ignore($this->merchantId)],
+            'phone' => ['required', 'string', 'max:20', Rule::unique('merchants', 'phone')->ignore($this->merchantId)],
             'locality' => ['required', 'string', 'max:120'],
             'address' => ['required', 'string', 'max:120'],
         ];

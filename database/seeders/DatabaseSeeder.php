@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,49 +14,67 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        if (App::environment('production')) {
+            $this->call([
+                RolesSeeder::class,
+                PermissionsSeeder::class,
+                RoleHasPermissionsSeeder::class,
+            ]);
 
-        $user1 = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'),
-        ]);
+            // Crear usuario admin en producción
+            $admin = User::create([
+                'name' => 'Admin User',
+                'email' => 'admin@example.com', 
+                'password' => Hash::make('password'),
+            ]);
 
-        $user2 = User::factory()->create([
-            'name' => 'Test Tenant User',
-            'email' => 'tenant@example.com',
-            'password' => bcrypt('password'),
-        ]);
+            $admin->assignRole('Admin');
 
-        $user3 = User::factory()->create([
-            'name' => 'Test Pilot User',
-            'email' => 'pilot@example.com',
-            'password' => bcrypt('password'),
-        ]);
+        } else {
+           
+            $this->call([
+                RolesSeeder::class,
+                PermissionsSeeder::class,
+                RoleHasPermissionsSeeder::class,
+                MerchantSeeder::class,
+                ServiceSeeder::class,
+                AircraftSeeder::class,
+                UserSeeder::class,
+                CategorySeeders::class,
+                ProductSeeders::class,
+                LotSeeder::class,
+                OrderSeeder::class,
+                FlightSeeder::class
+            ]);
 
-        $user4 = User::factory()->create([
-            'name' => 'Test Ground Support User',
-            'email' => 'ground@example.com',
-            'password' => bcrypt('password'),
-        ]);
+            $user1 = User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'password' => Hash::make('password'),
+            ]);
 
-        $this->call([
-            RolesSeeder::class,
-            PermissionsSeeder::class,
-            RoleHasPermissionsSeeder::class,
-            MerchantSeeder::class,
-            ServiceSeeder::class,
-            AircraftSeeder::class,
-            UserSeeder::class,
-            CategorySeeders::class,
-            ProductSeeders::class,
-            LotSeeder::class,
-            OrderSeeder::class,
-            FlightSeeder::class
-        ]);
-        $user1->assignRole('Admin');
-        $user2->assignRole('Tenant');
-        $user3->assignRole('Pilot');
-        $user4->assignRole('Ground Support');
+            $user2 = User::factory()->create([
+                'name' => 'Test Tenant User',
+                'email' => 'tenant@example.com',
+                'password' => Hash::make('password'),
+            ]);
+
+            $user3 = User::factory()->create([
+                'name' => 'Test Pilot User',
+                'email' => 'pilot@example.com',
+                'password' => Hash::make('password'),
+            ]);
+
+            $user4 = User::factory()->create([
+                'name' => 'Test Ground Support User',
+                'email' => 'ground@example.com',
+                'password' => Hash::make('password'),
+            ]);
+
+            $user1->assignRole('Admin');
+            $user2->assignRole('Tenant');
+            $user3->assignRole('Pilot');
+            $user4->assignRole('Ground Support');
+        }
     }
 }
