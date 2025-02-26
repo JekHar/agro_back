@@ -1,15 +1,19 @@
 <div>
     <div id="map" style="height: 600px;" wire:ignore></div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="mb-3">
-                <div class="btn-group">
-                    <button onclick="startDrawing()" class="btn btn-primary">{{ __('crud.lots.actions.draw') }}</button>
-                    <button onclick="exportKML()" class="btn btn-success">{{ __('crud.lots.actions.export') }}</button>
-                    <button onclick="importKML()" class="btn btn-success">{{ __('crud.lots.actions.import') }}</button>
-                </div>
-            </div>
+    <div class="d-flex flex-row justify-content-between mb-3 mt-3">
+        <div class="btn-group">
+            <button onclick="startDrawing()" class="btn btn-primary text-white">
+               <i class="fa fa-pencil"></i> {{ __('crud.lots.actions.draw') }}
+            </button>
+        </div>
+        <div class="btn-group">
+            <button onclick="exportKML()" class="btn btn-success">
+                <i class="fas fa-download"></i> {{ __('crud.lots.actions.export') }}
+            </button>
+            <button onclick="importKML()" class="btn btn-success">
+                <i class="fas fa-upload"></i> {{ __('crud.lots.actions.import') }}
+            </button>
         </div>
     </div>
 
@@ -56,9 +60,10 @@
             <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
-
-        <h6 class="card-title">{{ __('crud.lots.fields.coordinates') }}</h6>
-        <pre id="coordinates" wire:ignore></pre>
+        @if( config('app.debug') )
+            <h6 class="card-title">{{ __('crud.lots.fields.coordinates') }}</h6>
+            <pre id="coordinates" wire:ignore></pre>
+        @endif
     </div>
     <button wire:click="saveLot" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
         {{ __('crud.lots.actions.save') }}
