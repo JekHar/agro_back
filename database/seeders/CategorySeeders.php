@@ -12,9 +12,19 @@ class CategorySeeders extends Seeder
      */
     public function run(): void
     {
+        $categories = [
+            'Adherente' => 'Productos que mejoran la adhesión y efectividad de agroquímicos',
+            'Fungicida' => 'Productos para el control y prevención de enfermedades fúngicas',
+            'Insecticida' => 'Productos para el control de plagas e insectos',
+            'Aceite' => 'Aceites agrícolas para diversos usos',
+            'Herbicida' => 'Productos para el control de malezas y hierbas no deseadas',
+        ];
 
-        Category::factory(5)->create()->each(function ($category) {
-            Category::factory(3)->withParent($category)->create();
-        });
+        foreach ($categories as $name => $description) {
+            Category::create([
+                'name' => $name,
+                'description' => $description,
+            ]);
+        }
     }
 }
