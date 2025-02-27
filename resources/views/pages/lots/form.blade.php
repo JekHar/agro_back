@@ -17,8 +17,8 @@
 
 @section('content')
 
-<x-hero :title="isset($id) ? __('crud.lots.actions.edit') : __('crud.lots.add')"
-    :subtitle="isset($id) ? __('crud.lots.actions.edit') : __('crud.lots.form')"
+<x-hero :title="__('crud.lots.plural')"
+    :subtitle="__('crud.lots.form')"
     :breadcrumbs="[
         [
             'label' => __('crud.lots.breadcrumbs.home'),

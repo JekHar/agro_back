@@ -1,8 +1,8 @@
 @extends('layouts.backend')
 @section('content')
 
-<x-hero :title="isset($id) ? __('crud.categories.actions.edit') : __('crud.categories.add')"
-    :subtitle="isset($id) ? __('crud.categories.actions.edit') : __('crud.categories.form')"
+<x-hero :title="__('crud.categories.plural')"
+    :subtitle="__('crud.categories.form')"
     :breadcrumbs="[
         [
             'label' => __('crud.categories.breadcrumbs.catalog'),

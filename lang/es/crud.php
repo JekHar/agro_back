@@ -137,8 +137,9 @@ return [
     'services' => [
         'singular' => 'Servicio',
         'plural' => 'Servicios',
+        'form' => 'Formulario de Servicio',
         'services_list' => 'Lista de Servicios',
-        'add' => 'Agregar Servicios',
+        'add' => 'Agregar Servicio',
         'select_merchant' => 'Seleccionar Empresa',
         'fields' => [
             'name' => 'Nombre',
@@ -166,8 +167,9 @@ return [
     'products' => [
         'singular' => 'Producto',
         'plural' => 'Productos',
-        'products list' => 'Lista de Productos',
-        'add' => 'Agregar productos',
+        'products list' => 'Lista de Producto',
+        'form' => 'Formulario de Producto',
+        'add' => 'Agregar producto',
         'updated' => 'Producto actualizado exitosamente',
         'success' => 'Producto creado exitosamente',
         'select_category' => 'Seleccionar Categoría',
@@ -183,14 +185,14 @@ return [
             'updated_at' => 'Actualizado en',
         ],
         'actions' => [
-            'create' => 'Crear productos',
-            'edit' => 'Editar productos',
-            'delete' => 'Eliminar productos',
+            'create' => 'Crear producto',
+            'edit' => 'Editar producto',
+            'delete' => 'Eliminar producto',
         ],
         'breadcrumbs' => [
             'home' => 'Inicio',
             'catalog' => 'Catálogo',
-            'products' => 'Productos',
+            'products' => 'Producto',
             'create' => 'Crear Producto',
             'edit' => 'Editar Producto',
         ],
@@ -199,8 +201,9 @@ return [
     'aircrafts' => [
         'singular' => 'Aeronave',
         'plural' => 'Aeronaves',
+        'form' => 'Formulario de Aeronave',
         'aircrafts list' => 'Lista de Aeronaves',
-        'add' => 'Agregar aeronaves',
+        'add' => 'Agregar aeronave',
         'select_merchant' => 'Seleccionar Empresa',
         'fields' => [
             'name' => 'Nombre',
@@ -216,15 +219,16 @@ return [
             'updated_at' => 'Actualizado en',
         ],
         'actions' => [
-            'create' => 'Crear aeronaves',
-            'edit' => 'Editar aeronaves',
-            'delete' => 'Eliminar aeronaves',
+            'create' => 'Crear aeronave',
+            'edit' => 'Editar aeronave',
+            'delete' => 'Eliminar aeronave',
         ],
     ],
 
     'subsidiaries' => [
         'singular' => 'Subsidiaria',
         'plural' => 'Subsidiarias',
+        'form' => 'Formulario de Subsidiaria',
         'Subsidiaries_list' => 'Lista de Subsidiarias',
         'add' => 'Agregar Subsidiaria',
         'fields' => [
