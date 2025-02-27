@@ -268,6 +268,12 @@ return [
         ],
     ],
     'sidebar' => [
+        'sidebars' => [
+        'singular' => 'Sidebar',
+        'plural' => 'Sidebars',
+        'form' => 'Sidebar Form',
+        'add' => 'Add Sidebar',
+        'sidebars_list' => 'Sidebars List',
         'managemt' => 'Management',
         'customer_managemt' => 'Customer Management',
         'merchants' => 'Merchants',
@@ -281,5 +287,12 @@ return [
         'aircrafts' => 'Aircrafts',
         'admin' => 'Administration',
         'users' => 'Users',
+        'fields' => [
+            'name' => 'Name',
+            'description' => 'Description',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+        ],
+    ],
     ],
 ];
