@@ -34,6 +34,24 @@ function initializeMap() {
         zoomInTitle: labels.zoomIn,
         zoomOutTitle: labels.zoomOut
     }).addTo(map);
+    // Estilos para los botones
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .leaflet-bar a {
+            background-color: white !important;
+            font-weight: bold !important;
+        }
+        .leaflet-draw-actions {
+            background-color: #151211 !important;
+            font-weight: bold !important;
+        }
+        .leaflet-draw-actions a {
+            background-color: #151211 !important;
+            font-weight: bold !important;
+            display: inline-block;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function setupDrawingControls() {
