@@ -31,11 +31,13 @@ function setupDrawingControls() {
                 showArea: true,
                 metric: true,
                 drawError: {
-                    color: '#e1e100',
+                    color: '#ff6600',
                     timeout: 1000
                 },
                 shapeOptions: {
-                    color: 'red'
+                    color: '#ff6600',
+                    fillColor: 'orange',
+                    fillOpacity: 0.3 
                 },
                 completeShape: true
             },
@@ -47,9 +49,13 @@ function setupDrawingControls() {
         },
         edit: {
             featureGroup: drawnItems,
-            remove: true
+            remove: true,
+            edit: true
         }
     });
+    
+
+
 
     map.addControl(drawControl);
     map.on('draw:created', handleDrawCreated);
@@ -100,8 +106,43 @@ function handleDrawEdited(e) {
 }
 
 function startDrawing() {
-    new L.Draw.Polygon(map).enable();
+    if (drawnItems.getLayers().length > 0) {
+        const userConfirmed = confirm('Ya existe un polígono dibujado. ¿Desea eliminarlo para dibujar uno nuevo?');
+        if (!userConfirmed) {
+            return;
+        }
+        drawnItems.clearLayers(); 
+    }
+    new L.Draw.Polygon(map, {
+        shapeOptions: {
+            color: '#ff6600',
+            fillColor: 'orange',
+            fillOpacity: 0.3
+        }
+    }).enable();
 }
+function editButton() {
+    if (drawnItems.getLayers().length > 0) {
+        const layer = drawnItems.getLayers()[0];
+        layer.editing.enable();
+        document.getElementById('saveButton').style.display = 'inline-block'; 
+    } else {
+        alert('No hay ningún polígono para editar.');
+    }
+}
+
+function saveDrawing() {
+    if (drawnItems.getLayers().length > 0) {
+        const layer = drawnItems.getLayers()[0];
+        layer.editing.disable(); 
+
+        map.fire('draw:edited', { layers: drawnItems });
+        document.getElementById('saveButton').style.display = 'none';
+    } else {
+        alert('No hay ningún polígono para guardar.');
+    }
+}
+
 
 function exportKML() {
     const geojson = drawnItems.toGeoJSON();
@@ -133,7 +174,7 @@ document.addEventListener('livewire:init', () => {
         ]);
         
         const polygon = L.polygon(coords, {
-            color: 'red'
+            color: 'orange'
         });
         drawnItems.addLayer(polygon);
         
@@ -169,7 +210,11 @@ function handleKMLImport(event) {
                 if (points.length > 2) {
                     const latLngs = points.map(point => L.latLng(point[0], point[1]));
                     
-                    const polygon = L.polygon(latLngs, { color: 'red' });
+                    const polygon = L.polygon(latLngs, { 
+                        color: '#ff6600',
+                        fillColor: 'orange',
+                        fillOpacity: 0.3
+                    });
                     drawnItems.addLayer(polygon);
                     bounds.extend(polygon.getBounds());
 
@@ -202,6 +247,7 @@ function handleKMLImport(event) {
             console.error('Error parsing KML file:', error);
             alert('Error al cargar el archivo KML. Por favor, verifique el formato del archivo.');
         }
+        event.target.value = '';
     };
     reader.readAsText(file);
 }

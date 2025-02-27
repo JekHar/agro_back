@@ -91,6 +91,7 @@ return [
             'updated_at' => 'Updated At',
             'coordinates' => 'Last Lot Coordinates:',
             'merchant' => 'Merchant Business name',
+            'draw_confirm' => 'There is already a drawn polygon. Do you want to delete it to draw a new one?'
         ],
         'actions' => [
             'create' => 'Create Lot',
