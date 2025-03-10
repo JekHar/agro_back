@@ -4,8 +4,15 @@
     <div class="d-flex flex-row justify-content-between mb-3 mt-3">
         <div class="btn-group">
             <button onclick="startDrawing()" class="btn btn-primary text-white">
-               <i class="fa fa-pencil"></i> {{ __('crud.lots.actions.draw') }}
+                <i class="fa fa-pencil"></i> {{ __('crud.lots.actions.draw') }}
             </button>
+            <button onclick="editButton()" class="btn btn-secondary text-white">
+                <i class="fa fa-edit"></i> {{ __('crud.lots.actions.edit') }}
+            </button>
+            <button id='saveButton' onclick="saveDrawing()" class="btn btn-primary text-white"style="display: none;">
+                <i class="fa fa-save"></i> {{ __('crud.lots.actions.save_edit') }}
+            </button>
+
         </div>
         <div class="btn-group">
             <button onclick="exportKML()" class="btn btn-success">

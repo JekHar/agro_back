@@ -1,7 +1,7 @@
 let map, drawnItems;
 
 function initializeMap() {
-    map = L.map('map').setView([-34.6037, -58.3816], 13);
+    map = L.map('map', { zoomControl: false }).setView([-34.6037, -58.3816], 13);
     
     const satellite = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         maxZoom: 20,
@@ -15,15 +15,131 @@ function initializeMap() {
 
     satellite.addTo(map);
 
+    // Translate layer control labels
+    const layerLabels = {
+        "en": { "satellite": "Satellite", "terrain": "Terrain", "zoomIn": "Zoom in", "zoomOut": "Zoom out" },
+        "es": { "satellite": "Satélite", "terrain": "Terreno", "zoomIn": "Acercar", "zoomOut": "Alejar" }
+    };
+
+    // Get current language from HTML lang attribute or default to English
+    const lang = document.documentElement.lang || 'en';
+    const labels = layerLabels[lang] || layerLabels['en'];
+
     L.control.layers({
-        "Satélite": satellite,
-        "Terreno": terrain
+        [labels.satellite]: satellite,
+        [labels.terrain]: terrain
     }).addTo(map);
+    
+    L.control.zoom({
+        zoomInTitle: labels.zoomIn,
+        zoomOutTitle: labels.zoomOut
+    }).addTo(map);
+    // Estilos para los botones
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .leaflet-bar a {
+            background-color: white !important;
+            font-weight: bold !important;
+        }
+        .leaflet-draw-actions {
+            background-color: #151211 !important;
+            font-weight: bold !important;
+        }
+        .leaflet-draw-actions a {
+            background-color: #151211 !important;
+            font-weight: bold !important;
+            display: inline-block;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function setupDrawingControls() {
     drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
+
+    const translations = {
+        "en": {
+            "drawPolygon": "Draw a polygon",
+            "drawRectangle": "Draw a rectangle",
+            "drawCircle": "Draw a circle",
+            "drawMarker": "Draw a marker",
+            "drawPolyline": "Draw a polyline",
+            "cancel": "Cancel drawing",
+            "finish": "Finish drawing",
+            "undo": "Delete last point",
+            "startTooltip": "Click to start drawing shape",
+            "contTooltip": "Click to continue drawing shape",
+            "endTooltip": "Click first point to close this shape",
+            "edit": "Edit shapes",
+            "editDisabled": "No shapes to edit",
+            "remove": "Delete shapes",
+            "removeDisabled": "No shapes to delete",
+            "save": "Save changes",
+            "cancelEdit": "Cancel editing",
+            "editTooltip": "Drag handles to edit shapes",
+            "editSubTooltip": "Click cancel to undo changes",
+            "removeTooltip": "Click a shape to remove",
+        },
+        "es": {
+            "drawPolygon": "Dibujar polígono",
+            "drawRectangle": "Dibujar rectángulo",
+            "drawCircle": "Dibujar círculo",
+            "drawMarker": "Dibujar marcador",
+            "drawPolyline": "Dibujar línea",
+            "cancel": "Cancelar dibujo",
+            "finish": "Finalizar dibujo",
+            "undo": "Eliminar último punto",
+            "startTooltip": "Haz clic para empezar a dibujar la forma",
+            "contTooltip": "Haz clic para continuar dibujando la forma",
+            "endTooltip": "Haz clic en el primer punto para cerrar la forma",
+            "edit": "Editar polígonos",
+            "editDisabled": "No hay polígonos para editar",
+            "remove": "Eliminar polígonos",
+            "removeDisabled": "No hay polígonos para eliminar",
+            "save": "Guardar cambios",
+            "cancelEdit": "Cancelar edición",
+            "editTooltip": "Arrastra los puntos para editar las formas",
+            "editSubTooltip": "Haz clic en cancelar para deshacer los cambios",
+            "removeTooltip": "Haz clic en una forma para eliminarla",
+        }
+    };
+
+    const lang = document.documentElement.lang || 'en';
+    const t = translations[lang] || translations['en'];
+
+    L.drawLocal.draw.toolbar.buttons.polygon = t.drawPolygon;
+    L.drawLocal.draw.toolbar.buttons.rectangle = t.drawRectangle;
+    L.drawLocal.draw.toolbar.buttons.circle = t.drawCircle;
+    L.drawLocal.draw.toolbar.buttons.marker = t.drawMarker;
+    L.drawLocal.draw.toolbar.buttons.polyline = t.drawPolyline;
+    
+    L.drawLocal.draw.toolbar.actions.title = t.cancel;
+    L.drawLocal.draw.toolbar.actions.text = t.cancel;
+    L.drawLocal.draw.toolbar.finish.title = t.finish;
+    L.drawLocal.draw.toolbar.finish.text = t.finish;
+    L.drawLocal.draw.toolbar.undo.title = t.undo;
+    L.drawLocal.draw.toolbar.undo.text = t.undo;
+    
+    L.drawLocal.draw.handlers.polygon.tooltip.start = t.startTooltip;
+    L.drawLocal.draw.handlers.polygon.tooltip.cont = t.contTooltip;
+    L.drawLocal.draw.handlers.polygon.tooltip.end = t.endTooltip;
+    
+    L.drawLocal.edit.toolbar.buttons.edit = t.edit;
+    L.drawLocal.edit.toolbar.buttons.editDisabled = t.editDisabled;
+    L.drawLocal.edit.toolbar.buttons.remove = t.remove;
+    L.drawLocal.edit.toolbar.buttons.removeDisabled = t.removeDisabled;
+    
+    L.drawLocal.edit.toolbar.actions.save.title = t.save;
+    L.drawLocal.edit.toolbar.actions.save.text = t.save;
+    L.drawLocal.edit.toolbar.actions.cancel.title = t.cancelEdit;
+    L.drawLocal.edit.toolbar.actions.cancel.text = t.cancelEdit;
+    
+    L.drawLocal.edit.handlers.edit.tooltip.text = t.editTooltip;
+    L.drawLocal.edit.handlers.edit.tooltip.subtext = t.editSubTooltip;
+    L.drawLocal.edit.handlers.remove.tooltip.text = t.removeTooltip;
+
+    
 
     const drawControl = new L.Control.Draw({
         draw: {polygon: {
@@ -31,11 +147,13 @@ function setupDrawingControls() {
                 showArea: true,
                 metric: true,
                 drawError: {
-                    color: '#e1e100',
+                    color: '#ff6600',
                     timeout: 1000
                 },
                 shapeOptions: {
-                    color: 'red'
+                    color: '#ff6600',
+                    fillColor: 'orange',
+                    fillOpacity: 0.3 
                 },
                 completeShape: true
             },
@@ -47,7 +165,8 @@ function setupDrawingControls() {
         },
         edit: {
             featureGroup: drawnItems,
-            remove: true
+            remove: true,
+            edit: true
         }
     });
 
@@ -100,8 +219,46 @@ function handleDrawEdited(e) {
 }
 
 function startDrawing() {
-    new L.Draw.Polygon(map).enable();
+    if (drawnItems.getLayers().length > 0) {
+        const confirmMessage = window.translations?.lots?.fields?.draw_confirm || 'There is already a drawn polygon. Do you want to delete it to draw a new one?';
+        const userConfirmed = confirm(confirmMessage);
+        if (!userConfirmed) {
+            return;
+        }
+        drawnItems.clearLayers(); 
+    }
+    new L.Draw.Polygon(map, {
+        shapeOptions: {
+            color: '#ff6600',
+            fillColor: 'orange',
+            fillOpacity: 0.3
+        }
+    }).enable();
 }
+function editButton() {
+    if (drawnItems.getLayers().length > 0) {
+        const layer = drawnItems.getLayers()[0];
+        layer.editing.enable();
+        document.getElementById('saveButton').style.display = 'inline-block'; 
+    } else {
+        const noPolygonMessage = window.translations?.lots?.no_polygon_edit || 'No hay ningún polígono para editar.';
+        alert(noPolygonMessage);
+    }
+}
+
+function saveDrawing() {
+    if (drawnItems.getLayers().length > 0) {
+        const layer = drawnItems.getLayers()[0];
+        layer.editing.disable(); 
+
+        map.fire('draw:edited', { layers: drawnItems });
+        document.getElementById('saveButton').style.display = 'none';
+    } else {
+        const noPolygonMessage = window.translations?.lots?.no_polygon_save || 'No hay ningún polígono para guardar.';
+        alert(noPolygonMessage);
+    }
+}
+
 
 function exportKML() {
     const geojson = drawnItems.toGeoJSON();
@@ -133,7 +290,7 @@ document.addEventListener('livewire:init', () => {
         ]);
         
         const polygon = L.polygon(coords, {
-            color: 'red'
+            color: 'orange'
         });
         drawnItems.addLayer(polygon);
         
@@ -169,7 +326,11 @@ function handleKMLImport(event) {
                 if (points.length > 2) {
                     const latLngs = points.map(point => L.latLng(point[0], point[1]));
                     
-                    const polygon = L.polygon(latLngs, { color: 'red' });
+                    const polygon = L.polygon(latLngs, { 
+                        color: '#ff6600',
+                        fillColor: 'orange',
+                        fillOpacity: 0.3
+                    });
                     drawnItems.addLayer(polygon);
                     bounds.extend(polygon.getBounds());
 
@@ -200,8 +361,11 @@ function handleKMLImport(event) {
             }
         } catch (error) {
             console.error('Error parsing KML file:', error);
-            alert('Error al cargar el archivo KML. Por favor, verifique el formato del archivo.');
+            // Use translation for error message
+            const errorMessage = window.translations?.lots?.kml_error || 'Error al cargar el archivo KML. Por favor, verifique el formato del archivo.';
+            alert(errorMessage);
         }
+        event.target.value = '';
     };
     reader.readAsText(file);
 }
@@ -219,6 +383,8 @@ function parseKMLCoordinates(coordText) {
 function updateCoordinatesDisplay(coords, hectares) {
     const coordsElement = document.getElementById('coordinates');
     if (coordsElement) {
-        coordsElement.innerText = `Área: ${hectares} hectáreas\n\nCoordenadas:\n${JSON.stringify(coords, null, 2)}`;
+        const areaLabel = window.translations?.lots?.area_label || 'Área';
+        const coordsLabel = window.translations?.lots?.coords_label || 'Coordenadas';
+        coordsElement.innerText = `${areaLabel}: ${hectares} hectáreas\n\n${coordsLabel}:\n${JSON.stringify(coords, null, 2)}`;
     }
 }
