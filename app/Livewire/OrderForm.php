@@ -115,9 +115,8 @@ class OrderForm extends Component
 
     public function loadClients()
     {
-        // Get clients from merchants table where merchant_type is 'client'
         $this->clients = Merchant::where('merchant_type', 'client')
-            ->orderBy('business_name')
+            ->orderBy('id')
             ->get();
     }
 
@@ -140,7 +139,6 @@ class OrderForm extends Component
 
     public function loadAircrafts()
     {
-        // Get aircrafts related to the tenant
         $tenantId = Auth::user()->merchant_id;
 
         $this->aircrafts = Aircraft::when(Auth::user()->hasRole('Tenant'), function ($query) use ($tenantId) {

@@ -9,14 +9,14 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group mb-3">
-                            <label class="form-label">Fecha ingreso de Orden:</label>
+                            <label class="form-label">Fecha ingreso de Orden</label>
                             <input type="text" wire:model="order_date" class="form-control" readonly>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="form-group mb-3">
-                            <label class="form-label">Responsable de Ingreso:</label>
+                            <label class="form-label">Responsable de Ingreso</label>
                             <div class="input-group">
                                 <select wire:model="responsible_id" class="form-select" {{ $isEditing ? 'disabled' : '' }}>
                                     @foreach ($groundSupports as $staff)
@@ -32,12 +32,12 @@
 
                     <div class="col-md-4">
                         <div class="form-group mb-3">
-                            <label class="form-label">Cliente:</label>
+                            <label class="form-label">Cliente</label>
                             <div class="input-group">
                                 <select wire:model.live="client_id" class="form-select">
                                     <option value="">Seleccione cliente</option>
                                     @foreach ($clients as $client)
-                                        <option value="{{ $client->id }}">{{ $client->business_name }}</option>
+                                        <option value="{{ $client->id }}">{{ $client->id }} {{ $client->trade_name }} </option>
                                     @endforeach
                                 </select>
                                 <button type="button" class="btn btn-primary" wire:click="createNewClient">
@@ -70,7 +70,7 @@
                         <div class="form-group mb-3">
                             <label class="form-label">Aeronave</label>
                             <div class="input-group">
-                                <select wire:model="aircraft_id" class="form-select" {{ !$service_id ? 'disabled' : '' }}>
+                                <select wire:model="aircraft_id" class="form-select" {{ !$client_id ? 'disabled' : '' }}>
                                     <option value="">Seleccione aeronave</option>
                                     @foreach ($aircrafts as $aircraft)
                                         <option value="{{ $aircraft->id }}">{{ $aircraft->brand }} {{ $aircraft->models }}</option>
@@ -87,7 +87,7 @@
                         <div class="form-group mb-3">
                             <label class="form-label">Piloto</label>
                             <div class="input-group">
-                                <select wire:model="pilot_id" class="form-select" {{ !$aircraft_id ? 'disabled' : '' }}>
+                                <select wire:model="pilot_id" class="form-select" {{ !$client_id ? 'disabled' : '' }}>
                                     <option value="">Seleccione piloto</option>
                                     @foreach ($pilots as $pilot)
                                         <option value="{{ $pilot->id }}">{{ $pilot->name }}</option>
@@ -104,7 +104,7 @@
                         <div class="form-group mb-3">
                             <label class="form-label">Apoyo de Tierra</label>
                             <div class="input-group">
-                                <select wire:model="ground_support_id" class="form-select" {{ !$pilot_id ? 'disabled' : '' }}>
+                                <select wire:model="ground_support_id" class="form-select" {{ !$client_id ? 'disabled' : '' }}>
                                     <option value="">Seleccione apoyo</option>
                                     @foreach ($groundSupports as $support)
                                         <option value="{{ $support->id }}">{{ $support->name }}</option>
