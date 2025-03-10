@@ -15,6 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('orders', [OrderApiController::class, 'index']);
     Route::get('orders/{order}', [OrderApiController::class, 'show']);
     Route::put('orders/{orderId}', [OrderApiController::class, 'updateStatus']);
+    Route::put('order-lots/{orderId}', [OrderApiController::class, 'updateOrderLot']);
 
 
     Route::post('logout', [LoginApiController::class, 'logout']);

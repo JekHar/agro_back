@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('lot_id');
             $table->decimal('hectares', 11, 3);
+            $table->enum('status', ['pending', 'in_process', 'finished', 'canceled'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
 
