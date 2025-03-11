@@ -155,7 +155,7 @@ class OrderApiController extends Controller
                 ])->with('product:id,name,category_id,merchant_id,concentration,dosage_per_hectare,application_volume_per_hectare,stock');
             },
             'orderLots' => function ($query) {
-                $query->select(['id', 'order_id', 'lot_id', 'hectares'])
+                $query->select(['id', 'order_id', 'lot_id', 'hectares', 'status'])
                     ->with([
                         'lot:id,number,hectares,merchant_id',
                         'lot.coordinates:id,lot_id,latitude,longitude'
