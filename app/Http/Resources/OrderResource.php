@@ -95,6 +95,7 @@ class OrderResource extends JsonResource
                                         'longitude' => (double) $coordinate->longitude,
                                     ];
                                 }),
+                                
                             ],
                         ];
                     }),
@@ -130,6 +131,7 @@ class OrderResource extends JsonResource
                     'orderId' => $orderLot->order_id,
                     'lotId' => $orderLot->lot_id,
                     'hectares' => (double) $orderLot->hectares,
+                    'status' => $orderLot->status,
                     'lot' => [
                         'id' => $orderLot->lot->id,
                         'numbering' => $orderLot->lot->number,
@@ -140,7 +142,7 @@ class OrderResource extends JsonResource
                                 'id' => $coordinate->id,
                                 'latitude' => (double) $coordinate->latitude,
                                 'longitude' => (double) $coordinate->longitude,
-                            ];
+                            ];                 
                         }),
                     ],
                 ];
