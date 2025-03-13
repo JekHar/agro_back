@@ -52,6 +52,8 @@ class OrderForm extends Component
         'observations' => 'nullable|string',
     ];
 
+    protected $listeners = ['lotsUpdated' => 'handleLotsUpdated'];
+
     public function mount($orderId = null)
     {
         // Set editing mode if order ID is provided
@@ -115,8 +117,9 @@ class OrderForm extends Component
 
     public function loadClients()
     {
+        // Get clients from merchants table where merchant_type is 'client'
         $this->clients = Merchant::where('merchant_type', 'client')
-            ->orderBy('id')
+            ->orderBy('business_name')
             ->get();
     }
 
@@ -139,6 +142,7 @@ class OrderForm extends Component
 
     public function loadAircrafts()
     {
+        // Get aircrafts related to the tenant
         $tenantId = Auth::user()->merchant_id;
 
         $this->aircrafts = Aircraft::when(Auth::user()->hasRole('Tenant'), function ($query) use ($tenantId) {
@@ -167,13 +171,28 @@ class OrderForm extends Component
             ->get();
     }
 
-    // Update services when client changes
+    // Lots section
+    public $selectedLots = [];
+    public $availableLots = [];
+
+    // Update dependent fields when client changes
     public function updated($name, $value)
     {
         if ($name === 'client_id' && $value) {
             $this->loadServices();
             $this->service_id = null;
+            $this->dispatch('clientSelected', $value);
         }
+    }
+
+    /**
+     * Handle opening the lot selection modal/page
+     */
+    public function openLotSelection()
+    {
+        // This could redirect to a lot creation page
+        // or open a modal for lot selection
+        return redirect()->route('lots.create', ['client_id' => $this->client_id]);
     }
 
     public function createNewClient()
@@ -269,6 +288,16 @@ class OrderForm extends Component
                 'type' => 'error'
             ]);
         }
+    }
+
+    public function handleLotsUpdated($lots)
+    {
+        $this->selectedLots = $lots;
+    }
+
+    public function handleOpenLotCreation($clientId)
+    {
+        return redirect()->route('lots.create', ['client_id' => $clientId]);
     }
 
     public function render()
