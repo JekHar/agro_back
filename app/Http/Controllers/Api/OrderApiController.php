@@ -14,7 +14,7 @@ class OrderApiController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -92,7 +92,7 @@ class OrderApiController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -216,7 +216,7 @@ class OrderApiController extends Controller
         try {
 
             $order = OrderLot::find($orderId);
-            
+
 
             if (!$order) {
                 return response()->json([
