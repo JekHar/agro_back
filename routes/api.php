@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\LoginApiController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\OrderApiController;
+use App\Http\Controllers\Api\TrackingController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -17,6 +18,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('orders/{orderId}', [OrderApiController::class, 'updateStatus']);
     Route::put('order-lots/{orderId}', [OrderApiController::class, 'updateOrderLot']);
 
+    Route::post('tracking', [TrackingController::class, 'store']);
+    Route::get('tracking/order-lot/{orderLotId}', [TrackingController::class, 'getRoutesByOrderLot']);
 
     Route::post('logout', [LoginApiController::class, 'logout']);
 });

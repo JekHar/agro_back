@@ -41,4 +41,9 @@ class OrderLot extends Model implements ContractsAuditable
     {
         return $this->belongsTo(Lot::class);
     }
+
+    public function trackingroute()
+    {
+        return $this->hasMany(TrackingRoute::class);
+    }
 }
