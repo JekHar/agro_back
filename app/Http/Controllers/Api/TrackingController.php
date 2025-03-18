@@ -21,6 +21,7 @@ class TrackingController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
+                'success' => false,
                 'message' => 'Validation error',
                 'errors' => $validator->errors(),
                 'status' => 'error'
@@ -56,9 +57,9 @@ class TrackingController extends Controller
         ]);
 
         return response()->json([
+            'success' => true,
             'message' => 'Tracking data saved successfully',
             'data' => $trackingRoute,
-            'status' => 'success'
         ], 201);
     }
 
@@ -70,8 +71,9 @@ class TrackingController extends Controller
             ->get();
 
         return response()->json([
+            'success' => true,
+            'message' => 'Tracking routes retrieved successfully',
             'data' => $routes,
-            'status' => 'success'
-        ]);
+        ], 200);
     }
 }
