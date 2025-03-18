@@ -15,6 +15,7 @@ class TrackingController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'orderLotId' => 'required|exists:order_lots,id',
+            'userId' => 'required|exists:users,id',
             'route' => 'required|array',
         ]);
 
@@ -48,7 +49,7 @@ class TrackingController extends Controller
         // Create the tracking route
         $trackingRoute = TrackingRoute::create([
             'order_lot_id' => $request->orderLotId,
-            'user_id' => Auth::id(),
+            'user_id' => $request->userId,
             'route_data' => $request->route,
             'started_at' => $startTime,
             'finished_at' => $endTime,
