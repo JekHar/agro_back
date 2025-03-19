@@ -7,7 +7,7 @@ use App\Models\TrackingRoute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class TrackingController extends Controller
+class TrackingApiController extends Controller
 {
     public function store(Request $request)
     {
