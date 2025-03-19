@@ -18,11 +18,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('orders/{orderId}', [OrderApiController::class, 'updateStatus']);
     Route::put('order-lots/{orderId}', [OrderApiController::class, 'updateOrderLot']);
 
+    Route::post('tracking', [TrackingController::class, 'store']);
+    Route::get('tracking/order-lot/{orderLotId}', [TrackingController::class, 'getRoutesByOrderLot']);
+
     Route::post('logout', [LoginApiController::class, 'logout']);
 });
 
-Route::post('tracking', [TrackingController::class, 'store']);
-Route::get('tracking/order-lot/{orderLotId}', [TrackingController::class, 'getRoutesByOrderLot']);
+
 
 Route::post('login', [LoginApiController::class, 'Login']);
 
