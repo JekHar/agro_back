@@ -6,6 +6,9 @@ use App\Http\Controllers\Api\Auth\LoginApiController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\OrderApiController;
 
+Route::post('login', [LoginApiController::class, 'Login']);
+Route::post('password/email', [PasswordResetController::class, 'sendResetLink']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -20,6 +23,3 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('logout', [LoginApiController::class, 'logout']);
 });
-Route::post('login', [LoginApiController::class, 'Login']);
-
-Route::post('password/email', [PasswordResetController::class, 'sendResetLink']);

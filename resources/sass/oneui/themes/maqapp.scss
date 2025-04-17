@@ -50,3 +50,15 @@
   $theme-maqapp-link-color,
   $theme-maqapp-link-hover-color
 );
+
+.btn-primary {
+    color: $theme-maqapp-body-bg;
+}
+
+.btn:disabled, .btn.disabled {
+    color: $theme-maqapp-body-bg;
+}
+
+.btn:hover {
+    color: $theme-maqapp-body-bg;
+}

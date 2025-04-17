@@ -23,6 +23,7 @@ class OrderLot extends Model implements ContractsAuditable
     ];
 
     protected $casts = [
+        'status' => OrderLotStatus::class,
         'hectares' => 'decimal:2'
     ];
 
