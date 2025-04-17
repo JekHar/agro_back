@@ -32,21 +32,6 @@ class DatabaseSeeder extends Seeder
             $admin->assignRole('Admin');
 
         } else {
-           
-            $this->call([
-                RolesSeeder::class,
-                PermissionsSeeder::class,
-                RoleHasPermissionsSeeder::class,
-                MerchantSeeder::class,
-                ServiceSeeder::class,
-                AircraftSeeder::class,
-                UserSeeder::class,
-                CategorySeeders::class,
-                ProductSeeders::class,
-                LotSeeder::class,
-                OrderSeeder::class,
-                FlightSeeder::class
-            ]);
 
             $user1 = User::factory()->create([
                 'name' => 'Test User',
@@ -71,6 +56,24 @@ class DatabaseSeeder extends Seeder
                 'email' => 'ground@example.com',
                 'password' => Hash::make('password'),
             ]);
+
+           
+            $this->call([
+                RolesSeeder::class,
+                PermissionsSeeder::class,
+                RoleHasPermissionsSeeder::class,
+                MerchantSeeder::class,
+                ServiceSeeder::class,
+                AircraftSeeder::class,
+                UserSeeder::class,
+                CategorySeeders::class,
+                ProductSeeders::class,
+                LotSeeder::class,
+                // OrderSeeder::class,
+                SingleOrderSeeder::class,
+                // FlightSeeder::class
+            ]);
+
 
             $user1->assignRole('Admin');
             $user2->assignRole('Tenant');
