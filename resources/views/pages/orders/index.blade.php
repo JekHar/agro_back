@@ -31,11 +31,11 @@
                 {{ __('crud.orders.orders_list') }}
             </h3>
             <div class="block-options">
-                @can('clients.orders.create')
-                <a href="{{ route(request()->routeIs('clients.orders.*') ? 'clients.orders.create' : 'tenants.orders.create') }}" class="btn btn-sm btn-primary p-2 rounded-pill text-white" >
-                    <i class="fa fa-plus me-1"></i>
-                    {{ __('crud.orders.add') }}
-                </a>
+                @can('orders.create')
+                    <a href="{{ route('orders.create') }}" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
+                        <i class="fa fa-plus me-1"></i>
+                        {{ __('crud.orders.add') }}
+                    </a>
                 @endcan
             </div>
         </div>

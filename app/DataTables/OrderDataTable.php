@@ -69,7 +69,7 @@ class OrderDataTable extends DataTable
             ->filterColumn('pilot_name', function ($query, $keyword) {
                 $query->where('pilots.name', 'like', "%{$keyword}%");
             })
-            ->addColumn('action', 'pages.orders.action')
+            ->addColumn('action', 'pages.products.orders-actions')
             ->rawColumns(['status', 'action'])
             ->setRowId('id');
     }
