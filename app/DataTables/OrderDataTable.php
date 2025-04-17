@@ -22,7 +22,55 @@ class OrderDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'order.action')
+            ->editColumn('client_name', function ($order) {
+                return $order->client_name ?? 'N/A';
+            })
+            ->editColumn('tenant_name', function ($order) {
+                return $order->tenant_name ?? 'N/A';
+            })
+            ->editColumn('service_name', function ($order) {
+                return $order->service_name ?? 'N/A';
+            })
+            ->editColumn('pilot_name', function ($order) {
+                return $order->pilot_name ?? 'N/A';
+            })
+            ->editColumn('total_amount', function ($order) {
+                return '$' . number_format($order->total_amount, 2);
+            })
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at->format('d-m-Y H:i:s');
+            })
+            ->editColumn('status', function ($row) {
+                $statusClass = [
+                    'pending' => 'warning',
+                    'in_progress' => 'primary',
+                    'completed' => 'success',
+                    'canceled' => 'danger',
+                ][$row->status] ?? 'secondary';
+
+                $statusLabel = [
+                    'pending' => 'Pendiente',
+                    'in_progress' => 'En Progreso',
+                    'completed' => 'Completada',
+                    'canceled' => 'Cancelada',
+                ][$row->status] ?? 'Desconocido';
+
+                return '<span class="badge bg-'.$statusClass.'">'.$statusLabel.'</span>';
+            })
+            ->filterColumn('client_name', function ($query, $keyword) {
+                $query->where('client_merchants.business_name', 'like', "%{$keyword}%");
+            })
+            ->filterColumn('tenant_name', function ($query, $keyword) {
+                $query->where('tenant_merchants.business_name', 'like', "%{$keyword}%");
+            })
+            ->filterColumn('service_name', function ($query, $keyword) {
+                $query->where('services.name', 'like', "%{$keyword}%");
+            })
+            ->filterColumn('pilot_name', function ($query, $keyword) {
+                $query->where('pilots.name', 'like', "%{$keyword}%");
+            })
+            ->addColumn('action', 'pages.orders.action')
+            ->rawColumns(['status', 'action'])
             ->setRowId('id');
     }
 
@@ -31,7 +79,30 @@ class OrderDataTable extends DataTable
      */
     public function query(Order $model): QueryBuilder
     {
-        return $model->newQuery();
+        $query = $model->newQuery()
+            ->leftJoin('merchants as client_merchants', 'orders.client_id', '=', 'client_merchants.id')
+            ->leftJoin('merchants as tenant_merchants', 'orders.tenant_id', '=', 'tenant_merchants.id')
+            ->leftJoin('services', 'orders.service_id', '=', 'services.id')
+            ->leftJoin('users as pilots', 'orders.pilot_id', '=', 'pilots.id')
+            ->leftJoin('users as ground_support', 'orders.ground_support_id', '=', 'ground_support.id')
+            ->select(
+                'orders.*',
+                'client_merchants.business_name as client_name',
+                'tenant_merchants.business_name as tenant_name',
+                'services.name as service_name',
+                'pilots.name as pilot_name',
+                'ground_support.name as ground_support_name'
+            );
+
+        if (auth()->user()->hasRole('Admin')) {
+            return $query;
+        } elseif (auth()->user()->hasRole('Tenant')) {
+            return $query->where('orders.tenant_id', auth()->user()->merchant_id);
+        } elseif (auth()->user()->hasRole('Client')) {
+            return $query->where('orders.client_id', auth()->user()->merchant_id);
+        }
+
+        return $query;
     }
 
     /**
@@ -43,16 +114,18 @@ class OrderDataTable extends DataTable
                     ->setTableId('order-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(1)
+                    ->orderBy(0, 'desc')
                     ->selectStyleSingle()
+                    ->parameters([
+                        'dom' => 'Bfrtip',
+                        'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                        'drawCallback' => 'function() { initDeleteConfirmation() }',
+                    ])
                     ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        Button::make('reset'),
-                        Button::make('reload')
+                        Button::make('excel')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                        Button::make('csv')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                        Button::make('pdf')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                        Button::make('print')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
                     ]);
     }
 
@@ -62,15 +135,19 @@ class OrderDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::computed('action')
+            Column::make('id')->title('#'),
+            Column::make('order_number')->title('Número de Orden'),
+            Column::make('client_name')->title('Cliente'),
+            Column::make('tenant_name')->title('Proveedor'),
+            Column::make('service_name')->title('Servicio'),
+            Column::make('total_hectares')->title('Total Hectáreas'),
+            Column::make('total_amount')->title('Monto Total'),
+            Column::make('status')->title('Estado'),
+            Column::computed('action')->title('Acciones')
                   ->exportable(false)
                   ->printable(false)
-                  ->width(60)
+                  ->width(120)
                   ->addClass('text-center'),
-            Column::make('id'),
-            Column::make('add your columns'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
         ];
     }
 
