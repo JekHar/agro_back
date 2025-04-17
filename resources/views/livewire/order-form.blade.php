@@ -131,6 +131,8 @@
 
         <livewire:order-lots :clientId="$client_id" :existingLots="$selectedLots" />
 
+        <livewire:order-products :clientId="$client_id" :existingProducts="$selectedProducts ?? []" :totalHectares="$totalHectares" />
+
         <div class="row mb-3">
             <div class="col-md-12 text-end">
                 <button type="submit" class="btn btn-primary">

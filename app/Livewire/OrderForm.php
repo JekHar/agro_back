@@ -35,6 +35,7 @@ class OrderForm extends Component
     public $aircraft_id;
     public $pilot_id;
     public $ground_support_id;
+    public $totalHectares = 0;
 
     // Lists for dropdowns
     public $clients = [];
@@ -52,7 +53,7 @@ class OrderForm extends Component
         'observations' => 'nullable|string',
     ];
 
-    protected $listeners = ['lotsUpdated' => 'handleLotsUpdated'];
+    protected $listeners = ['lotsUpdated' => 'handleLotsUpdated', 'productsUpdated' => 'handleProductsUpdated'];
 
     public function mount($orderId = null)
     {
@@ -295,11 +296,25 @@ class OrderForm extends Component
     public function handleLotsUpdated($lots)
     {
         $this->selectedLots = $lots;
+
+        // Calculate total hectares
+        $this->totalHectares = 0;
+        foreach ($lots as $lot) {
+            $this->totalHectares += floatval($lot['hectares'] ?? 0);
+        }
+
+        // Dispatch event to update products with new hectares
+        $this->dispatch('hectaresUpdated', $this->totalHectares);
     }
 
     public function handleOpenLotCreation($clientId)
     {
         return redirect()->route('lots.create', ['client_id' => $clientId]);
+    }
+
+    public function handleProductsUpdated($products)
+    {
+        $this->selectedProducts = $products;
     }
 
     public function render()

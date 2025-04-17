@@ -1,5 +1,5 @@
 <div>
-    <div class="block block-rounded mb-2">
+    <div class="block block-rounded">
         <div class="block-header block-header-default bg-primary">
             <h3 class="block-title text-white">LOTES</h3>
             <div class="block-options">
