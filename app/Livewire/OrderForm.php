@@ -117,10 +117,12 @@ class OrderForm extends Component
 
     public function loadClients()
     {
-        // Get clients from merchants table where merchant_type is 'client'
-        $this->clients = Merchant::where('merchant_type', 'client')
-            ->orderBy('business_name')
-            ->get();
+        $query = Merchant::where('merchant_type', 'client')
+            ->orderBy('business_name');
+        $query = $query->when(Auth::user()->hasRole('Tenant'),function ($query) {
+                $query->where('merchant_id', auth()->user()->merchant_id);
+        });
+        $this->clients = $query->get();
     }
 
     public function loadServices()
