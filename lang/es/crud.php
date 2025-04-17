@@ -294,5 +294,6 @@ return [
         'aircrafts' => 'Aeronaves',
         'admin' => 'Administración',
         'users' => 'Usuarios',
+        'orders' => 'Órdenes',
     ],
 ];

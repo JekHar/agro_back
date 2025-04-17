@@ -86,14 +86,22 @@
                 </li>
                 </li>
                 @endcan
-
+                @can('orders.index')
+                    <li class="nav-main-item">
+                        <a class="nav-main-link{{ request()->is('orders*') ? ' active' : '' }}"
+                           href="{{ route('orders.index') }}">
+                            <i class="nav-main-link-icon fa fa-clipboard"></i>
+                            <span class="nav-main-link-name">{{ __('crud.sidebar.orders') }}</span>
+                        </a>
+                    </li>
+                @endcan
                 <!-- Catalog Section -->
                 <li class="nav-main-heading">{{ __('crud.sidebar.catalog') }}</li>
                 @can('products.index')
                 <li class="nav-main-item">
                     <a class="nav-main-link{{ request()->is('products*') ? ' active' : '' }}"
                         href="{{ route('products.index') }}">
-                        <i class="nav-main-link-icon si si-bag"></i>
+                        <i class="nav-main-link-icon fa fa-bottle-water"></i>
                         <span class="nav-main-link-name">{{ __('crud.sidebar.products') }}</span>
                     </a>
                 </li>
