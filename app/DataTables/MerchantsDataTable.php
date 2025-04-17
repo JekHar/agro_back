@@ -10,7 +10,7 @@ use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class qMerchantsDataTable extends DataTable
+class MerchantsDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
