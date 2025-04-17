@@ -280,6 +280,17 @@ return [
             'edit' => 'Editar Categoría',
         ],
     ],
+    'orders' => [
+        'singular' => 'Orden',
+        'plural' => 'Órdenes',
+        'orders_list' => 'Lista de Órdenes',
+        'add' => 'Crear Orden',
+        'form' => 'Formulario de Orden',
+        'create_title' => 'CREAR ORDEN DE TRABAJO',
+        'edit_title' => 'EDITAR ORDEN DE TRABAJO',
+        'success' => 'Orden guardada exitosamente',
+        'create' => 'Crear Orden de Trabajo',
+    ],
     'sidebar' => [
         'managemt' => 'Gestión',
         'customer_managemt' => 'Gestión de Clientes',
