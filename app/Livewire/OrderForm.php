@@ -3,11 +3,18 @@
 namespace App\Livewire;
 
 use App\Models\Aircraft;
+use App\Models\Flight;
+use App\Models\FlightLot;
+use App\Models\FlightProduct;
+use App\Models\Lot;
 use App\Models\Merchant;
 use App\Models\Order;
+use App\Models\OrderLot;
+use App\Models\OrderProduct;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -44,6 +51,11 @@ class OrderForm extends Component
     public $pilots = [];
     public $groundSupports = [];
 
+    // Products and lots
+    public $selectedProducts = [];
+    public $selectedLots = [];
+    public $flights = [];
+
     protected $rules = [
         'client_id' => 'required|exists:merchants,id',
         'service_id' => 'required|exists:services,id',
@@ -51,9 +63,19 @@ class OrderForm extends Component
         'pilot_id' => 'required|exists:users,id',
         'ground_support_id' => 'required|exists:users,id',
         'observations' => 'nullable|string',
+        'selectedLots' => 'required|array|min:1',
+        'selectedLots.*.lot_id' => 'required|exists:lots,id',
+        'selectedLots.*.hectares' => 'required|numeric|min:0.01',
+        'selectedLots.*.status' => 'required|in:pending,in_progress,completed',
+        'selectedProducts' => 'required|array|min:1',
+        'selectedProducts.*.product_id' => 'required|exists:products,id',
     ];
 
-    protected $listeners = ['lotsUpdated' => 'handleLotsUpdated', 'productsUpdated' => 'handleProductsUpdated'];
+    protected $listeners = [
+        'lotsUpdated' => 'handleLotsUpdated',
+        'productsUpdated' => 'handleProductsUpdated',
+        'flightsUpdated' => 'handleFlightsUpdated'
+    ];
 
     public function mount($orderId = null)
     {
@@ -174,10 +196,6 @@ class OrderForm extends Component
             ->get();
     }
 
-    // Lots section
-    public $selectedLots = [];
-    public $availableLots = [];
-
     // Update dependent fields when client changes
     public function updated($name, $value)
     {
@@ -227,6 +245,8 @@ class OrderForm extends Component
         $this->validate();
 
         try {
+            DB::beginTransaction();
+
             if ($this->isEditing) {
                 // Update existing order
                 $this->order->update([
@@ -238,6 +258,7 @@ class OrderForm extends Component
                     'ground_support_id' => $this->ground_support_id,
                     'observations' => $this->observations,
                     'status' => $this->status,
+                    'total_hectares' => $this->totalHectares,
                 ]);
 
                 // Handle prescription file if uploaded
@@ -246,6 +267,11 @@ class OrderForm extends Component
                     $this->order->prescription_file = $filePath;
                     $this->order->save();
                 }
+
+                // Delete existing related data to avoid duplicates
+                $this->order->orderLots()->delete();
+                $this->order->orderProducts()->delete();
+                $this->order->flights()->delete();
 
                 $message = 'Orden actualizada correctamente';
             } else {
@@ -261,6 +287,8 @@ class OrderForm extends Component
                     'observations' => $this->observations,
                     'status' => 'draft',
                     'created_by' => Auth::id(),
+                    'total_hectares' => $this->totalHectares,
+                    'total_amount' => 0,
                 ]);
 
                 // Handle prescription file if uploaded
@@ -275,6 +303,17 @@ class OrderForm extends Component
                 $message = 'Orden creada correctamente';
             }
 
+            // Save lots
+            $this->saveLots();
+
+            // Save products
+            $this->saveProducts();
+
+            // Save flights
+            $this->saveFlights();
+
+            DB::commit();
+
             $this->dispatch('showAlert', [
                 'title' => 'Éxito',
                 'text' => $message,
@@ -285,6 +324,7 @@ class OrderForm extends Component
             return redirect()->route('orders.show', $this->isEditing ? $this->orderId : $this->order->id);
 
         } catch (\Exception $e) {
+            DB::rollBack();
             $this->dispatch('showAlert', [
                 'title' => 'Error',
                 'text' => 'Ha ocurrido un error: ' . $e->getMessage(),
@@ -293,7 +333,95 @@ class OrderForm extends Component
         }
     }
 
-    public function handleLotsUpdated($lots)
+    /**
+     * Save the order lots
+     */
+    protected function saveLots()
+    {
+        foreach ($this->selectedLots as $lot) {
+            if (empty($lot['lot_id'])) continue;
+
+            OrderLot::create([
+                'order_id' => $this->order->id,
+                'lot_id' => $lot['lot_id'],
+                'hectares' => $lot['hectares'],
+                'status' => $lot['status'] ?? 'pending'
+            ]);
+        }
+    }
+
+    /**
+     * Save the order products
+     */
+    protected function saveProducts()
+    {
+        foreach ($this->selectedProducts as $product) {
+            if (empty($product['product_id'])) continue;
+
+            OrderProduct::create([
+                'order_id' => $this->order->id,
+                'product_id' => $product['product_id'],
+                'client_provided_quantity' => $product['client_provided_quantity'] ?? 0,
+                'total_quantity_to_use' => $product['total_quantity_to_use'] ?? 0,
+                'calculated_dosage' => $product['calculated_dosage'] ?? 0,
+                'product_difference' => $product['product_difference'] ?? 0,
+                'difference_observation' => $product['difference_observation'] ?? '',
+                'use_client_quantity' => $product['use_client_quantity'] ?? false,
+                'use_manual_dosage' => $product['use_manual_dosage'] ?? false,
+                'manual_dosage_per_hectare' => $product['manual_dosage_per_hectare'] ?? 0,
+                'manual_total_quantity' => $product['manual_total_quantity'] ?? 0,
+            ]);
+        }
+    }
+
+    /**
+     * Save the flights and their related data
+     */
+    protected function saveFlights()
+    {
+        foreach ($this->flights as $flightData) {
+            if (empty($flightData['hectares_to_perform']) || floatval($flightData['hectares_to_perform']) <= 0) continue;
+
+            // Create flight record
+            $flight = Flight::create([
+                'order_id' => $this->order->id,
+                'hectares_to_perform' => $flightData['hectares_to_perform'],
+                'status' => 'pending',
+                'flight_number' => rand(1000, 9999),
+                'total_hectares' => 0, // calculate?
+            ]);
+
+            // Save flight lots
+            if (isset($flightData['lots']) && is_array($flightData['lots'])) {
+                foreach ($flightData['lots'] as $lotData) {
+                    if (empty($lotData['lot_id'])) continue;
+
+                    FlightLot::create([
+                        'flight_id' => $flight->id,
+                        'lot_id' => $lotData['lot_id'],
+                        'lot_hectares' => $lotData['lot_hectares'] ?? 0,
+                        'hectares_to_apply' => $lotData['hectares_to_apply'] ?? 0,
+                        'lot_total_hectares' => 0, // calculate?
+                    ]);
+                }
+            }
+
+            // Save flight products
+            if (isset($flightData['products']) && is_array($flightData['products'])) {
+                foreach ($flightData['products'] as $productData) {
+                    if (empty($productData['product_id'])) continue;
+
+                    FlightProduct::create([
+                        'flight_id' => $flight->id,
+                        'product_id' => $productData['product_id'],
+                        'quantity' => $productData['quantity'] ?? 0,
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function handleLotsUpdated($lots): void
     {
         $this->selectedLots = $lots;
 
@@ -307,14 +435,19 @@ class OrderForm extends Component
         $this->dispatch('hectaresUpdated', $this->totalHectares);
     }
 
-    public function handleOpenLotCreation($clientId)
+    public function handleOpenLotCreation($clientId): \Illuminate\Http\RedirectResponse
     {
         return redirect()->route('lots.create', ['client_id' => $clientId]);
     }
 
-    public function handleProductsUpdated($products)
+    public function handleProductsUpdated($products): void
     {
         $this->selectedProducts = $products;
+    }
+
+    public function handleFlightsUpdated($flights): void
+    {
+        $this->flights = $flights;
     }
 
     public function render()
@@ -322,3 +455,4 @@ class OrderForm extends Component
         return view('livewire.order-form');
     }
 }
+

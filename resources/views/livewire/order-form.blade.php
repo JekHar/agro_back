@@ -133,6 +133,8 @@
 
         <livewire:order-products :clientId="$client_id" :existingProducts="$selectedProducts ?? []" :totalHectares="$totalHectares" />
 
+        <livewire:order-flights :clientId="$client_id" :existingFlights="$flights ?? []" :totalHectares="$totalHectares" :products="$selectedProducts ?? []" />
+
         <div class="row mb-3">
             <div class="col-md-12 text-end">
                 <button type="submit" class="btn btn-primary">

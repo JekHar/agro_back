@@ -27,6 +27,7 @@
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('showAlert', (message) => {
+                console.log(message);
                 Swal.fire({
                     title: message.title,
                     text: message.text,

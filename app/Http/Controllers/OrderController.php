@@ -27,7 +27,7 @@ class OrderController extends Controller
     /**
      * Display the specified order.
      */
-    public function show(Order $order)
+    public function show(String $order)
     {
         return view('pages.orders.show', compact('order'));
     }
