@@ -97,6 +97,8 @@ class PermissionsSeeder extends Seeder
             ['id' => 64, 'name' => 'services.index'],
             ['id' => 65, 'name' => 'services.show'],
             ['id' => 66, 'name' => 'services.store'],
+
+            ['id' => 67, 'name' => 'clients.merchants.lots.index'],
         ];
 
         foreach ($permissions as $permission) {

@@ -22,8 +22,8 @@ class LotDataTable extends DataTable
             ->filterColumn('merchant_name', function ($query, $keyword) {
                 $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
-            ->editColumn('updated_at', fn ($item) => $item->updated_at->format('d-m-Y H:i:s'))
-            ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
+            ->editColumn('updated_at', fn($item) => $item->updated_at->format('d-m-Y H:i:s'))
+            ->editColumn('created_at', fn($item) => $item->created_at->format('d-m-Y H:i:s'))
             ->setRowClass(function () {
                 return 'align-middle position-relative';
             })
@@ -32,18 +32,25 @@ class LotDataTable extends DataTable
 
     public function query(Lot $model): QueryBuilder
     {
+        $merchant_id = session('merchant_id');
+
+        $query = $model->newQuery()
+            ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
+            ->select('lots.*', 'merchants.business_name as merchant_name');
+
+       
+        if ($merchant_id) {
+            $query->where('lots.merchant_id', $merchant_id);
+        }
+
         if (auth()->user()->hasRole('Admin')) {
-            return $model->newQuery()
-                ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
-                ->where('merchants.merchant_type', 'client')
-                ->select('lots.*', 'merchants.business_name as merchant_name');
+            $query->where('merchants.merchant_type', 'client');
         } elseif (auth()->user()->hasRole('Tenant')) {
-            return $model->newQuery()
-                ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
-                ->select('lots.*', 'merchants.business_name as merchant_name')
-                ->where('merchants.merchant_type', 'client')
+            $query->where('merchants.merchant_type', 'client')
                 ->where('merchants.merchant_id', auth()->user()->merchant_id);
         }
+
+        return $query;
     }
 
     public function html(): HtmlBuilder

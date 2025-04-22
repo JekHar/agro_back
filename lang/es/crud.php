@@ -4,9 +4,11 @@ return [
     'success' => 'Éxito!',
     'merchants' => [
         'singular' => 'Empresa',
-        'plural' => 'Empresas',
+        'plural' => 'Clientes',
         'Merchants_list' => 'Lista de Empresas',
-        'add' => 'Agregar Empresa',
+        'clients_subtitle' => 'Lista de Clientes',
+        'add_merchant' => 'Agregar Empresa',
+        'add_client' => 'Agregar Cliente',
         'delete' => 'Eliminar Usuario',
         'actions' => 'Acciones',
         'select_merchant' => 'Seleccionar Empresa',
