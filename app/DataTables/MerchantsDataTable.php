@@ -53,7 +53,8 @@ class MerchantsDataTable extends DataTable
                     ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
                     ->where('merchant_type', 'Client')
                     ->where('merchants.merchant_id', auth()->user()->merchant_id)
-                    ->selectRaw('COUNT(DISTINCT lots.id) as lots_count');
+                    ->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
+                    ->groupBy('merchants.id');
             }
         }
         if (request()->routeIs('tenants.merchants.*')) {
