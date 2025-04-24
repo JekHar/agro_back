@@ -12,13 +12,14 @@
                         <div class="block-header block-header-default">
                             <h3 class="block-title">{{ __('login') }}</h3>
                             <div class="block-options">
-                                @if ( Route::has('password.request') )
+                                @if (Route::has('password.request'))
                                     <a class="btn-block-option fs-sm" href="{{ route('password.request') }}">
                                         {{ __('¿Olvidaste tu contraseña?') }}
                                     </a>
                                 @endif
-                                @if ( Route::has('register') )
-                                    <a class="btn-block-option" href="{{ route('register') }}" data-bs-toggle="tooltip" data-bs-placement="left" title="New Account">
+                                @if (Route::has('register'))
+                                    <a class="btn-block-option" href="{{ route('register') }}" data-bs-toggle="tooltip"
+                                        data-bs-placement="left" title="New Account">
                                         <i class="fa fa-user-plus"></i>
                                     </a>
                                 @endif
@@ -42,33 +43,47 @@
                                     @csrf
                                     <div class="py-3">
                                         <div class="mb-4">
-                                            <input id="email" type="email" class="form-control form-control-alt form-control-lg @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required placeholder="{{ __('Email') }}" autocomplete="email" autofocus>
+                                            <input id="email" type="email"
+                                                class="form-control form-control-alt form-control-lg @error('email') is-invalid @enderror"
+                                                name="email" value="{{ old('email') }}" required
+                                                placeholder="{{ __('Email') }}" autocomplete="email" autofocus>
 
                                             @error('email')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
-                                        <div class="mb-4">
-                                            <input id="password" type="password" class="form-control form-control-alt form-control-lg @error('password') is-invalid @enderror" name="password" required placeholder="{{ __('Password') }}" autocomplete="password">
+                                        <div class="mb-4 position-relative">
+                                            <input id="password" type="password"
+                                                class="form-control form-control-alt form-control-lg @error('password') is-invalid @enderror"
+                                                name="password" required placeholder="{{ __('Password') }}"
+                                                autocomplete="password">
+                                            <span class="password-toggle-icon position-absolute"
+                                                style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                                <i class="fa fa-eye-slash" id="togglePassword"></i>
+                                            </span>
 
                                             @error('password')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
                                         <div class="mb-4">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="remember">{{ __('Recordarme') }}</label>
+                                                <input class="form-check-input" type="checkbox" name="remember"
+                                                    id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                                <label class="form-check-label"
+                                                    for="remember">{{ __('Recordarme') }}</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row mb-4">
                                         <div class="col-md-6 col-xl-5">
-                                            <button type="submit" class="btn btn-sm btn-primary p-2 rounded-pill text-white" style="background-color: #FF6600; border: none; outline: none;">
+                                            <button type="submit"
+                                                class="btn btn-sm btn-primary p-2 rounded-pill text-white"
+                                                style="background-color: #FF6600; border: none; outline: none;">
                                                 <i class="fa fa-fw fa-sign-in-alt me-1 opacity-50"></i> {{ __('Log in') }}
                                             </button>
                                         </div>
@@ -86,3 +101,26 @@
     </div>
 @endsection
 
+@push('after_body')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+
+            // Verifica si los elementos existen
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        togglePassword.classList.remove('fa-eye-slash');
+                        togglePassword.classList.add('fa-eye');
+                    } else {
+                        passwordInput.type = 'password';
+                        togglePassword.classList.remove('fa-eye');
+                        togglePassword.classList.add('fa-eye-slash');
+                    }
+                });
+            }
+        });
+    </script>
+@endpush
