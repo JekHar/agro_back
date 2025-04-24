@@ -69,9 +69,9 @@ class DatabaseSeeder extends Seeder
                 CategorySeeders::class,
                 ProductSeeders::class,
                 LotSeeder::class,
-                // OrderSeeder::class,
-                SingleOrderSeeder::class,
-                // FlightSeeder::class
+                OrderSeeder::class,
+                //SingleOrderSeeder::class,
+                FlightSeeder::class
             ]);
 
 

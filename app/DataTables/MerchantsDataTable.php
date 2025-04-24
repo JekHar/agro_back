@@ -21,8 +21,13 @@ class MerchantsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', 'pages.merchants.actions')
+            ->addColumn('lots_count', function ($merchant) {
+                $count = $merchant->lots_count ?? 0;
+                $url = route('clients.merchants.lots.index', $merchant->id);
+                return '<a href="'.$url.'" class="text-primary">'.$count.'</a>';
+            })
             ->setRowId('id')
-            ->rawColumns(['action']);
+            ->rawColumns(['action', 'lots_count']);
     }
 
     /**
@@ -32,22 +37,24 @@ class MerchantsDataTable extends DataTable
     {
 
         if (request()->routeIs('clients.merchants.*')) {
-            if (auth()->user()->hasRole('Admin')){
-            return $model->newQuery()
-                ->select('merchants.*')
-                ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
-                //->leftJoin('orders', 'merchants.id', '=', 'orders.merchant_id')
-                ->where('merchant_type', 'Client');
-            //->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
-            //->selectRaw('COUNT(DISTINCT lots.id) as lots_count, MAX(orders.created_at) as last_service')
-            //->groupBy('merchants.id');
-            } elseif(auth()->user()->hasRole('Tenant')){
+            if (auth()->user()->hasRole('Admin')) {
                 return $model->newQuery()
                     ->select('merchants.*')
-                    //->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
+                    ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
+                    //->leftJoin('orders', 'merchants.id', '=', 'orders.merchant_id')
                     ->where('merchant_type', 'Client')
-                    ->where('merchants.merchant_id', auth()->user()->merchant_id);
-                    //->selectRaw('COUNT(DISTINCT lots.id) as lots_count');
+                    //->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
+                    ->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
+                    ->groupBy('merchants.id');
+
+            } elseif (auth()->user()->hasRole('Tenant')) {
+                return $model->newQuery()
+                    ->select('merchants.*')
+                    ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
+                    ->where('merchant_type', 'Client')
+                    ->where('merchants.merchant_id', auth()->user()->merchant_id)
+                    ->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
+                    ->groupBy('merchants.id');
             }
         }
         if (request()->routeIs('tenants.merchants.*')) {
@@ -91,8 +98,7 @@ class MerchantsDataTable extends DataTable
 
         if (request()->routeIs('tenants.*')) {
             return [
-                Column::make('id')->title('#'),
-                Column::make('trade_name')->title('Nombre de Fantasia'),
+                Column::make('trade_name')->title('Nombre'),
                 Column::make('fiscal_number')->title('CUIT'),
                 Column::make('email')->title('Email'),
                 Column::make('phone')->title('Telefono'),
@@ -105,12 +111,14 @@ class MerchantsDataTable extends DataTable
         }
         if (request()->routeIs('clients.*')) {
             return [
-                Column::make('id')->title('#'),
-                Column::make('trade_name')->title('Nombre de Fantasia'),
+                Column::make('trade_name')->title('Nombre'),
                 Column::make('fiscal_number')->title('CUIT'),
                 Column::make('main_activity')->title('Actividad Principal'),
                 Column::make('email')->title('Email'),
                 Column::make('phone')->title('Telefono'),
+                Column::computed('lots_count')
+                ->title('Lotes')
+                ->orderable(true),
                 //Column::Make('lots')->name('lots'),
                 //Column::Make('last_service')->name('last service'),
                 Column::computed('action')->title('Acciones')

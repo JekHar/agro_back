@@ -14,7 +14,7 @@ class MerchantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(MerchantsDataTable $dataTable): mixed
+        public function index(MerchantsDataTable $dataTable): mixed
     {
         return $dataTable->render('pages.merchants.index');
     }
