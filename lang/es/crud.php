@@ -97,6 +97,7 @@ return [
             'coordinates' => 'Coordenadas del último lote:',
             'created_at' => 'Creado En',
             'updated_at' => 'Actualizado En',
+            'number_auto_assigned' => 'El número de lote se asigna automáticamente',
             'merchant' => 'Cliente',
             'draw_confirm' => 'Ya existe un polígono dibujado. ¿Desea eliminarlo para dibujar uno nuevo?',
         ],

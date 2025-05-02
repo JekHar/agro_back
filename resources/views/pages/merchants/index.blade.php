@@ -11,17 +11,8 @@
 @endpush
 @section('content')
 <x-hero
-    :title="__('crud.merchants.plural')"
-    :subtitle="__('crud.merchants.Merchants_list')"
-    :breadcrumbs="[
-            [
-                'label' => __('crud.merchants.breadcrumbs.management'),
-                'url' => '/',
-            ],
-            [
-                'label' => __('crud.merchants.plural'),
-            ],
-        ]"></x-hero>
+    :title="request()->routeIs('clients.merchants.*') ? __('crud.merchants.plural') : __('crud.merchants.singular')"
+    ></x-hero>
 
 <div class="content">
 

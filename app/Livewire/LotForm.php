@@ -26,6 +26,9 @@ class LotForm extends Component
     public $kmlFile;
 
     public $currentLotId;
+    
+    // Flag to track if we're in create mode
+    public $isCreateMode = false;
 
     protected function rules()
     {
@@ -43,6 +46,9 @@ class LotForm extends Component
         $this->currentLotId = $lotId;
         if ($lotId) {
             $this->loadLot($lotId);
+        } else {
+            $this->isCreateMode = true;
+            $this->number = null;
         }
     }
 
@@ -72,6 +78,22 @@ class LotForm extends Component
         $this->coordinates = $coords;
         $this->hectares = $hectares;
     }
+    
+    public function updatedMerchantId($value)
+    {
+        
+        if ($this->isCreateMode && $value) {
+            $this->number = $this->getNextLotNumber($value);
+        }
+    }
+
+    protected function getNextLotNumber($merchantId)
+    {
+        $maxNumber = Lot::where('merchant_id', $merchantId)
+            ->max('number');
+        
+        return ($maxNumber ?? 0) + 1;
+    }
 
     public function saveLot()
     {
@@ -79,10 +101,15 @@ class LotForm extends Component
             $this->rules()['rules'],
             $this->rules()['messages']
         );
+        
         try {
             $lot = $this->currentLotId ?
                 Lot::findOrFail($this->currentLotId) :
                 new Lot;
+
+            if (!$this->currentLotId) {
+                $validatedData['number'] = $this->getNextLotNumber($validatedData['merchant_id']);
+            }
 
             $lot->fill([
                 'merchant_id' => $validatedData['merchant_id'],

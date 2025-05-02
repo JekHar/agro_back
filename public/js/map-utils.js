@@ -3,7 +3,8 @@ let map, drawnItems;
 function initializeMap() {
     map = L.map('map', { zoomControl: false }).setView([-34.6037, -58.3816], 13);
     
-    const satellite = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    // Use hybrid layer (satellite + roads) instead of just satellite
+    const satellite = L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
     });
@@ -49,6 +50,14 @@ function initializeMap() {
             background-color: #151211 !important;
             font-weight: bold !important;
             display: inline-block;
+        }
+        /* Make vertex points smaller */
+        .leaflet-editing-icon {
+            width: 8px !important;
+            height: 8px !important;
+            margin-left: -4px !important;
+            margin-top: -4px !important;
+            border-radius: 4px !important;
         }
     `;
     document.head.appendChild(style);
@@ -139,8 +148,6 @@ function setupDrawingControls() {
     L.drawLocal.edit.handlers.edit.tooltip.subtext = t.editSubTooltip;
     L.drawLocal.edit.handlers.remove.tooltip.text = t.removeTooltip;
 
-    
-
     const drawControl = new L.Control.Draw({
         draw: {polygon: {
                 allowIntersection: false,
@@ -154,6 +161,22 @@ function setupDrawingControls() {
                     color: '#ff6600',
                     fillColor: 'orange',
                     fillOpacity: 0.3 
+                },
+                // Make vertices smaller while drawing
+                icon: new L.DivIcon({
+                    iconSize: new L.Point(8, 8),
+                    className: 'leaflet-div-icon leaflet-editing-icon'
+                }),
+                touchIcon: new L.DivIcon({
+                    iconSize: new L.Point(16, 16),
+                    className: 'leaflet-div-icon leaflet-editing-icon'
+                }),
+                vertices: {
+                    size: 8,
+                    icon: new L.DivIcon({
+                        iconSize: new L.Point(8, 8),
+                        className: 'leaflet-div-icon leaflet-editing-icon'
+                    })
                 },
                 completeShape: true
             },
@@ -232,9 +255,19 @@ function startDrawing() {
             color: '#ff6600',
             fillColor: 'orange',
             fillOpacity: 0.3
-        }
+        },
+        // Make vertices smaller while drawing
+        icon: new L.DivIcon({
+            iconSize: new L.Point(8, 8),
+            className: 'leaflet-div-icon leaflet-editing-icon'
+        }),
+        touchIcon: new L.DivIcon({
+            iconSize: new L.Point(16, 16),
+            className: 'leaflet-div-icon leaflet-editing-icon'
+        })
     }).enable();
 }
+
 function editButton() {
     if (drawnItems.getLayers().length > 0) {
         const layer = drawnItems.getLayers()[0];
@@ -259,7 +292,6 @@ function saveDrawing() {
     }
 }
 
-
 function exportKML() {
     const geojson = drawnItems.toGeoJSON();
     const kml = tokml(geojson);
@@ -277,28 +309,27 @@ document.addEventListener('livewire:init', () => {
     setupDrawingControls();
 
     Livewire.on('lot-loaded', (data) => {
-    drawnItems.clearLayers();
-    
-    const coordinates = data[0]?.coordinates;
-    const hectares = data[0]?.hectares;
-    
-    if (coordinates && coordinates.length > 0) {
-
-        const coords = coordinates.map(coord => [
-            parseFloat(coord.lat),
-            parseFloat(coord.lng)
-        ]);
+        drawnItems.clearLayers();
         
-        const polygon = L.polygon(coords, {
-            color: 'orange'
-        });
-        drawnItems.addLayer(polygon);
+        const coordinates = data[0]?.coordinates;
+        const hectares = data[0]?.hectares;
         
-        updateCoordinatesDisplay(coordinates, hectares);
-        
-        map.fitBounds(polygon.getBounds());
-    }
-});
+        if (coordinates && coordinates.length > 0) {
+            const coords = coordinates.map(coord => [
+                parseFloat(coord.lat),
+                parseFloat(coord.lng)
+            ]);
+            
+            const polygon = L.polygon(coords, {
+                color: 'orange'
+            });
+            drawnItems.addLayer(polygon);
+            
+            updateCoordinatesDisplay(coordinates, hectares);
+            
+            map.fitBounds(polygon.getBounds());
+        }
+    });
 });
 
 function importKML() {

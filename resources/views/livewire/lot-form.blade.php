@@ -1,7 +1,20 @@
 <div>
+    <div class="mb-3">
+        <label for="merchant_id" class="form-label">{{ __('crud.lots.fields.merchant') }}</label>
+        <select wire:model="merchant_id" id="merchant_id" class="form-select" placeholder="{{ __('crud.lots.fields.merchant') }}">
+            <option value="">{{ __('crud.lots.select_merchant') }}</option>
+            @foreach($merchants as $merchant)
+            <option value="{{ $merchant->id }}">{{ $merchant->business_name }}</option>
+            @endforeach
+        </select>
+        @error('merchant_id')
+        <div class="text-danger">{{ $message }}</div>
+        @enderror
+    </div>
     <div id="map" style="height: 600px;" wire:ignore></div>
 
     <div class="d-flex flex-row justify-content-between mb-3 mt-3">
+        
         <div class="btn-group">
             <button onclick="startDrawing()" class="btn btn-primary text-white">
                 <i class="fa fa-pencil"></i> {{ __('crud.lots.actions.draw') }}
@@ -23,7 +36,6 @@
             </button>
         </div>
     </div>
-
     <div class="row">
         <div class="mb-3">
             <input type="file"
@@ -32,25 +44,15 @@
                 onchange="handleKMLImport(event)"
                 class="d-none">
         </div>
-        <div class="mb-3">
-            <label for="merchant_id" class="form-label">{{ __('crud.lots.fields.merchant') }}</label>
-            <select wire:model="merchant_id" id="merchant_id" class="form-select" placeholder="{{ __('crud.lots.fields.merchant') }}">
-                <option value="">{{ __('crud.lots.select_merchant') }}</option>
-                @foreach($merchants as $merchant)
-                <option value="{{ $merchant->id }}">{{ $merchant->business_name }}</option>
-                @endforeach
-            </select>
-            @error('merchant_id')
-            <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
 
         <div class="mb-3">
             <label for="number" class="form-label">{{ __('crud.lots.fields.number') }}</label>
             <input type="number"
                 wire:model="number"
                 id="number"
-                class="form-control">
+                class="form-control"
+                {{ $isCreateMode && !$merchant_id ? 'readonly' : '' }}>
+            <small class="text-muted">{{ $isCreateMode && !$merchant_id ? __('crud.lots.fields.number_auto_assigned') : '' }}</small>
             @error('number')
             <div class="text-danger">{{ $message }}</div>
             @enderror

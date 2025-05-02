@@ -17,21 +17,7 @@
 
 @section('content')
 
-<x-hero :title="__('crud.lots.plural')"
-    :subtitle="__('crud.lots.form')"
-    :breadcrumbs="[
-        [
-            'label' => __('crud.lots.breadcrumbs.home'),
-            'url' => '/dashboard',
-        ],
-        [
-            'label' => __('crud.lots.plural'),
-            'url' => route('lots.index'),
-        ],
-        [
-            'label' => isset($id) ? __('crud.lots.actions.edit') : __('crud.lots.add'),
-        ],
-    ]"></x-hero>
+<x-hero :title="__('crud.lots.plural')"></x-hero>
 <div class="content">
     <div class="block block-rounded">
         <div class="block-header block-header-default">
