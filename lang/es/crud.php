@@ -185,6 +185,8 @@ return [
             'concentration' => 'Concentración',
             'dosage_per_hectare' => 'Dosis por hectárea',
             'application_volume_per_hectare' => 'Volumen de aplicación por hectárea',
+            'liters_per_container' => 'Litros por bidon',
+            'brand' => 'Marca comercial',
             'stock' => 'Inventario',
             'working_width' => 'Ancho de trabajo',
             'created_at' => 'Creado en',

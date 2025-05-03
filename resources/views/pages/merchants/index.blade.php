@@ -25,7 +25,7 @@
                 @can('clients.merchants.create')
                 <a href="{{ route(request()->routeIs('clients.merchants.*') ? 'clients.merchants.create' : 'tenants.merchants.create') }}" class="btn btn-sm btn-primary p-2 rounded-pill text-white" >
                     <i class="fa fa-plus me-1"></i>
-                    {{ __('crud.merchants.add') }}
+                    {{ __('crud.merchants.add_client') }}
                 </a>
                 @endcan
             </div>

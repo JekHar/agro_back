@@ -54,8 +54,7 @@ class ProductDataTable extends DataTable
                 ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
                 ->leftJoin('merchants', 'products.merchant_id', '=', 'merchants.id')
                 ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name')
-                ->whereColumn('products.merchant_id', 'merchants.id')
-                ->where('merchants.merchant_id', auth()->user()->merchant_id);
+                ->where('merchants.id', auth()->user()->merchant_id);
         }
     }
 
