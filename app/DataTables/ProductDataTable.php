@@ -93,10 +93,10 @@ class ProductDataTable extends DataTable
             Column::make('name')->title('Nombre'),
             Column::make('category_name')->title('Categoría'),
             Column::make('merchant_name')->title('Cliente'),
-            Column::make('concentration')->title('Concent'),
+            Column::make('commercial_brand')->title('Marca Comercial'),
             Column::make('dosage_per_hectare')->title('Dosis/ha'),
-            Column::make('application_volume_per_hectare')->title('Volumen/ha'),
-            Column::make('stock')->title('Stock'),
+            Column::make('liters_per_can')->title('litros por bidones'),
+            // Column::make('stock')->title('Stock'),
             // Column::make('created_at')->title('Fecha creación'),
             // Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
