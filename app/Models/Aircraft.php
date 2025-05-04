@@ -19,6 +19,7 @@ class Aircraft extends Model implements ContractsAuditable
     protected $fillable = [
         'merchant_id',
         'brand',
+        'alias',
         'models',
         'manufacturing_year',
         'acquisition_date',

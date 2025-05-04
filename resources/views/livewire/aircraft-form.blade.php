@@ -7,7 +7,8 @@
                     <label class="form-label" for="models">
                         <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.model') }}
                     </label>
-                    <input type="text" class="form-control @error('models') is-invalid @enderror" id="models" wire:model="models">
+                    <input type="text" class="form-control @error('models') is-invalid @enderror" id="models"
+                        wire:model="models">
                     @error('models')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -20,11 +21,26 @@
                     <label class="form-label" for="brand">
                         <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.brand') }}
                     </label>
-                    <input type="text" class="form-control @error('brand') is-invalid @enderror" id="brand" wire:model="brand">
+                    <input type="text" class="form-control @error('brand') is-invalid @enderror" id="brand"
+                        wire:model="brand">
                     @error('brand')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div>
+            </div>
+        </div>
+
+        <!-- Alias -->
+        <div class="col-md-6">
+            <div class="mb-4">
+                <label class="form-label" for="alias">
+                    <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.alias') }}
+                </label>
+                <input type="text" class="form-control @error('alias">') is-invalid @enderror" id="alias"
+                wire:model="alias">
+                @error('alias')
+                    <span class="invalid-feedback">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -36,7 +52,8 @@
                         {{ __('crud.aircrafts.fields.working_width') }}
                     </label>
                     <div class="input-group">
-                        <input type="number" class="form-control @error('working_width') is-invalid @enderror" id="working_width" wire:model="working_width" step="0.01">
+                        <input type="number" class="form-control @error('working_width') is-invalid @enderror"
+                            id="working_width" wire:model="working_width" step="0.01">
                         <span class="input-group-text">m</span>
                     </div>
                     @error('working_width')
@@ -48,16 +65,17 @@
             <!-- Merchant -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    @if(auth()->user()->hasRole('Admin'))
-                    <label class="form-label" for="merchant_id">
-                        <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.merchant') }}
-                    </label>
-                    <select class="form-select @error('merchant_id') is-invalid @enderror" id="merchant_id" wire:model="merchant_id">
-                        <option value="">{{ __('crud.aircrafts.select_merchant') }}</option>
-                        @foreach ($merchants as $id => $businessName)
-                            <option value="{{ $id }}">{{ $businessName }}</option>
-                        @endforeach
-                    </select>
+                    @if (auth()->user()->hasRole('Admin'))
+                        <label class="form-label" for="merchant_id">
+                            <span class="text-danger">*</span> {{ __('crud.aircrafts.fields.merchant') }}
+                        </label>
+                        <select class="form-select @error('merchant_id') is-invalid @enderror" id="merchant_id"
+                            wire:model="merchant_id">
+                            <option value="">{{ __('crud.aircrafts.select_merchant') }}</option>
+                            @foreach ($merchants as $id => $businessName)
+                                <option value="{{ $id }}">{{ $businessName }}</option>
+                            @endforeach
+                        </select>
                     @endif
                     @error('merchant_id')
                         <span class="invalid-feedback">{{ $message }}</span>
@@ -73,7 +91,8 @@
                     <label class="form-label" for="manufacturing_year">
                         {{ __('crud.aircrafts.fields.manufacturing_year') }}
                     </label>
-                    <input type="number" class="form-control @error('manufacturing_year') is-invalid @enderror" id="manufacturing_year" wire:model="manufacturing_year">
+                    <input type="number" class="form-control @error('manufacturing_year') is-invalid @enderror"
+                        id="manufacturing_year" wire:model="manufacturing_year">
                     @error('manufacturing_year')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -83,10 +102,12 @@
             <!-- Acquisition Date -->
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="form-label" for="acquisition_date"> <span class="text-danger">*</span>
+                    <label class="form-label" for="acquisition_date">
                         {{ __('crud.aircrafts.fields.acquisition_date') }}
                     </label>
-                    <input type="date" class="js-flatpickr form-control @error('acquisition_date') is-invalid @enderror" id="acquisition_date" wire:model="acquisition_date" data-date-format="Y-m-d">
+                    <input type="date"
+                        class="js-flatpickr form-control @error('acquisition_date') is-invalid @enderror"
+                        id="acquisition_date" wire:model="acquisition_date" data-date-format="Y-m-d">
                     @error('acquisition_date')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror

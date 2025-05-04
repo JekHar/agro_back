@@ -31,9 +31,10 @@ class AircraftRequest extends FormRequest
         return [
             'merchant_id' => 'required|exists:merchants,id',
             'brand' => 'required|string|max:100',
+            'alias' => 'required|string|max:100',
             'models' => 'required|string|max:100',
             'manufacturing_year' => 'nullable|numeric|min:0',
-            'acquisition_date' => 'required|date',
+            'acquisition_date' => 'nullable|date',
             'working_width' => 'required|numeric|min:0',
         ];
     }
