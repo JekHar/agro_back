@@ -52,7 +52,7 @@ class ServiceDataTable extends DataTable
             ->join('merchants', 'services.merchant_id', '=', 'merchants.id')
             ->select('services.*', 'merchants.business_name as  merchant_name')
             ->whereColumn('services.merchant_id', 'merchants.id')
-            ->where('merchants.merchant_id', auth()->user()->merchant_id);
+            ->where('merchants.id', auth()->user()->merchant_id);
     }}
 
     /**
@@ -86,11 +86,8 @@ class ServiceDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id'),
             Column::make('name')->title('Servicio'),
-            Column::make('merchant_name')->title('Nombre de fantasia'),
-            Column::make('description')->title('Descripcion'),
-            Column::make('price_per_hectare')->title('Precio/Has'),
+            Column::make('price_per_hectare')->title('Precio/Ha'),
             Column::computed('action')->title('Acciones')
                 ->exportable(false)
                 ->printable(false)

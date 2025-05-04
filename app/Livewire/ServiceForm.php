@@ -16,8 +16,6 @@ class ServiceForm extends Component
 
     public $name;
 
-    public $description;
-
     public $merchant_id;
 
     public $price_per_hectare;
@@ -27,6 +25,8 @@ class ServiceForm extends Component
     public $merchants;
 
     public $isEditing = false;
+
+    public $userRole;
 
     protected function rules()
     {
@@ -41,13 +41,14 @@ class ServiceForm extends Component
 
     public function mount($serviceId = null)
     {
-        if (auth()->user()->hasRole('Admin')) {
+        $this->userRole = auth()->user()->hasRole('Admin') ? 'Admin' : 'Tenant';
+        
+
+        if ($this->userRole === 'Admin') {
             $this->merchants = Merchant::where('merchant_type', 'client')
                 ->pluck('business_name', 'id');
-        } elseif (auth()->user()->hasRole('Tenant')) {
-            $this->merchants = Merchant::where('merchant_type', 'client')
-                ->where('merchant_id', auth()->user()->merchant_id)
-                ->pluck('business_name', 'id');
+        } else {
+            $this->merchant_id = auth()->user()->merchant_id;
         }
         
         if ($serviceId) {
@@ -55,8 +56,12 @@ class ServiceForm extends Component
             $this->serviceId = $serviceId;
             $this->service = Service::find($serviceId);
             $this->name = $this->service->name;
-            $this->description = $this->service->description;
-            $this->merchant_id = $this->service->merchant_id;
+            
+
+            if ($this->userRole === 'Admin') {
+                $this->merchant_id = $this->service->merchant_id;
+            }
+            
             $this->price_per_hectare = $this->service->price_per_hectare;
         }
     }
@@ -67,6 +72,10 @@ class ServiceForm extends Component
             $this->rules()['rules'],
             $this->rules()['messages']
         );
+
+        if ($this->userRole === 'Tenant') {
+            $validatedData['merchant_id'] = auth()->user()->merchant_id;
+        }
 
         try {
             if ($this->isEditing) {
