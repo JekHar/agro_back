@@ -16,6 +16,8 @@ return new class extends Migration
 
             $table->decimal('concentration', 11, 2)->nullable()->change();
             $table->decimal('application_volume_per_hectare', 11, 2)->nullable()->change();
+            $table->integer('stock')->nullable()->change();
+            $table->decimal('dosage_per_hectare', 11, 2)->nullable()->change();
             $table->string('commercial_brand')->nullable()->after('name');
             $table->decimal('liters_per_can', 8, 2)->nullable()->after('dosage_per_hectare');
     
