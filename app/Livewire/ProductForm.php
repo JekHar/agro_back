@@ -101,7 +101,7 @@ class ProductForm extends Component
                 $this->product->update($validatedData);
                 $message = __('crud.products.updated');
             } else {
-                $productNew = Product::create($validatedData);
+                 Product::create($validatedData);
                 $message = __('crud.products.success');
             }
 

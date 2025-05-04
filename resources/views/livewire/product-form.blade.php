@@ -22,14 +22,14 @@
                 <!-- Marca comercial -->
                 <div class="col-md-4">
                     <div class="mb-4">
-                        <label class="form-label" for="brand"> 
+                        <label class="form-label" for="commercial_brand"> 
                             {{ __('crud.products.fields.brand') }}
                         </label>
                         <input type="text" 
-                            class="form-control @error('brand') is-invalid @enderror" 
-                            id="brand" wire:model="brand" 
+                            class="form-control @error('commercial_brand') is-invalid @enderror" 
+                            id="commercial_brand" wire:model="commercial_brand" 
                             placeholder="Ingrese la marca comercial">
-                        @error('brand')
+                        @error('commercial_brand')
                             <span class="invalid-feedback d-block" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -110,17 +110,17 @@
                 <!-- Litros por bidón -->
                 <div class="col-md-4">
                     <div class="mb-4">
-                        <label class="form-label" for="liters_per_container">
+                        <label class="form-label" for="liters_per_can">
                             {{ __('crud.products.fields.liters_per_container') }}
                         </label>
                         <div class="input-group">
                             <input type="number" 
-                                class="form-control @error('liters_per_container') is-invalid @enderror" 
-                                id="liters_per_container" wire:model="liters_per_container" 
+                                class="form-control @error('liters_per_can') is-invalid @enderror" 
+                                id="liters_per_can" wire:model="liters_per_can" 
                                 step="0.01" placeholder="0.00">
                             <span class="input-group-text">L</span>
                         </div>
-                        @error('liters_per_container')
+                        @error('liters_per_can')
                             <span class="invalid-feedback d-block" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

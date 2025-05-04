@@ -15,9 +15,11 @@ class Product extends Model implements Auditable
 
     protected $fillable = [
         'name',
+        'commercial_brand',
         'category_id',
         'concentration',
         'dosage_per_hectare',
+        'liters_per_can',
         'application_volume_per_hectare',
         'stock',
         'merchant_id',
