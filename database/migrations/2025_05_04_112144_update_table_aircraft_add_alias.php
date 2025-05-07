@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('aircrafts', function (Blueprint $table) {
             $table->string('alias')->nullable()->after('brand');
             $table->date('acquisition_date')->nullable()->change();
+            $table->integer('manufacturing_year')->nullable()->change();
         });
     }
 
