@@ -2,6 +2,16 @@
 
 return [
     'success' => 'Éxito!',
+    'roles' => [
+        'singular' => 'Rol',
+        'plural' => 'Roles',
+        'types' => [
+            'Admin' => 'Administrador',
+            'Tenant' => 'Empresa',
+            'Pilot' => 'Piloto',
+            'Ground Support' => 'Soporte en Tierra',
+        ],
+    ],
     'merchants' => [
         'singular' => 'Empresa',
         'plural' => 'Clientes',

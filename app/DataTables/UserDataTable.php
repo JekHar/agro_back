@@ -22,7 +22,10 @@ class UserDataTable extends DataTable
                 $query->where('merchants.business_name', 'like', "%{$keyword}%");
             })
             ->addColumn('role', function ($user) {
-                return $user->roles->first()?->name ?? 'N/A';
+                $roleName = $user->roles->first()?->name ?? 'N/A';
+                if ($roleName != 'N/A') {
+                    return __('crud.roles.types.' . $roleName);
+                }
             })
             ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
             ->addColumn('action', 'pages.users.action')
@@ -74,11 +77,9 @@ class UserDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id'),
             Column::make('name')->title('Nombre'),
             Column::make('email')->title('Correo Electrónico'),
             column::make('role')->title('Rol'),
-            Column::make('merchant_name')->title('Empresa'),
             Column::make('created_at')->title('Fecha creación'),
             Column::computed('action')->title('Acciones')
                 ->exportable(false)

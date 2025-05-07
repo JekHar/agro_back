@@ -107,7 +107,6 @@
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
 
-            // Verifica si los elementos existen
             if (togglePassword && passwordInput) {
                 togglePassword.addEventListener('click', function() {
                     if (passwordInput.type === 'password') {

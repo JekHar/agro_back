@@ -10,16 +10,7 @@
 @section('content')
 <x-hero
     :title="__('crud.users.plural')"
-    :subtitle="__('crud.users.Users_list')"
-    :breadcrumbs="[
-            [
-                'label' => __('crud.lots.breadcrumbs.home'),
-                'url' => '/',
-            ],
-            [
-                'label' => __('crud.users.plural'),
-            ],
-        ]"></x-hero>
+></x-hero>
 
 <div class="content">
     <div class="block block-rounded">
