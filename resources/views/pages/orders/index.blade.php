@@ -12,16 +12,7 @@
 @section('content')
 <x-hero
     :title="__('crud.orders.plural')"
-    :subtitle="__('crud.orders.orders_list')"
-    :breadcrumbs="[
-            [
-                'label' => __('crud.orders.breadcrumbs.management'),
-                'url' => '/',
-            ],
-            [
-                'label' => __('crud.orders.plural'),
-            ],
-        ]"></x-hero>
+></x-hero>
 
 <div class="content">
 

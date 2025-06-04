@@ -13,15 +13,8 @@
 @endpush
 
 @section('content')
-<x-hero :title="__('crud.products.plural')" :subtitle="__('crud.products.products list')" :breadcrumbs="[
-        [
-            'label' => __('crud.products.breadcrumbs.catalog'),
-            'url' => '/',
-        ],
-        [
-            'label' => __('crud.products.plural'),
-        ],
-    ]"></x-hero>
+<x-hero :title="__('crud.products.plural')">
+</x-hero>
 
 <div class="content">
 
