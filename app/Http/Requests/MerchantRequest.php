@@ -30,19 +30,19 @@ class MerchantRequest extends FormRequest
             'trade_name' => ['nullable', 'string', 'max:80'],
             'fiscal_number' => [
                 'max:999999999999',
-                'required',
+                'nullable',
                 'numeric',
                 Rule::unique('merchants', 'fiscal_number')
                     ->ignore($this->merchantId),
             ],
             'merchant_id' => $this->isClientRoute()
-                ? ['required', 'exists:merchants,id']
+                ? ['nullable', 'exists:merchants,id']
                 : ['nullable', 'exists:merchants,id'],
-            'merchant_type' => ['required', new Enum(MerchantType::class)],
-            'email' => ['required', 'email', 'max:80', Rule::unique('merchants', 'email')->ignore($this->merchantId)],
-            'phone' => ['required', 'string', 'max:20', Rule::unique('merchants', 'phone')->ignore($this->merchantId)],
-            'locality' => ['required', 'string', 'max:120'],
-            'address' => ['required', 'string', 'max:120'],
+            'merchant_type' => ['nullable', new Enum(MerchantType::class)],
+            'email' => ['nullable', 'email', 'max:80', Rule::unique('merchants', 'email')->ignore($this->merchantId)],
+            'phone' => ['nullable', 'string', 'max:20', Rule::unique('merchants', 'phone')->ignore($this->merchantId)],
+            'locality' => ['nullable', 'string', 'max:120'],
+            'address' => ['nullable', 'string', 'max:120'],
         ];
 
         if ($this->isClientRoute()) {

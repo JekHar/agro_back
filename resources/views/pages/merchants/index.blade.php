@@ -19,13 +19,13 @@
     <div class="block block-rounded">
         <div class="block-header block-header-default">
             <h3 class="block-title">
-                {{ __('crud.merchants.Merchants_list') }}
+                {{request()->routeIs('clients.merchants.*') ? __('crud.merchants.clients_subtitle') : __('crud.merchants.Merchants_list')}}
             </h3>
             <div class="block-options">
                 @can('clients.merchants.create')
                 <a href="{{ route(request()->routeIs('clients.merchants.*') ? 'clients.merchants.create' : 'tenants.merchants.create') }}" class="btn btn-sm btn-primary p-2 rounded-pill text-white" >
                     <i class="fa fa-plus me-1"></i>
-                    {{ __('crud.merchants.add') }}
+                    {{request()->routeIs('clients.merchants.*') ? __('crud.merchants.add_client') : __('crud.merchants.add_merchant')}}
                 </a>
                 @endcan
             </div>

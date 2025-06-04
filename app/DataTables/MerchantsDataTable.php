@@ -98,7 +98,7 @@ class MerchantsDataTable extends DataTable
 
         if (request()->routeIs('tenants.*')) {
             return [
-                Column::make('trade_name')->title('Nombre'),
+                Column::make('business_name')->title('Nombre'),
                 Column::make('fiscal_number')->title('CUIT'),
                 Column::make('email')->title('Email'),
                 Column::make('phone')->title('Telefono'),
@@ -111,7 +111,7 @@ class MerchantsDataTable extends DataTable
         }
         if (request()->routeIs('clients.*')) {
             return [
-                Column::make('trade_name')->title('Nombre'),
+                Column::make('business_name')->title('Nombre'),
                 Column::make('fiscal_number')->title('CUIT'),
                 Column::make('main_activity')->title('Actividad Principal'),
                 Column::make('email')->title('Email'),

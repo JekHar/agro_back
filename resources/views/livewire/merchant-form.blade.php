@@ -42,7 +42,7 @@
                     @if((auth()->user()->hasRole('Admin') && $isClient) || 
                     (!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
                     <div class="col-md-6">
-                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.merchant') }}</label>
+                         {{ __('crud.merchants.fields.merchant') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-building"></i>
@@ -63,7 +63,7 @@
                     @if((auth()->user()->hasRole('Admin') && $isClient) || 
                     (!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
                     <div class="col-md-6">
-                        <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.fiscal_number') }}</label>
+                        {{ __('crud.merchants.fields.fiscal_number') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-id-card"></i>
@@ -85,7 +85,7 @@
                 @if(!(auth()->user()->hasRole('Admin') && $isClient) && 
                     !(!auth()->user()->hasRole('Tenant') && !auth()->user()->hasRole('Admin')))
                     <div class="col-md-4">
-                        <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.fiscal_number') }}</label>
+                        {{ __('crud.merchants.fields.fiscal_number') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-id-card"></i>
@@ -120,7 +120,7 @@
                     @endif
 
                     <div class="col-md-4">
-                        <label class="form-label"><span class="text-danger">*</span> {{ __('crud.merchants.fields.email') }}</label>
+                        {{ __('crud.merchants.fields.email') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-envelope"></i>
@@ -136,7 +136,7 @@
                     </div>
 
                     <div class="col-md-4 {{auth()->user()->hasRole('Tenant') && $isClient ? 'mt-4' : ''}}">
-                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.phone') }}</label>
+                         {{ __('crud.merchants.fields.phone') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-phone"></i>
@@ -155,7 +155,7 @@
                 <!-- Fila 4: Localidad y Dirección -->
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.locality') }}</label>
+                         {{ __('crud.merchants.fields.locality') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-map-marker"></i>
@@ -171,7 +171,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label"><span class="text-danger">*</span>  {{ __('crud.merchants.fields.address') }}</label>
+                         {{ __('crud.merchants.fields.address') }}</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-location-arrow"></i>
@@ -190,7 +190,7 @@
                 <input type="hidden" wire:model="merchant_type">
 
                 <!-- Botones -->
-                <div class="mt-4">
+                <div class="mt-4 d-flex justify-content-end">
                     <button type="submit" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
                         <i class="fa fa-save me-1"></i>
                         {{ $isEditing ? __('crud.merchants.actions.edit') : __('crud.merchants.actions.create') }}

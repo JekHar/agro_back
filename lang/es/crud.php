@@ -13,7 +13,7 @@ return [
         'actions' => 'Acciones',
         'select_merchant' => 'Seleccionar Empresa',
         'fields' => [
-            'business_name' => 'Nombre de Fantasía',
+            'business_name' => 'Nombre',
             'trade_name' => 'Razón Social',
             'fiscal_number' => 'CUIT',
             'email' => 'Correo Electrónico',
@@ -28,7 +28,7 @@ return [
             'updated_at' => 'Actualizado En',
         ],
         'actions' => [
-            'create' => 'Crear',
+            'create' => 'Agregar',
             'edit' => 'Editar',
             'delete' => 'Eliminar',
         ],
