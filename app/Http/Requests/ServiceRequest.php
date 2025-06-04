@@ -30,7 +30,6 @@ class ServiceRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
             'merchant_id' => 'required|exists:merchants,id',
             'price_per_hectare' => 'required|numeric|min:0',
         ];

@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            <!-- Descripción -->
+            {{-- <!-- Descripción -->
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="description">{{ __('crud.services.fields.description') }}</label>
@@ -33,14 +33,14 @@
                     @enderror
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="row">
-            <!-- Selección de Merchant -->
+            @if($userRole === 'Admin')
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="form-label" for="merchant_id"> <span class="text-danger">*</span> {{ __('crud.services.fields.merchant') }}</label>
-                    <select class="form-select  @error('merchant_id') is-invalid @enderror" 
+                    <select class="form-select @error('merchant_id') is-invalid @enderror" 
                             id="merchant_id" 
                             wire:model="merchant_id">
                         <option value="">{{ __('crud.services.select_merchant') }}</option>
@@ -55,6 +55,9 @@
                     @enderror
                 </div>
             </div>
+            @else
+            <input type="hidden" wire:model="merchant_id">
+            @endif
 
             <!-- Precio por Hectárea -->
             <div class="col-md-6">
