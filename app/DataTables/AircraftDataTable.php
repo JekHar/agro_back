@@ -85,9 +85,8 @@ class AircraftDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id'),
-            Column::make('merchant_name')->title('Empresa'),
             Column::make('brand')->title('Marca'),
+            Column::make('alias')->title('Alias'),
             Column::make('models')->title('Modelo'),
             Column::make('manufacturing_year')->title('Año de Fabricación'),
             Column::computed('acquisition_date')->title('Fecha de Adquisición'),

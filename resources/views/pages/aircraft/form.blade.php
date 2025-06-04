@@ -1,20 +1,6 @@
 @extends('layouts.backend')
 @section('content')
-<x-hero :title="__('crud.aircrafts.plural')"
-    :subtitle="__('crud.aircrafts.form')"
-    :breadcrumbs="[
-        [
-            'label' => __('crud.lots.breadcrumbs.home'),
-            'url' => '/dashboard',
-        ],
-        [
-            'label' => __('crud.aircrafts.plural'),
-            'url' => route('aircrafts.index'),
-        ],
-        [
-            'label' => isset($id) ? __('crud.aircrafts.actions.edit') : __('crud.aircrafts.add'),
-        ],
-    ]"></x-hero>
+<x-hero :title="__('crud.aircrafts.plural')"></x-hero>
 <div class="content">
     <div class="block block-rounded">
         <div class="block-header block-header-default">
