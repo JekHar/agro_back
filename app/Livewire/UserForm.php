@@ -50,11 +50,11 @@ class UserForm extends Component
         $this->merchants = Merchant::where('merchant_type', MerchantType::TENANT)
             ->pluck('business_name', 'id');
         if (auth()->user()->hasRole('Admin')) {
-        $this->roles = Role::whereIn('name', ['Tenant', 'Pilot', 'Ground Support'])
-            ->pluck('name', 'id');
+            $this->roles = Role::whereIn('name', ['Admin', 'Tenant', 'Pilot', 'Ground Support'])
+                ->pluck('name', 'id');
         } else {
             $this->roles = Role::whereIn('name', ['Pilot', 'Ground Support'])
-            ->pluck('name', 'id');
+                ->pluck('name', 'id');
         }
         if ($userId) {
             $this->isEditing = true;
@@ -69,62 +69,62 @@ class UserForm extends Component
     }
 
     public function save()
-{   
-    if (auth()->user()->hasRole('Tenant')) {
-        $this->merchant_id = auth()->user()->merchant_id;
-    }
+    {
+        if (auth()->user()->hasRole('Tenant')) {
+            $this->merchant_id = auth()->user()->merchant_id;
+        }
 
-    $validatedData = $this->validate();
-    try {
+        $validatedData = $this->validate();
+        try {
 
-        if ($this->isEditing) {
-            $this->user->update([
-                'name' => $validatedData['name'],
-                'merchant_id' => $validatedData['merchant_id'],
-                'email' => $validatedData['email'],
-                'password' => Hash::make($validatedData['password']),
+            if ($this->isEditing) {
+                $this->user->update([
+                    'name' => $validatedData['name'],
+                    'merchant_id' => $validatedData['merchant_id'],
+                    'email' => $validatedData['email'],
+                    'password' => Hash::make($validatedData['password']),
+                ]);
+
+                if ($validatedData['role']) {
+                    $this->user->syncRoles([Role::find($validatedData['role'])->name]);
+                }
+            } else {
+                $user = User::create([
+                    'name' => $validatedData['name'],
+                    'email' => $validatedData['email'],
+                    'merchant_id' => $validatedData['merchant_id'],
+                    'password' => Hash::make($validatedData['password']),
+                ]);
+
+                if ($validatedData['role']) {
+                    $user->assignRole(Role::find($validatedData['role'])->name);
+                }
+            }
+
+            $this->dispatch('swal', [
+                'title' => 'Éxito!',
+                'message' => __($this->isEditing ? 'crud.users.actions.updated' : 'crud.users.actions.created'),
+                'icon' => 'success',
+                'redirect' => route('users.index'),
             ]);
 
-            if ($validatedData['role']) {
-                $this->user->syncRoles([Role::find($validatedData['role'])->name]);
+            if ($this->isModal) {
+                $this->dispatch('close-modal');
             }
-        } else {
-            $user = User::create([
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'merchant_id' => $validatedData['merchant_id'],
-                'password' => Hash::make($validatedData['password']),
+
+            if (! $this->isEditing) {
+                $this->reset(['name', 'email', 'password', 'password_confirmation', 'merchant_id', 'role']);
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+
+            $this->dispatch('swal', [
+                'title' => __('Error'),
+                'message' => __('crud.users.actions.error'),
+                'icon' => 'error',
             ]);
-
-            if ($validatedData['role']) {
-                $user->assignRole(Role::find($validatedData['role'])->name);
-            }
         }
-
-        $this->dispatch('swal', [
-            'title' => 'Éxito!',
-            'message' => __($this->isEditing ? 'crud.users.actions.updated' : 'crud.users.actions.created'),
-            'icon' => 'success',
-            'redirect' => route('users.index'),
-        ]);
-
-        if ($this->isModal) {
-            $this->dispatch('close-modal');
-        }
-
-        if (! $this->isEditing) {
-            $this->reset(['name', 'email', 'password', 'password_confirmation', 'merchant_id', 'role']);
-        }
-    } catch (\Exception $e) {
-        Log::error($e->getMessage(), $e->getTrace());
-        
-        $this->dispatch('swal', [
-            'title' => __('Error'),
-            'message' => __('crud.users.actions.error'),
-            'icon' => 'error',
-        ]);
     }
-}
 
     public function render()
     {
