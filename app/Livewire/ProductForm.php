@@ -17,13 +17,13 @@ class ProductForm extends Component
 
     public $name;
 
-    public $category_id;
+    public $commercial_brand;
 
-    public $concentration;
+    public $category_id;
 
     public $dosage_per_hectare;
 
-    public $application_volume_per_hectare;
+    public $liters_per_can;
 
     public $stock;
 
@@ -34,6 +34,8 @@ class ProductForm extends Component
     public $merchants;
 
     public $isEditing = false;
+
+    public $isTenant = false;
 
     protected function rules()
     {
@@ -49,11 +51,15 @@ class ProductForm extends Component
     public function mount($productId = null)
     {
         $this->categories = Category::pluck('name', 'id');
+        $this->isTenant = auth()->user()->hasRole('Tenant');
         
         if (auth()->user()->hasRole('Admin')) {
             $this->merchants = Merchant::where('merchant_type', 'client')
                 ->pluck('business_name', 'id');
-        } elseif (auth()->user()->hasRole('Tenant')) {
+        } elseif ($this->isTenant) {
+            $this->merchant_id = auth()->user()->merchant_id;
+            
+
             $this->merchants = Merchant::where('merchant_type', 'client')
                 ->where('merchant_id', auth()->user()->merchant_id)
                 ->pluck('business_name', 'id');
@@ -64,11 +70,16 @@ class ProductForm extends Component
             $this->productId = $productId;
             $this->product = Product::find($productId);
             $this->name = $this->product->name;
+            $this->commercial_brand = $this->product->commercial_brand;
             $this->category_id = $this->product->category_id;
-            $this->merchant_id = $this->product->merchant_id;
-            $this->concentration = $this->product->concentration;
+            $this->liters_per_can = $this->product->liters_per_can;
+            
+            if (!$this->isTenant) {
+                $this->merchant_id = $this->product->merchant_id;
+            }
+            
             $this->dosage_per_hectare = $this->product->dosage_per_hectare;
-            $this->application_volume_per_hectare = $this->product->application_volume_per_hectare;
+            $this->liters_per_can = $this->product->liters_per_can;
             $this->stock = $this->product->stock;
         }
     }
@@ -80,12 +91,17 @@ class ProductForm extends Component
             $this->rules()['messages']
         );
 
+
+        if ($this->isTenant) {
+            $validatedData['merchant_id'] = auth()->user()->merchant_id;
+        }
+        
         try {
             if ($this->isEditing) {
                 $this->product->update($validatedData);
                 $message = __('crud.products.updated');
             } else {
-                Product::create($validatedData);
+                 Product::create($validatedData);
                 $message = __('crud.products.success');
             }
 
@@ -99,7 +115,7 @@ class ProductForm extends Component
         } catch (\Throwable $th) {
             $this->dispatch('swal', [
                 'title' => ('Error'),
-                'message' => ('Ocurrió un error al procesar la solicitud'),
+                'message' => ('Ocurrió un error al procesar la solicitud: ' . $th->getMessage()),
                 'icon' => 'error',
             ]);
         }

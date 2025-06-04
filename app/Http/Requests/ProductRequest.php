@@ -32,12 +32,14 @@ class ProductRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
+            'commercial_brand' => 'nullable|string|max:100',
             'category_id' => 'required|exists:categories,id',
-            'merchant_id' => 'required|exists:merchants,id',
-            'concentration' => 'required|numeric|min:0, max:100',
-            'dosage_per_hectare' => 'required|numeric|min:0',
-            'application_volume_per_hectare' => 'required|numeric|min:0',
-            'stock' => 'required|numeric|min:0',
+            'merchant_id' => 'nullable|exists:merchants,id',
+            'stock' => 'nullable|numeric|min:0',
+            'dosage_per_hectare' => 'nullable|numeric|min:0',
+            'liters_per_can' => 'nullable|numeric|min:0',
+            'commercial_brand' => 'nullable|string|max:100',
+
         ];
     }
 
