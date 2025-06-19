@@ -1,4 +1,6 @@
 let map, drawnItems;
+let cropMode = false;
+let cropPolygon = null;
 
 function initializeMap() {
     map = L.map('map', { zoomControl: false }).setView([-34.6037, -58.3816], 13);
@@ -111,6 +113,9 @@ function setupDrawingControls() {
             "editTooltip": "Arrastra los puntos para editar las formas",
             "editSubTooltip": "Haz clic en cancelar para deshacer los cambios",
             "removeTooltip": "Haz clic en una forma para eliminarla",
+            "crop": "Recortar área",
+            "cropTooltip": "Haz clic para dibujar el área a recortar",
+            "cropCancel": "Cancelar recorte",
         }
     };
 
@@ -200,6 +205,12 @@ function setupDrawingControls() {
 
 function handleDrawCreated(e) {
     const layer = e.layer;
+    
+    if (cropMode) {
+        applyCrop(layer);
+        return;
+    }
+    
     drawnItems.clearLayers();
     drawnItems.addLayer(layer);
 
@@ -256,7 +267,6 @@ function startDrawing() {
             fillColor: 'orange',
             fillOpacity: 0.3
         },
-        // Make vertices smaller while drawing
         icon: new L.DivIcon({
             iconSize: new L.Point(8, 8),
             className: 'leaflet-div-icon leaflet-editing-icon'
@@ -291,6 +301,193 @@ function saveDrawing() {
         alert(noPolygonMessage);
     }
 }
+
+function startCrop() {
+    if (drawnItems.getLayers().length === 0) {
+        const noPolygonMessage = window.translations?.lots?.no_polygon_crop || 'No hay ningún polígono para recortar.';
+        alert(noPolygonMessage);
+        return;
+    }
+    
+    cropMode = true;
+    document.getElementById('cropButton').style.display = 'none';
+    document.getElementById('cropCancelButton').style.display = 'inline-block';
+    
+    new L.Draw.Polygon(map, {
+        shapeOptions: {
+            color: '#ff0000',
+            fillColor: 'red',
+            fillOpacity: 0.3
+        },
+        icon: new L.DivIcon({
+            iconSize: new L.Point(8, 8),
+            className: 'leaflet-div-icon leaflet-editing-icon'
+        })
+    }).enable();
+}
+
+function cancelCrop() {
+    cropMode = false;
+    if (cropPolygon) {
+        map.removeLayer(cropPolygon);
+        cropPolygon = null;
+    }
+    document.getElementById('cropButton').style.display = 'inline-block';
+    document.getElementById('cropCancelButton').style.display = 'none';
+}
+
+function applyCrop(cropLayer) {
+    if (drawnItems.getLayers().length === 0) return;
+    
+    const originalPolygon = drawnItems.getLayers()[0];
+    const originalCoords = originalPolygon.getLatLngs()[0];
+    const cropCoords = cropLayer.getLatLngs()[0];
+    
+    try {
+        const originalGeoJSON = {
+            type: "Feature",
+            geometry: {
+                type: "Polygon",
+                coordinates: [originalCoords.map(coord => [coord.lng, coord.lat])]
+            }
+        };
+        
+        const cropGeoJSON = {
+            type: "Feature",
+            geometry: {
+                type: "Polygon",
+                coordinates: [cropCoords.map(coord => [coord.lng, coord.lat])]
+            }
+        };
+        
+        const isWithin = turf.booleanWithin(cropGeoJSON, originalGeoJSON);
+        
+        let result;
+        
+        if (isWithin) {
+            result = {
+                type: "Feature",
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [
+                        originalGeoJSON.geometry.coordinates[0],
+                        cropGeoJSON.geometry.coordinates[0] 
+                    ]
+                }
+            };
+        } else {
+            result = turf.difference(originalGeoJSON, cropGeoJSON);
+        }
+        
+        if (result && result.geometry && result.geometry.coordinates) {
+            drawnItems.clearLayers();
+
+            if (result.geometry.coordinates.length > 1) {
+                const outerRing = result.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+                const holes = result.geometry.coordinates.slice(1).map(hole => 
+                    hole.map(coord => [coord[1], coord[0]])
+                );
+                
+                const resultPolygon = L.polygon([outerRing, ...holes], {
+                    color: '#ff6600',
+                    fillColor: 'orange',
+                    fillOpacity: 0.3
+                });
+                
+                drawnItems.addLayer(resultPolygon);
+
+                const leafletCoords = resultPolygon.getLatLngs()[0];
+                const area = L.GeometryUtil.geodesicArea(leafletCoords);
+                
+                let totalHoleArea = 0;
+                if (resultPolygon.getLatLngs().length > 1) {
+                    for (let i = 1; i < resultPolygon.getLatLngs().length; i++) {
+                        const holeCoords = resultPolygon.getLatLngs()[i];
+                        totalHoleArea += L.GeometryUtil.geodesicArea(holeCoords);
+                    }
+                }
+    
+                
+                const finalArea = area - totalHoleArea;
+                const hectares = (finalArea / 10000).toFixed(3);
+                
+                const formattedCoords = leafletCoords.map(point => ({
+                    lat: point.lat,
+                    lng: point.lng 
+                }));
+                
+                updateCoordinatesDisplay(formattedCoords, hectares);
+                
+                Livewire.dispatch('updateCoordinates', {
+                    coords: formattedCoords,
+                    hectares: hectares
+                });
+                
+            } else {
+                // Polígono simple (sin agujero)
+                const resultCoords = result.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+                const resultPolygon = L.polygon(resultCoords, {
+                    color: '#ff6600',
+                    fillColor: 'orange',
+                    fillOpacity: 0.3
+                });
+                
+                drawnItems.addLayer(resultPolygon);
+                
+                // Calcular nueva área
+                const area = L.GeometryUtil.geodesicArea(resultCoords);
+                const hectares = (area / 10000).toFixed(3);
+                
+                const formattedCoords = resultCoords.map(point => ({
+                    lat: point[0],
+                    lng: point[1]
+                }));
+                
+                updateCoordinatesDisplay(formattedCoords, hectares);
+                
+                Livewire.dispatch('updateCoordinates', {
+                    coords: formattedCoords,
+                    hectares: hectares
+                });
+            }
+        } else {
+            alert('No se puede aplicar el recorte. El área seleccionada no es válida.');
+        }
+        
+    } catch (error) {
+        console.error('Error al aplicar recorte:', error);
+        alert('Error al aplicar el recorte. Inténtalo de nuevo.');
+    }
+    
+    // Limpiar modo de recorte
+    map.removeLayer(cropLayer);
+    cancelCrop();
+}
+
+function createPolygonWithHoles(outerCoords, holes) {
+    // Crear el polígono principal
+    const mainPolygon = L.polygon(outerCoords, {
+        color: '#ff6600',
+        fillColor: 'orange',
+        fillOpacity: 0.3
+    });
+    
+    // Crear los agujeros como polígonos separados con fondo transparente
+    holes.forEach(holeCoords => {
+        const hole = L.polygon(holeCoords, {
+            color: '#ff6600',
+            fillColor: 'white',
+            fillOpacity: 1,
+            weight: 1
+        });
+        drawnItems.addLayer(hole);
+    });
+    
+    return mainPolygon;
+}
+
+
+
 
 function exportKML() {
     const geojson = drawnItems.toGeoJSON();

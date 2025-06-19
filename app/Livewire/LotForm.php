@@ -23,11 +23,12 @@ class LotForm extends Component
 
     public $coordinates = [];
 
+    public $holes = []; 
+
     public $kmlFile;
 
     public $currentLotId;
     
-    // Flag to track if we're in create mode
     public $isCreateMode = false;
 
     protected function rules()
@@ -57,26 +58,41 @@ class LotForm extends Component
         $lot = Lot::with('coordinates')->findOrFail($lotId);
         $this->merchant_id = $lot->merchant_id;
         $this->number = $lot->number;
-
         $this->hectares = $lot->hectares;
-        $this->coordinates = $lot->coordinates->map(function ($coords) {
+
+        $mainCoords = $lot->coordinates->where('is_hole', false)->sortBy('sequence_number');
+        $holeCoords = $lot->coordinates->where('is_hole', true)->groupBy('hole_group');
+
+        $this->coordinates = $mainCoords->map(function ($coords) {
             return [
                 'lat' => $coords->latitude,
                 'lng' => $coords->longitude,
             ];
         })->toArray();
 
+        // Estructurar los agujeros por grupos
+        $this->holes = $holeCoords->map(function ($holeGroup) {
+            return $holeGroup->sortBy('sequence_number')->map(function ($coords) {
+                return [
+                    'lat' => $coords->latitude,
+                    'lng' => $coords->longitude,
+                ];
+            })->values()->toArray();
+        })->values()->toArray();
+
         $this->dispatch('lot-loaded', [
             'coordinates' => $this->coordinates,
+            'holes' => $this->holes,
             'hectares' => $this->hectares,
         ]);
     }
 
     #[On('updateCoordinates')]
-    public function updateCoordinates($coords, $hectares)
+    public function updateCoordinates($coords, $hectares, $holes = [])
     {
         $this->coordinates = $coords;
         $this->hectares = $hectares;
+        $this->holes = $holes;
     }
     
     public function updatedMerchantId($value)
@@ -128,7 +144,21 @@ class LotForm extends Component
                     'latitude' => $coord['lat'],
                     'longitude' => $coord['lng'],
                     'sequence_number' => $index,
+                    'is_hole' => false,
+                    'hole_group' => null,
                 ]);
+            });
+
+            collect($this->holes)->each(function ($hole, $holeIndex) use ($lot) {
+                collect($hole)->each(function ($coord, $coordIndex) use ($lot, $holeIndex) {
+                    $lot->coordinates()->create([
+                        'latitude' => $coord['lat'],
+                        'longitude' => $coord['lng'],
+                        'sequence_number' => $coordIndex,
+                        'is_hole' => true,
+                        'hole_group' => $holeIndex + 1, 
+                    ]);
+                });
             });
 
             $this->dispatch('swal', [
