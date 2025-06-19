@@ -27,14 +27,14 @@
                 <i class="fa fa-save"></i> {{ __('crud.lots.actions.save_edit') }}
             </button>
             <button id='cropButton' onclick="startCrop()" class="btn btn-warning text-white">
-                <i class="fa fa-cut"></i> {{ __('crud.lots.actions.crop') }}
+                <i class="fa fa-cut"></i> {{ __('Recortar') }}
             </button>
             <button id='cropCancelButton' onclick="cancelCrop()" class="btn btn-danger text-white"
                 style="display: none;">
-                <i class="fa fa-times"></i> {{ __('crud.lots.actions.cancel_crop') }}
+                <i class="fa fa-times"></i> {{ __('Cancelar') }}
             </button>
             <button onclick="startDrawingPin()" class="btn btn-info text-white"> {{-- Nuevo botón para el pin --}}
-                <i class="fa fa-map-marker"></i> {{ __('crud.lots.actions.draw_pin') }}
+                <i class="fa fa-map-marker"></i> {{ __('Colocar pin') }}
             </button>
         </div>
         <div class="btn-group">
@@ -65,13 +65,12 @@
         <div class="mb-3">
             <label for="navigationPinCoordinates"
                 class="form-label">{{ __('crud.lots.fields.navigation_pin') }}</label>
-            <div id="navigationPinCoordinates" class="form-control"
-                style="background-color: #f8f9fa; font-family: monospace;">
+            <div id="navigationPinCoordinates" class="form-control">
                 @if ($navigationPin['lat'] && $navigationPin['lng'])
                     Pin: Lat: {{ number_format($navigationPin['lat'], 6) }}, Lng:
                     {{ number_format($navigationPin['lng'], 6) }}
                 @else
-                    {{ __('crud.lots.no_pin_selected') }}
+                    {{ __('Pin no seleccionado') }}
                 @endif
             </div>
             @error('navigationPin.lat')

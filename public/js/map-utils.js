@@ -217,21 +217,32 @@ function setupDrawingControls() {
 
 function handleDrawCreated(e) {
     const layer = e.layer;
+    console.log('Draw created event fired', layer);
 
     if (cropMode) {
         applyCrop(layer);
         return;
     }
 
-    if (layer instanceof L.Marker) { // Si es un marcador (pin)
-        if (navigationPin) { // Si ya existe un pin, lo removemos
+    if (layer instanceof L.Marker) { 
+        console.log('Marker detected, coordinates:', layer.getLatLng());
+        
+        if (navigationPin) {
+            console.log('Removing existing navigation pin');
             map.removeLayer(navigationPin);
         }
-        navigationPin = layer;
-        navigationPin.addTo(map); // Agregamos el nuevo pin al mapa
-
+        
         const latlng = layer.getLatLng();
-        updateNavigationPinDisplay(latlng); // Nueva función para actualizar la UI
+        console.log('Creating new marker at:', latlng);
+        
+        // SOLUCIÓN 1: Usar el marcador estándar de Leaflet primero
+        navigationPin = L.marker(latlng).addTo(map);
+        console.log('Navigation pin added to map:', navigationPin);
+        
+        // Verificar si el marcador está realmente en el mapa
+        console.log('Map layers after adding pin:', map._layers);
+
+        updateNavigationPinDisplay(latlng);
         Livewire.dispatch('updateNavigationPin', {
             lat: latlng.lat,
             lng: latlng.lng
@@ -258,12 +269,11 @@ function handleDrawCreated(e) {
         hectares: hectares
     });
 }
-
 function updateNavigationPinDisplay(latlng) {
     const pinCoordsElement = document.getElementById('navigationPinCoordinates');
     if (pinCoordsElement) {
-        const formattedLat = latlng.lat.toFixed(6); // Formato con 6 decimales
-        const formattedLng = latlng.lng.toFixed(6); // Formato con 6 decimales
+        const formattedLat = latlng.lat.toFixed(6);
+        const formattedLng = latlng.lng.toFixed(6);
         pinCoordsElement.innerText = `Pin: Lat: ${formattedLat}, Lng: ${formattedLng}`;
     }
 }
@@ -696,7 +706,7 @@ function importKML() {
 
 function startDrawingPin() {
     if (navigationPin) {
-        const confirmMessage = window.translations?.lots?.fields?.pin_confirm || 'There is already a navigation pin. Do you want to delete it to draw a new one?';
+        const confirmMessage = window.translations?.lots?.fields?.pin_confirm || 'Ya hay un pin de navegación colocado. ¿Deseas eliminarlo y colocar uno nuevo?';
         const userConfirmed = confirm(confirmMessage);
         if (!userConfirmed) {
             return;
