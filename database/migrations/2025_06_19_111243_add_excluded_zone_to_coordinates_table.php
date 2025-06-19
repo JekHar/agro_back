@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('coordinates', function (Blueprint $table) {
+            $table->integer('sequence_number')->default(0); 
             $table->boolean('is_hole')->default(false)->after('sequence_number');
             $table->integer('hole_group')->nullable()->after('is_hole');
         });

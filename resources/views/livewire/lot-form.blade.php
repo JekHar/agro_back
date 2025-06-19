@@ -33,6 +33,9 @@
                 style="display: none;">
                 <i class="fa fa-times"></i> {{ __('crud.lots.actions.cancel_crop') }}
             </button>
+            <button onclick="startDrawingPin()" class="btn btn-info text-white"> {{-- Nuevo botón para el pin --}}
+                <i class="fa fa-map-marker"></i> {{ __('crud.lots.actions.draw_pin') }}
+            </button>
         </div>
         <div class="btn-group">
             <button onclick="exportKML()" class="btn btn-success">
@@ -55,6 +58,26 @@
             <small
                 class="text-muted">{{ $isCreateMode && !$merchant_id ? __('crud.lots.fields.number_auto_assigned') : '' }}</small>
             @error('number')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="navigationPinCoordinates"
+                class="form-label">{{ __('crud.lots.fields.navigation_pin') }}</label>
+            <div id="navigationPinCoordinates" class="form-control"
+                style="background-color: #f8f9fa; font-family: monospace;">
+                @if ($navigationPin['lat'] && $navigationPin['lng'])
+                    Pin: Lat: {{ number_format($navigationPin['lat'], 6) }}, Lng:
+                    {{ number_format($navigationPin['lng'], 6) }}
+                @else
+                    {{ __('crud.lots.no_pin_selected') }}
+                @endif
+            </div>
+            @error('navigationPin.lat')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+            @error('navigationPin.lng')
                 <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>

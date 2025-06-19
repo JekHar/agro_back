@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('lots', function (Blueprint $table) {
             $table->decimal('hectares', 11, 2)->change();
+            $table->decimal('navigation_latitude', 10, 8)->nullable()->after('hectares');
+            $table->decimal('navigation_longitude', 11, 8)->nullable()->after('navigation_latitude');
         });
     }
 

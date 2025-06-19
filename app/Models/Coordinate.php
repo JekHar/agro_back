@@ -27,6 +27,10 @@ class Coordinate extends Model implements Auditable
 
     protected $casts = [
         'is_hole' => 'boolean',
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
+        'sequence_number' => 'integer',
+        'hole_group' => 'integer',
     ];
 
     public function lot()
@@ -36,11 +40,19 @@ class Coordinate extends Model implements Auditable
 
     public function scopeMainPerimeter($query)
     {
-        return $query->where('is_hole', false);
+        return $query->where('is_hole', false)->orderBy('sequence_number');
     }
 
     public function scopeHoles($query)
     {
-        return $query->where('is_hole', true);
+        return $query->where('is_hole', true)->orderBy('hole_group')->orderBy('sequence_number');
+    }
+
+        public function scopeHoleGroups($query)
+    {
+        return $query->where('is_hole', true)
+                    ->selectRaw('hole_group, COUNT(*) as coordinate_count')
+                    ->groupBy('hole_group')
+                    ->orderBy('hole_group');
     }
 }

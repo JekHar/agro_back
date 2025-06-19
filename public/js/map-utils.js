@@ -1,10 +1,11 @@
 let map, drawnItems;
 let cropMode = false;
 let cropPolygon = null;
+let navigationPin = null;
 
 function initializeMap() {
     map = L.map('map', { zoomControl: false }).setView([-34.6037, -58.3816], 13);
-    
+
     // Use hybrid layer (satellite + roads) instead of just satellite
     const satellite = L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 20,
@@ -32,12 +33,13 @@ function initializeMap() {
         [labels.satellite]: satellite,
         [labels.terrain]: terrain
     }).addTo(map);
-    
+
     L.control.zoom({
         zoomInTitle: labels.zoomIn,
         zoomOutTitle: labels.zoomOut
     }).addTo(map);
-    // Estilos para los botones
+
+    setupDrawingControls();
     const style = document.createElement('style');
     style.innerHTML = `
         .leaflet-bar a {
@@ -127,34 +129,35 @@ function setupDrawingControls() {
     L.drawLocal.draw.toolbar.buttons.circle = t.drawCircle;
     L.drawLocal.draw.toolbar.buttons.marker = t.drawMarker;
     L.drawLocal.draw.toolbar.buttons.polyline = t.drawPolyline;
-    
+
     L.drawLocal.draw.toolbar.actions.title = t.cancel;
     L.drawLocal.draw.toolbar.actions.text = t.cancel;
     L.drawLocal.draw.toolbar.finish.title = t.finish;
     L.drawLocal.draw.toolbar.finish.text = t.finish;
     L.drawLocal.draw.toolbar.undo.title = t.undo;
     L.drawLocal.draw.toolbar.undo.text = t.undo;
-    
+
     L.drawLocal.draw.handlers.polygon.tooltip.start = t.startTooltip;
     L.drawLocal.draw.handlers.polygon.tooltip.cont = t.contTooltip;
     L.drawLocal.draw.handlers.polygon.tooltip.end = t.endTooltip;
-    
+
     L.drawLocal.edit.toolbar.buttons.edit = t.edit;
     L.drawLocal.edit.toolbar.buttons.editDisabled = t.editDisabled;
     L.drawLocal.edit.toolbar.buttons.remove = t.remove;
     L.drawLocal.edit.toolbar.buttons.removeDisabled = t.removeDisabled;
-    
+
     L.drawLocal.edit.toolbar.actions.save.title = t.save;
     L.drawLocal.edit.toolbar.actions.save.text = t.save;
     L.drawLocal.edit.toolbar.actions.cancel.title = t.cancelEdit;
     L.drawLocal.edit.toolbar.actions.cancel.text = t.cancelEdit;
-    
+
     L.drawLocal.edit.handlers.edit.tooltip.text = t.editTooltip;
     L.drawLocal.edit.handlers.edit.tooltip.subtext = t.editSubTooltip;
     L.drawLocal.edit.handlers.remove.tooltip.text = t.removeTooltip;
 
     const drawControl = new L.Control.Draw({
-        draw: {polygon: {
+        draw: {
+            polygon: {
                 allowIntersection: false,
                 showArea: true,
                 metric: true,
@@ -165,7 +168,7 @@ function setupDrawingControls() {
                 shapeOptions: {
                     color: '#ff6600',
                     fillColor: 'orange',
-                    fillOpacity: 0.3 
+                    fillOpacity: 0.3
                 },
                 // Make vertices smaller while drawing
                 icon: new L.DivIcon({
@@ -188,7 +191,16 @@ function setupDrawingControls() {
             rectangle: false,
             circle: false,
             circlemarker: false,
-            marker: false,
+            marker: {
+                icon: new L.DivIcon({
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    tooltipAnchor: [16, -28],
+                    shadowSize: [41, 41],
+                    className: 'leaflet-marker-icon'
+                })
+            },
             polyline: false
         },
         edit: {
@@ -205,12 +217,28 @@ function setupDrawingControls() {
 
 function handleDrawCreated(e) {
     const layer = e.layer;
-    
+
     if (cropMode) {
         applyCrop(layer);
         return;
     }
-    
+
+    if (layer instanceof L.Marker) { // Si es un marcador (pin)
+        if (navigationPin) { // Si ya existe un pin, lo removemos
+            map.removeLayer(navigationPin);
+        }
+        navigationPin = layer;
+        navigationPin.addTo(map); // Agregamos el nuevo pin al mapa
+
+        const latlng = layer.getLatLng();
+        updateNavigationPinDisplay(latlng); // Nueva función para actualizar la UI
+        Livewire.dispatch('updateNavigationPin', {
+            lat: latlng.lat,
+            lng: latlng.lng
+        });
+        return;
+    }
+
     drawnItems.clearLayers();
     drawnItems.addLayer(layer);
 
@@ -231,20 +259,29 @@ function handleDrawCreated(e) {
     });
 }
 
+function updateNavigationPinDisplay(latlng) {
+    const pinCoordsElement = document.getElementById('navigationPinCoordinates');
+    if (pinCoordsElement) {
+        const formattedLat = latlng.lat.toFixed(6); // Formato con 6 decimales
+        const formattedLng = latlng.lng.toFixed(6); // Formato con 6 decimales
+        pinCoordsElement.innerText = `Pin: Lat: ${formattedLat}, Lng: ${formattedLng}`;
+    }
+}
+
 function handleDrawEdited(e) {
     const layers = e.layers;
-    layers.eachLayer(function(layer) {
+    layers.eachLayer(function (layer) {
         const coords = layer.getLatLngs()[0];
         const area = L.GeometryUtil.geodesicArea(coords);
         const hectares = (area / 10000).toFixed(3);
-        
+
         const formattedCoords = coords.map(point => ({
             lat: point.lat,
             lng: point.lng
         }));
 
         updateCoordinatesDisplay(formattedCoords, hectares);
-        
+
         Livewire.dispatch('updateCoordinates', {
             coords: formattedCoords,
             hectares: hectares
@@ -259,7 +296,7 @@ function startDrawing() {
         if (!userConfirmed) {
             return;
         }
-        drawnItems.clearLayers(); 
+        drawnItems.clearLayers();
     }
     new L.Draw.Polygon(map, {
         shapeOptions: {
@@ -282,7 +319,7 @@ function editButton() {
     if (drawnItems.getLayers().length > 0) {
         const layer = drawnItems.getLayers()[0];
         layer.editing.enable();
-        document.getElementById('saveButton').style.display = 'inline-block'; 
+        document.getElementById('saveButton').style.display = 'inline-block';
     } else {
         const noPolygonMessage = window.translations?.lots?.no_polygon_edit || 'No hay ningún polígono para editar.';
         alert(noPolygonMessage);
@@ -292,7 +329,7 @@ function editButton() {
 function saveDrawing() {
     if (drawnItems.getLayers().length > 0) {
         const layer = drawnItems.getLayers()[0];
-        layer.editing.disable(); 
+        layer.editing.disable();
 
         map.fire('draw:edited', { layers: drawnItems });
         document.getElementById('saveButton').style.display = 'none';
@@ -308,11 +345,11 @@ function startCrop() {
         alert(noPolygonMessage);
         return;
     }
-    
+
     cropMode = true;
     document.getElementById('cropButton').style.display = 'none';
     document.getElementById('cropCancelButton').style.display = 'inline-block';
-    
+
     new L.Draw.Polygon(map, {
         shapeOptions: {
             color: '#ff0000',
@@ -336,13 +373,17 @@ function cancelCrop() {
     document.getElementById('cropCancelButton').style.display = 'none';
 }
 
+
 function applyCrop(cropLayer) {
     if (drawnItems.getLayers().length === 0) return;
-    
+
     const originalPolygon = drawnItems.getLayers()[0];
     const originalCoords = originalPolygon.getLatLngs()[0];
     const cropCoords = cropLayer.getLatLngs()[0];
-    
+
+    console.log('Original coords:', originalCoords);
+    console.log('Crop coords:', cropCoords);
+
     try {
         const originalGeoJSON = {
             type: "Feature",
@@ -351,7 +392,7 @@ function applyCrop(cropLayer) {
                 coordinates: [originalCoords.map(coord => [coord.lng, coord.lat])]
             }
         };
-        
+
         const cropGeoJSON = {
             type: "Feature",
             geometry: {
@@ -359,11 +400,11 @@ function applyCrop(cropLayer) {
                 coordinates: [cropCoords.map(coord => [coord.lng, coord.lat])]
             }
         };
-        
+
         const isWithin = turf.booleanWithin(cropGeoJSON, originalGeoJSON);
-        
+
         let result;
-        
+
         if (isWithin) {
             result = {
                 type: "Feature",
@@ -371,108 +412,199 @@ function applyCrop(cropLayer) {
                     type: "Polygon",
                     coordinates: [
                         originalGeoJSON.geometry.coordinates[0],
-                        cropGeoJSON.geometry.coordinates[0] 
+                        cropGeoJSON.geometry.coordinates[0]
                     ]
                 }
             };
         } else {
             result = turf.difference(originalGeoJSON, cropGeoJSON);
         }
-        
+
         if (result && result.geometry && result.geometry.coordinates) {
             drawnItems.clearLayers();
-
             if (result.geometry.coordinates.length > 1) {
+                // Polígono con agujeros
                 const outerRing = result.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
-                const holes = result.geometry.coordinates.slice(1).map(hole => 
+                const holeRings = result.geometry.coordinates.slice(1).map(hole =>
                     hole.map(coord => [coord[1], coord[0]])
                 );
-                
-                const resultPolygon = L.polygon([outerRing, ...holes], {
+
+                const polygonLatLngs = [outerRing, ...holeRings];
+                const resultPolygon = L.polygon(polygonLatLngs, {
                     color: '#ff6600',
                     fillColor: 'orange',
                     fillOpacity: 0.3
                 });
-                
-                drawnItems.addLayer(resultPolygon);
 
-                const leafletCoords = resultPolygon.getLatLngs()[0];
-                const area = L.GeometryUtil.geodesicArea(leafletCoords);
-                
+                drawnItems.addLayer(resultPolygon);
+                let mainArea = 0;
                 let totalHoleArea = 0;
-                if (resultPolygon.getLatLngs().length > 1) {
-                    for (let i = 1; i < resultPolygon.getLatLngs().length; i++) {
-                        const holeCoords = resultPolygon.getLatLngs()[i];
-                        totalHoleArea += L.GeometryUtil.geodesicArea(holeCoords);
+
+                try {
+                    mainArea = L.GeometryUtil.geodesicArea(outerRing.map(coord => L.latLng(coord[0], coord[1])));
+                    console.log('Main area:', mainArea);
+
+                    holeRings.forEach((hole, index) => {
+                        const holeArea = L.GeometryUtil.geodesicArea(hole.map(coord => L.latLng(coord[0], coord[1])));
+                        console.log(`Hole ${index} area:`, holeArea);
+                        if (!isNaN(holeArea) && holeArea > 0) {
+                            totalHoleArea += holeArea;
+                        }
+                    });
+
+                    console.log('Total hole area:', totalHoleArea);
+
+                } catch (areaError) {
+                    console.error('Error calculating area:', areaError);
+                    // Fallback: usar área directa del polígono
+                    const leafletCoords = resultPolygon.getLatLngs();
+                    if (leafletCoords && leafletCoords[0]) {
+                        mainArea = L.GeometryUtil.geodesicArea(leafletCoords[0]);
+                        if (leafletCoords.length > 1) {
+                            for (let i = 1; i < leafletCoords.length; i++) {
+                                const holeArea = L.GeometryUtil.geodesicArea(leafletCoords[i]);
+                                if (!isNaN(holeArea) && holeArea > 0) {
+                                    totalHoleArea += holeArea;
+                                }
+                            }
+                        }
                     }
                 }
-    
-                
-                const finalArea = area - totalHoleArea;
+
+                const finalArea = Math.max(0, mainArea - totalHoleArea);
                 const hectares = (finalArea / 10000).toFixed(3);
-                
-                const formattedCoords = leafletCoords.map(point => ({
-                    lat: point.lat,
-                    lng: point.lng 
+
+                console.log('Final area:', finalArea, 'Hectares:', hectares);
+
+                // Verificar que no sea NaN
+                if (isNaN(finalArea) || isNaN(hectares)) {
+                    console.error('Area calculation resulted in NaN');
+                    alert('Error en el cálculo del área. Por favor, intenta de nuevo.');
+                    return;
+                }
+
+                const formattedMainCoords = outerRing.map(point => ({
+                    lat: parseFloat(point[0]),
+                    lng: parseFloat(point[1])
                 }));
-                
-                updateCoordinatesDisplay(formattedCoords, hectares);
-                
+
+                // Formatear agujeros
+                const formattedHoles = holeRings.map(hole =>
+                    hole.map(point => ({
+                        lat: parseFloat(point[0]),
+                        lng: parseFloat(point[1])
+                    }))
+                );
+
+                updateCoordinatesDisplay(formattedMainCoords, hectares);
+
                 Livewire.dispatch('updateCoordinates', {
-                    coords: formattedCoords,
-                    hectares: hectares
+                    coords: formattedMainCoords,
+                    hectares: parseFloat(hectares),
+                    holes: formattedHoles
                 });
-                
+
             } else {
-                // Polígono simple (sin agujero)
                 const resultCoords = result.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
                 const resultPolygon = L.polygon(resultCoords, {
                     color: '#ff6600',
                     fillColor: 'orange',
                     fillOpacity: 0.3
                 });
-                
+
                 drawnItems.addLayer(resultPolygon);
-                
-                // Calcular nueva área
-                const area = L.GeometryUtil.geodesicArea(resultCoords);
+
+                let area = 0;
+                try {
+                    area = L.GeometryUtil.geodesicArea(resultCoords);
+                    console.log('Simple polygon area:', area);
+                } catch (areaError) {
+                    console.error('Error calculating simple area:', areaError);
+                    const leafletCoords = resultPolygon.getLatLngs()[0];
+                    area = L.GeometryUtil.geodesicArea(leafletCoords);
+                }
+
                 const hectares = (area / 10000).toFixed(3);
-                
+
+                console.log('Simple area:', area, 'Hectares:', hectares);
+
+                if (isNaN(area) || isNaN(hectares)) {
+                    console.error('Simple area calculation resulted in NaN');
+                    alert('Error en el cálculo del área. Por favor, intenta de nuevo.');
+                    return;
+                }
+
                 const formattedCoords = resultCoords.map(point => ({
-                    lat: point[0],
-                    lng: point[1]
+                    lat: parseFloat(point[0]),
+                    lng: parseFloat(point[1])
                 }));
-                
+
                 updateCoordinatesDisplay(formattedCoords, hectares);
-                
+
                 Livewire.dispatch('updateCoordinates', {
                     coords: formattedCoords,
-                    hectares: hectares
+                    hectares: parseFloat(hectares),
+                    holes: []
                 });
             }
         } else {
             alert('No se puede aplicar el recorte. El área seleccionada no es válida.');
         }
-        
+
     } catch (error) {
         console.error('Error al aplicar recorte:', error);
         alert('Error al aplicar el recorte. Inténtalo de nuevo.');
     }
-    
-    // Limpiar modo de recorte
+
     map.removeLayer(cropLayer);
     cancelCrop();
 }
 
+function loadLotWithHoles(data) {
+    drawnItems.clearLayers();
+
+    const coordinates = data?.coordinates;
+    const holes = data?.holes || [];
+    const hectares = data?.hectares;
+
+    if (coordinates && coordinates.length > 0) {
+        const mainCoords = coordinates.map(coord => [
+            parseFloat(coord.lat),
+            parseFloat(coord.lng)
+        ]);
+
+        const polygonLatLngs = [mainCoords];
+
+        if (holes.length > 0) {
+            holes.forEach(holeGroup => {
+                const holeCoords = holeGroup.map(coord => [
+                    parseFloat(coord.lat),
+                    parseFloat(coord.lng)
+                ]);
+                polygonLatLngs.push(holeCoords);
+            });
+        }
+
+        const polygon = L.polygon(polygonLatLngs, {
+            color: '#ff6600',
+            fillColor: 'orange',
+            fillOpacity: 0.3
+        });
+
+        drawnItems.addLayer(polygon);
+        updateCoordinatesDisplay(coordinates, hectares);
+        map.fitBounds(polygon.getBounds());
+    }
+}
+
+
 function createPolygonWithHoles(outerCoords, holes) {
-    // Crear el polígono principal
     const mainPolygon = L.polygon(outerCoords, {
         color: '#ff6600',
         fillColor: 'orange',
         fillOpacity: 0.3
     });
-    
-    // Crear los agujeros como polígonos separados con fondo transparente
+
     holes.forEach(holeCoords => {
         const hole = L.polygon(holeCoords, {
             color: '#ff6600',
@@ -482,7 +614,7 @@ function createPolygonWithHoles(outerCoords, holes) {
         });
         drawnItems.addLayer(hole);
     });
-    
+
     return mainPolygon;
 }
 
@@ -492,7 +624,7 @@ function createPolygonWithHoles(outerCoords, holes) {
 function exportKML() {
     const geojson = drawnItems.toGeoJSON();
     const kml = tokml(geojson);
-    
+
     const blob = new Blob([kml], { type: 'text/xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -501,30 +633,59 @@ function exportKML() {
     a.click();
 }
 
+
 document.addEventListener('livewire:init', () => {
     initializeMap();
     setupDrawingControls();
 
     Livewire.on('lot-loaded', (data) => {
         drawnItems.clearLayers();
-        
+        if (navigationPin) {
+            map.removeLayer(navigationPin);
+            navigationPin = null;
+        }
+
         const coordinates = data[0]?.coordinates;
+        const holes = data[0].holes;
         const hectares = data[0]?.hectares;
-        
+        const navigationPinCoords = data[0]?.navigationPin;
+
+
         if (coordinates && coordinates.length > 0) {
-            const coords = coordinates.map(coord => [
+            const mainCoords = coordinates.map(coord => [
                 parseFloat(coord.lat),
                 parseFloat(coord.lng)
             ]);
-            
-            const polygon = L.polygon(coords, {
-                color: 'orange'
+
+
+            const polygonLatLngs = [mainCoords];
+
+            if (holes && holes.length > 0) {
+                holes.forEach(holeGroup => {
+                    const holeCoords = holeGroup.map(coord => [
+                        parseFloat(coord.lat),
+                        parseFloat(coord.lng)
+                    ]);
+                    polygonLatLngs.push(holeCoords);
+                });
+            }
+
+            const polygon = L.polygon(polygonLatLngs, {
+                color: 'orange',
+                fillColor: 'orange',
+                fillOpacity: 0.3
             });
+
             drawnItems.addLayer(polygon);
-            
+
             updateCoordinatesDisplay(coordinates, hectares);
-            
+
             map.fitBounds(polygon.getBounds());
+        }
+        if (navigationPinCoords && navigationPinCoords.lat && navigationPinCoords.lng) {
+            const latlng = L.latLng(parseFloat(navigationPinCoords.lat), parseFloat(navigationPinCoords.lng));
+            navigationPin = L.marker(latlng).addTo(map);
+            updateNavigationPinDisplay(latlng);
         }
     });
 });
@@ -533,28 +694,50 @@ function importKML() {
     document.getElementById('kmlFileInput').click();
 }
 
+function startDrawingPin() {
+    if (navigationPin) {
+        const confirmMessage = window.translations?.lots?.fields?.pin_confirm || 'There is already a navigation pin. Do you want to delete it to draw a new one?';
+        const userConfirmed = confirm(confirmMessage);
+        if (!userConfirmed) {
+            return;
+        }
+        map.removeLayer(navigationPin);
+        navigationPin = null;
+    }
+    new L.Draw.Marker(map, {
+        icon: new L.DivIcon({
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            tooltipAnchor: [16, -28],
+            shadowSize: [41, 41],
+            className: 'leaflet-marker-icon'
+        })
+    }).enable();
+}
+
 function handleKMLImport(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         try {
             const parser = new DOMParser();
             const kml = parser.parseFromString(e.target.result, 'text/xml');
 
             drawnItems.clearLayers();
-            
+
             const coordinates = kml.getElementsByTagName('coordinates');
             let bounds = L.latLngBounds([]);
-            
+
             for (let coord of coordinates) {
                 const points = parseKMLCoordinates(coord.textContent);
-                
+
                 if (points.length > 2) {
                     const latLngs = points.map(point => L.latLng(point[0], point[1]));
-                    
-                    const polygon = L.polygon(latLngs, { 
+
+                    const polygon = L.polygon(latLngs, {
                         color: '#ff6600',
                         fillColor: 'orange',
                         fillOpacity: 0.3
@@ -563,24 +746,24 @@ function handleKMLImport(event) {
                     bounds.extend(polygon.getBounds());
 
                     const polygonCoords = polygon.getLatLngs()[0];
-                    
+
                     const area = L.GeometryUtil.geodesicArea(polygonCoords);
                     const hectares = (area / 10000).toFixed(3);
-                    
+
                     const formattedCoords = polygonCoords.map(point => ({
                         lat: point.lat,
                         lng: point.lng
                     }));
-                    
+
                     updateCoordinatesDisplay(formattedCoords, hectares);
-                    
+
                     Livewire.dispatch('updateCoordinates', {
                         coords: formattedCoords,
                         hectares: hectares
                     });
                 }
             }
-            
+
             if (bounds.isValid()) {
                 map.fitBounds(bounds, {
                     padding: [50, 50],
@@ -589,7 +772,6 @@ function handleKMLImport(event) {
             }
         } catch (error) {
             console.error('Error parsing KML file:', error);
-            // Use translation for error message
             const errorMessage = window.translations?.lots?.kml_error || 'Error al cargar el archivo KML. Por favor, verifique el formato del archivo.';
             alert(errorMessage);
         }
@@ -611,8 +793,10 @@ function parseKMLCoordinates(coordText) {
 function updateCoordinatesDisplay(coords, hectares) {
     const coordsElement = document.getElementById('coordinates');
     if (coordsElement) {
+        const validHectares = isNaN(hectares) ? '0.000' : hectares;
+
         const areaLabel = window.translations?.lots?.area_label || 'Área';
         const coordsLabel = window.translations?.lots?.coords_label || 'Coordenadas';
-        coordsElement.innerText = `${areaLabel}: ${hectares} hectáreas\n\n${coordsLabel}:\n${JSON.stringify(coords, null, 2)}`;
+        coordsElement.innerText = `${areaLabel}: ${validHectares} hectáreas\n\n${coordsLabel}:\n${JSON.stringify(coords, null, 2)}`;
     }
 }
