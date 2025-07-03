@@ -93,6 +93,9 @@ class OrderResource extends JsonResource
                                         'id' => $coordinate->id,
                                         'latitude' => (double) $coordinate->latitude,
                                         'longitude' => (double) $coordinate->longitude,
+                                        'sequenceNumber' => (int) $coordinate->sequence_number,
+                                        'isHole' => (bool) $coordinate->is_hole,
+                                        'holeGroup' => (int) $coordinate->hole_group,
                                     ];
                                 }),
                                 
@@ -142,6 +145,9 @@ class OrderResource extends JsonResource
                                 'id' => $coordinate->id,
                                 'latitude' => (double) $coordinate->latitude,
                                 'longitude' => (double) $coordinate->longitude,
+                                'sequenceNumber' => (int) $coordinate->sequence_number,
+                                'isHole' => (bool) $coordinate->is_hole,
+                                'holeGroup' => (int) $coordinate->hole_group,
                             ];                 
                         }),
                     ],

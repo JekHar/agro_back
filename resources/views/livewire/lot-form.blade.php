@@ -64,7 +64,7 @@
 
         <div class="mb-3">
             <label for="navigationPinCoordinates"
-                class="form-label">{{ __('crud.lots.fields.navigation_pin') }}</label>
+                class="form-label">{{ __('Pin de navegación') }}</label>
             <div id="navigationPinCoordinates" class="form-control">
                 @if ($navigationPin['lat'] && $navigationPin['lng'])
                     Pin: Lat: {{ number_format($navigationPin['lat'], 6) }}, Lng:
