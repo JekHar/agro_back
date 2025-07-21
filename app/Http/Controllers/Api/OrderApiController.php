@@ -134,7 +134,7 @@ class OrderApiController extends Controller
                         $q->select(['id', 'flight_id', 'lot_id', 'hectares_to_apply', 'lot_total_hectares'])
                             ->with([
                                 'lot:id,number,hectares,merchant_id',
-                                'lot.coordinates:id,lot_id,latitude,longitude'
+                                'lot.coordinates:id,lot_id,latitude,longitude,sequence_number,is_hole,hole_group'
                             ]);
                     }
                 ]);
@@ -158,7 +158,7 @@ class OrderApiController extends Controller
                 $query->select(['id', 'order_id', 'lot_id', 'hectares', 'status'])
                     ->with([
                         'lot:id,number,hectares,merchant_id',
-                        'lot.coordinates:id,lot_id,latitude,longitude'
+                        'lot.coordinates:id,lot_id,latitude,longitude,sequence_number,is_hole,hole_group'
                     ]);
             }
         ])->find($id);

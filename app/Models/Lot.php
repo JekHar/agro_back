@@ -17,6 +17,9 @@ class Lot extends Model implements Auditable
         'merchant_id',
         'number',
         'hectares',
+        'navigation_latitude',
+        'navigation_longitude',
+        
     ];
 
     public function merchant()
