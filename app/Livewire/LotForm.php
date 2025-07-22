@@ -21,6 +21,7 @@ class LotForm extends Component
     public $coordinates = [];
     public $holes = [];
     public $kmlFile;
+    public $name_lot;
     public $currentLotId;
     public $isCreateMode = false;
     public $navigationPin = ['lat' => null, 'lng' => null];
@@ -56,6 +57,7 @@ class LotForm extends Component
         $this->merchant_id = $lot->merchant_id;
         $this->number = $lot->number;
         $this->hectares = $lot->hectares;
+        $this->name_lot = $lot->name_lot;
         $this->navigationPin['lat'] = $lot->navigation_latitude; // Asumiendo que existe
         $this->navigationPin['lng'] = $lot->navigation_longitude;
 
@@ -98,7 +100,7 @@ class LotForm extends Component
     public function updateCoordinates($coords, $hectares, $holes = [])
     {
         $this->coordinates = $coords;
-        $this->hectares = $hectares;
+        $this->hectares = round($hectares, 2);
         $this->holes = $holes;
     }
 
@@ -140,10 +142,11 @@ class LotForm extends Component
                 'merchant_id' => $validatedData['merchant_id'],
                 'number' => $validatedData['number'],
                 'hectares' => $validatedData['hectares'],
+                'name_lot' => $validatedData['name_lot'],
                 'navigation_latitude' => $this->navigationPin['lat'], // Guardar el pin
                 'navigation_longitude' => $this->navigationPin['lng'], // Guardar el pin
             ]);
-
+            
             $lot->save();
 
             if ($this->currentLotId) {

@@ -15,7 +15,6 @@
     <div id="map" style="height: 600px;" wire:ignore></div>
 
     <div class="d-flex flex-row justify-content-between mb-3 mt-3">
-
         <div class="btn-group">
             <button onclick="startDrawing()" class="btn btn-primary text-white">
                 <i class="fa fa-pencil"></i> {{ __('crud.lots.actions.draw') }}
@@ -63,8 +62,16 @@
         </div>
 
         <div class="mb-3">
-            <label for="navigationPinCoordinates"
-                class="form-label">{{ __('Pin de navegación') }}</label>
+            <label for="name_lot" class="form-label">{{ __('crud.lots.fields.name') }}</label>
+            <input type="text" wire:model="name_lot" id="name_lot" class="form-control"
+                placeholder="{{ __('crud.lots.fields.name_placeholder') }}">
+            @error('name_lot')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="navigationPinCoordinates" class="form-label">{{ __('Pin de navegación') }}</label>
             <div id="navigationPinCoordinates" class="form-control">
                 @if ($navigationPin['lat'] && $navigationPin['lng'])
                     Pin: Lat: {{ number_format($navigationPin['lat'], 6) }}, Lng:
@@ -88,10 +95,10 @@
                 <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
-        @if (config('app.debug'))
+        {{-- @if (config('app.debug'))
             <h6 class="card-title">{{ __('crud.lots.fields.coordinates') }}</h6>
             <pre id="coordinates" wire:ignore></pre>
-        @endif
+        @endif --}}
     </div>
     <button wire:click="saveLot" class="btn btn-sm btn-primary p-2 rounded-pill text-white">
         {{ __('crud.lots.actions.save') }}
