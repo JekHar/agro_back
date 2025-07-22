@@ -71,13 +71,25 @@
         </div>
 
         <div class="mb-3">
-            <label for="navigationPinCoordinates" class="form-label">{{ __('Pin de navegación') }}</label>
-            <div id="navigationPinCoordinates" class="form-control">
+            <label for="navigationPinCoordinates" class="form-label">{{ __('Pin de navegación') }}</label>
+            <div class="form-control d-flex justify-content-between align-items-center">
                 @if ($navigationPin['lat'] && $navigationPin['lng'])
-                    Pin: Lat: {{ number_format($navigationPin['lat'], 6) }}, Lng:
-                    {{ number_format($navigationPin['lng'], 6) }}
+                    <div class="flex-grow-1">
+                        <span id="coordinatesText"
+                            style="user-select: all;">{{ number_format($navigationPin['lat'], 6) }},
+                            {{ number_format($navigationPin['lng'], 6) }}</span>
+                    </div>
+                    <div class="btn-group ms-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="copyCoordinates()">
+                            <i class="fa fa-copy"></i>
+                        </button>
+                        <a href="https://maps.google.com/?q={{ $navigationPin['lat'] }},{{ $navigationPin['lng'] }}"
+                            target="_blank" class="btn btn-sm btn-outline-success">
+                            <i class="fa fa-map-marker"></i>
+                        </a>
+                    </div>
                 @else
-                    {{ __('Pin no seleccionado') }}
+                    <span class="text-muted">{{ __('Pin no seleccionado') }}</span>
                 @endif
             </div>
             @error('navigationPin.lat')
@@ -104,3 +116,35 @@
         {{ __('crud.lots.actions.save') }}
     </button>
 </div>
+
+<script>
+    function copyCoordinates() {
+        const coordinatesText = document.getElementById('coordinatesText').textContent;
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(coordinatesText).then(() => {
+                showCopySuccess();
+            });
+        } else {
+            const textArea = document.createElement('textarea');
+            textArea.value = coordinatesText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showCopySuccess();
+        }
+    }
+
+    function showCopySuccess() {
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-success position-fixed';
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; padding: 10px 15px; border-radius: 5px;';
+        notification.textContent = 'Coordenadas copiadas al portapapeles';
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 2000);
+    }
+</script>
