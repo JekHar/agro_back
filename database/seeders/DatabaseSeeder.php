@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             // Crear usuario admin en producción
             $admin = User::create([
                 'name' => 'Admin User',
-                'email' => 'admin@example.com', 
+                'email' => 'admin@example.com',
                 'password' => Hash::make('password'),
             ]);
 
@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
             ]);
 
-           
+
             $this->call([
                 RolesSeeder::class,
                 PermissionsSeeder::class,

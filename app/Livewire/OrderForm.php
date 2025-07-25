@@ -13,6 +13,7 @@ use App\Models\OrderLot;
 use App\Models\OrderProduct;
 use App\Models\Service;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -56,6 +57,9 @@ class OrderForm extends Component
     public $selectedLots = [];
     public $flights = [];
 
+    public ?int $tenant_id = 0;
+    public Collection $tenants;
+
     protected $rules = [
         'client_id' => 'required|exists:merchants,id',
         'service_id' => 'required|exists:services,id',
@@ -96,7 +100,16 @@ class OrderForm extends Component
         $this->loadAircrafts();
         $this->loadStaff();
 
-        // Load services based on selected client (if any)
+        $this->tenant_id = auth()->user()->merchant_id;
+
+        if (auth()->user()->hasRole('Admin')) {
+            $this->tenants = Merchant::where('merchant_type', 'tenant')
+                ->whereHas('aircraft')
+                ->whereHas('services')
+                ->orderBy('business_name')
+                ->get();
+        }
+
         if ($this->client_id) {
             $this->loadServices();
         }
@@ -142,23 +155,18 @@ class OrderForm extends Component
     {
         $query = Merchant::where('merchant_type', 'client')
             ->orderBy('business_name');
-        $query = $query->when(Auth::user()->hasRole('Tenant'),function ($query) {
-                $query->where('merchant_id', auth()->user()->merchant_id);
+        $query = $query->when(Auth::user()->hasRole('Tenant'), function ($query) {
+            $query->where('merchant_id', auth()->user()->merchant_id);
         });
         $this->clients = $query->get();
     }
 
     public function loadServices()
     {
-        if (!$this->client_id) {
-            $this->services = [];
-            return;
-        }
-
         // Get services related to the selected client or available to all clients
         $this->services = Service::whereNull('disabled_at')
             ->where(function ($query) {
-                $query->where('merchant_id', $this->client_id)
+                $query->where('merchant_id', $this->tenant_id)
                     ->orWhereNull('merchant_id');
             })
             ->orderBy('name')
@@ -167,11 +175,10 @@ class OrderForm extends Component
 
     public function loadAircrafts()
     {
-        // Get aircrafts related to the tenant
-        $tenantId = Auth::user()->merchant_id;
+        // Get aircraft related to the tenant
 
-        $this->aircrafts = Aircraft::when(Auth::user()->hasRole('Tenant'), function ($query) use ($tenantId) {
-            return $query->where('merchant_id', $tenantId);
+        $this->aircrafts = Aircraft::when(Auth::user()->hasRole('Tenant'), function ($query) {
+            return $query->where('merchant_id', $this->tenant_id);
         })
             ->orderBy('brand')
             ->get();
@@ -182,7 +189,7 @@ class OrderForm extends Component
         // Load pilots (users with pilot role)
         $this->pilots = User::role('Pilot')
             ->when(Auth::user()->hasRole('Tenant'), function ($query) {
-                return $query->where('merchant_id', Auth::user()->merchant_id);
+                return $query->where('merchant_id', $this->tenant_id);
             })
             ->orderBy('name')
             ->get();
@@ -190,7 +197,7 @@ class OrderForm extends Component
         // Load ground support staff (users with ground support role)
         $this->groundSupports = User::role('Ground Support')
             ->when(Auth::user()->hasRole('Tenant'), function ($query) {
-                return $query->where('merchant_id', Auth::user()->merchant_id);
+                return $query->where('merchant_id', $this->tenant_id);
             })
             ->orderBy('name')
             ->get();
@@ -203,6 +210,13 @@ class OrderForm extends Component
             $this->loadServices();
             $this->service_id = null;
             $this->dispatch('clientSelected', $value);
+        }
+
+        if('tenant_id' === $name && $value) {
+            $this->loadClients();
+            $this->loadAircrafts();
+            $this->loadStaff();
+            $this->loadServices();
         }
     }
 
@@ -251,7 +265,7 @@ class OrderForm extends Component
                 // Update existing order
                 $this->order->update([
                     'client_id' => $this->client_id,
-                    'tenant_id' => Auth::user()->merchant_id,
+                    'tenant_id' => $this->tenant_id,
                     'service_id' => $this->service_id,
                     'aircraft_id' => $this->aircraft_id,
                     'pilot_id' => $this->pilot_id,
@@ -279,7 +293,7 @@ class OrderForm extends Component
                 $order = Order::create([
                     'order_number' => $this->order_number,
                     'client_id' => $this->client_id,
-                    'tenant_id' => Auth::user()->merchant_id,
+                    'tenant_id' => $this->tenant_id,
                     'service_id' => $this->service_id,
                     'aircraft_id' => $this->aircraft_id,
                     'pilot_id' => $this->pilot_id,

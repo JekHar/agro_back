@@ -13,10 +13,13 @@ class AircraftSeeder extends Seeder
      */
     public function run(): void
     {
-        $clientMerchantIds = Merchant::where('merchant_type', 'client')->pluck('id');
+        $clientMerchantIds = Merchant::where('merchant_type', 'tenant')->pluck('id');
 
-        Aircraft::factory()->count(10)->create([
-            'merchant_id' => $clientMerchantIds->random(),
-        ]);
+        foreach ($clientMerchantIds as $clientMerchantId) {
+            Aircraft::factory()->count(10)->create([
+                'merchant_id' => $clientMerchantId,
+            ]);
+        }
+;
     }
 }

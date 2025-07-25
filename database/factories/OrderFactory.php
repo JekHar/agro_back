@@ -23,14 +23,21 @@ class OrderFactory extends Factory
 
     public function definition()
     {
+        $tenant = Merchant::where('merchant_type', 'tenant')->inRandomOrder()->first();
+        $client = Merchant::where('merchant_type', 'client')->inRandomOrder()->first();
+
         return [
             'order_number' => 'ORD-' . $this->faker->unique()->numberBetween(1000, 9999),
-            'client_id' => Merchant::factory(),
-            'tenant_id' => Merchant::factory(),
-            'service_id' => Service::factory(),
-            'aircraft_id' => Aircraft::factory(),
-            'pilot_id' => User::factory(),
-            'ground_support_id' => User::factory(),
+            'client_id' => $client->id,
+            'tenant_id' => $tenant->id,
+            'service_id' => Service::where('merchant_id', $tenant->id)->inRandomOrder()->first()->id ?? Service::factory()->create(['merchant_id' => $tenant->id])->id,
+            'aircraft_id' => Aircraft::where('merchant_id', $tenant->id)->inRandomOrder()->first()->id ?? Aircraft::factory()->create(['merchant_id' => $tenant->id])->id,
+            'pilot_id' => User::whereHas('roles', function($q) {
+                $q->where('name', 'Pilot');
+            })->inRandomOrder()->first()->id ?? User::factory()->create(),
+            'ground_support_id' => User::whereHas('roles', function($q) {
+                $q->where('name', 'Ground Support');
+            })->inRandomOrder()->first()->id ?? User::factory()->create(),
             'total_hectares' => $this->faker->randomFloat(2, 10, 500),
             'total_amount' => $this->faker->randomFloat(2, 1000, 50000),
             'status' => $this->faker->randomElement(['draft','pending', 'in_progress', 'completed', 'cancelled']),
@@ -67,9 +74,10 @@ class OrderLotFactory extends Factory
 
     public function definition()
     {
+        // Get an existing lot instead of creating a new one
         return [
             'order_id' => Order::factory(),
-            'lot_id' => Lot::factory(),
+            'lot_id' => Lot::inRandomOrder()->first()->id ?? Lot::factory()->create()->id,
             'hectares' => $this->faker->randomFloat(2, 5, 100)
         ];
     }
@@ -145,7 +153,7 @@ class FlightLotFactory extends Factory
     {
         return [
             'flight_id' => Flight::factory(),
-            'lot_id' => Lot::factory(),
+            'lot_id' => Lot::inRandomOrder()->first()->id ?? Lot::factory()->create()->id,
             'lot_total_hectares' => $this->faker->randomFloat(2, 10, 200),
             'hectares_to_apply' => $this->faker->randomFloat(2, 5, 100)
         ];

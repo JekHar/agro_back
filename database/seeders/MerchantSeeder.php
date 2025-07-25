@@ -17,5 +17,15 @@ class MerchantSeeder extends Seeder
                 'merchant_type' => 'tenant',
             ]
         );
+
+        $clientMerchantIds = Merchant::where('merchant_type', 'tenant')->pluck('id');
+        foreach ($clientMerchantIds as $clientMerchantId) {
+            Merchant::factory()->create(
+                [
+                    'merchant_type' => 'client',
+                    'merchant_id' => $clientMerchantId,
+                ]
+            );
+        }
     }
 }

@@ -6,6 +6,22 @@
             </div>
 
             <div class="block-content">
+                @hasrole('Admin')
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Usuario de sistema</label>
+                            <div class="input-group">
+                                <select wire:model="tenant_id" class="form-select" {{ $isEditing ? 'disabled' : '' }}>
+                                    @foreach ($tenants as $tenant)
+                                        <option value="{{ $tenant->id }}">{{ $tenant->business_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endhasrole
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group mb-3">

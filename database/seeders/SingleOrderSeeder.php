@@ -21,46 +21,42 @@ class SingleOrderSeeder extends Seeder
 {
     public function run()
     {
-        $merchant = Merchant::create([
-            'business_name' => 'Cliente Córdoba SRL',
-            'trade_name' => 'Cliente Córdoba',
-            'fiscal_number' => rand(10000000, 99999999),
-            'main_activity' => 'Agricultura',
-            'email' => 'cliente.cordoba@example.com',
-            'phone' => '+54 351 ' . rand(1000000, 9999999),
-            'merchant_type' => 'client',
-            'locality' => 'Córdoba Capital',
-            'address' => 'Av. Colón 1234, Córdoba Capital',
-        ]);
-        
+        // Use existing client merchant instead of creating a new one
+        $merchant = Merchant::where('merchant_type', 'client')->inRandomOrder()->first();
+
+        if (!$merchant) {
+            $this->command->warn('No client merchants found. Make sure MerchantSeeder has been run.');
+            return;
+        }
+
         $lot = Lot::create([
             'merchant_id' => $merchant->id,
             'number' => rand(1000, 9999),
             'hectares' => rand(20, 50)
         ]);
-       
+
         $baseLatitude = -31.4201;
         $baseLongitude = -64.1888;
-        
+
         $hectares = $lot->hectares;
         $areaKm2 = $hectares / 100;
-        
+
         $widthKm = sqrt($areaKm2 * 1.5);
         $heightKm = $areaKm2 / $widthKm;
-        
+
         $latCorrectionFactor = 111;
         $lonCorrectionFactor = 111 * cos(deg2rad($baseLatitude));
-        
+
         $heightDegrees = $heightKm / $latCorrectionFactor;
         $widthDegrees = $widthKm / $lonCorrectionFactor;
-        
+
         $coordinates = [
             ['latitude' => $baseLatitude, 'longitude' => $baseLongitude],
             ['latitude' => $baseLatitude, 'longitude' => $baseLongitude + $widthDegrees],
             ['latitude' => $baseLatitude + $heightDegrees, 'longitude' => $baseLongitude + $widthDegrees],
             ['latitude' => $baseLatitude + $heightDegrees, 'longitude' => $baseLongitude]
         ];
-        
+
         foreach ($coordinates as $coord) {
             Coordinate::create([
                 'lot_id' => $lot->id,
@@ -68,33 +64,40 @@ class SingleOrderSeeder extends Seeder
                 'longitude' => $coord['longitude']
             ]);
         }
-        
+
         $tenant = Merchant::where('merchant_type', 'tenant')->first();
+        if (!$tenant) {
+            $this->command->warn('No tenant merchants found. Make sure MerchantSeeder has been run.');
+            return;
+        }
+
         $user2 = User::where('email', 'tenant@example.com')->first();
-        
+
         if ($user2 && $tenant) {
             $user2->merchant_id = $tenant->id;
             $user2->save();
         }
-        
-        $service = Service::factory()->create([
-            'merchant_id' => $tenant->id
-        ]);
-        
-        $aircraft = Aircraft::factory()->create([
-            'merchant_id' => $tenant->id
-        ]);
-        
+
+        $service = Service::where('merchant_id', $tenant->id)->first() ?:
+            Service::factory()->create([
+                'merchant_id' => $tenant->id
+            ]);
+
+        $aircraft = Aircraft::where('merchant_id', $tenant->id)->first() ?:
+            Aircraft::factory()->create([
+                'merchant_id' => $tenant->id
+            ]);
+
         $pilot = User::factory()->create([
             'email' => 'piloto.cordoba@example.com'
         ]);
         $pilot->assignRole('Pilot');
-        
+
         $groundSupport = User::factory()->create([
             'email' => 'soporte.cordoba@example.com'
         ]);
         $groundSupport->assignRole('Ground Support');
-        
+
         $order = Order::create([
             'order_number' => 'ORD-' . rand(1000, 9999),
             'client_id' => $merchant->id,
@@ -109,22 +112,22 @@ class SingleOrderSeeder extends Seeder
             'scheduled_date' => now()->addDays(rand(3, 10)),
             'observations' => 'Orden de prueba para Córdoba Capital'
         ]);
-        
+
         OrderLot::create([
             'order_id' => $order->id,
             'lot_id' => $lot->id,
             'hectares' => $lot->hectares
         ]);
-        
+
         $products = Product::inRandomOrder()->take(2)->get();
         if ($products->isEmpty()) {
             $products = Product::factory()->count(2)->create();
         }
-        
+
         foreach ($products as $product) {
             $dosage = rand(1, 5);
             $clientQuantity = $lot->hectares * $dosage;
-            
+
             OrderProduct::create([
                 'order_id' => $order->id,
                 'product_id' => $product->id,
@@ -137,7 +140,7 @@ class SingleOrderSeeder extends Seeder
                 'difference_observation' => null
             ]);
         }
-        
+
         $flight = Flight::create([
             'order_id' => $order->id,
             'flight_number' =>  rand(1000, 9999),
@@ -153,26 +156,26 @@ class SingleOrderSeeder extends Seeder
                 'precipitation' => 0
             ]
         ]);
-        
+
         FlightLot::create([
             'flight_id' => $flight->id,
             'lot_id' => $lot->id,
             'lot_total_hectares' => $lot->hectares,
             'hectares_to_apply' => $lot->hectares
         ]);
-        
+
         foreach ($products as $product) {
             $orderProduct = OrderProduct::where('order_id', $order->id)
                 ->where('product_id', $product->id)
                 ->first();
-                
+
             FlightProduct::create([
                 'flight_id' => $flight->id,
                 'product_id' => $product->id,
                 'quantity' => $orderProduct ? $orderProduct->total_quantity_to_use : ($lot->hectares * rand(1, 5))
             ]);
         }
-        
+
         $this->command->info('Se ha creado una orden en Córdoba Capital con éxito.');
     }
 }
