@@ -29,6 +29,18 @@ class UserDataTable extends DataTable
             })
             ->editColumn('created_at', fn ($item) => $item->created_at->format('d-m-Y H:i:s'))
             ->addColumn('action', 'pages.users.action')
+            ->filterColumn('role', function ($query, $keyword) {
+                $translatedRoles = [
+                    'Admin' => __('crud.roles.types.Admin'),
+                    'Tenant' => __('crud.roles.types.Tenant'),
+                    'Client' => __('crud.roles.types.Client'),
+                ];
+                // the user might enter the word in spanish, so we need to match spanish to english because the roles are stored in english
+                $keyword = array_search($keyword, $translatedRoles) ?: $keyword;
+                $query->whereHas('roles', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
             ->rawColumns(['image', 'action'])
             ->setRowClass(function () {
                 return 'align-middle position-relative';
