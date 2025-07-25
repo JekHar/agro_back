@@ -100,7 +100,8 @@ return [
         'add' => 'Añadir Lote',
         'form' => 'Formulario de Lote',
         'fields' => [
-            'name' => 'Nombre',
+            'name' => 'Nombre del Lote (Opcional)',
+            'name_placeholder' => 'Ingrese el nombre del lote',
             'number' => 'Número de Lote',
             'lot_id' => 'Lote',
             'hectares' => 'Hectáreas',

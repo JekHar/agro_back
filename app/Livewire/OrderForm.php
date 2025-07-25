@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\OrderLotStatus;
 use App\Models\Aircraft;
 use App\Models\Flight;
 use App\Models\FlightLot;
@@ -136,9 +137,9 @@ class OrderForm extends Component
 
     public function loadOrder($orderId)
     {
-        $this->order = Order::findOrFail($orderId);
+        $this->order = Order::with(['orderLots.lot', 'orderProducts.product', 'flights.flightLots.lot', 'flights.flightProducts.product'])
+            ->findOrFail($orderId);
 
-        // Map order properties to component properties
         $this->order_date = $this->order->created_at->format('d/m/y');
         $this->order_number = $this->order->order_number;
         $this->responsible_id = $this->order->created_by ?? Auth::id();
@@ -149,6 +150,55 @@ class OrderForm extends Component
         $this->ground_support_id = $this->order->ground_support_id;
         $this->observations = $this->order->observations;
         $this->status = $this->order->status;
+
+        $this->selectedLots = $this->order->orderLots->map(function ($orderLot) {
+            return [
+                'lot_id' => $orderLot->lot_id,
+                'hectares' => $orderLot->hectares,
+                'status' => $orderLot->status instanceof OrderLotStatus ? $orderLot->status->value : $orderLot->status,
+            ];
+        })->toArray();
+
+        $this->selectedProducts = $this->order->orderProducts->map(function ($orderProduct) {
+            return [
+                'product_id' => $orderProduct->product_id,
+                'client_provided_quantity' => $orderProduct->client_provided_quantity,
+                'total_quantity_to_use' => $orderProduct->total_quantity_to_use,
+                'calculated_dosage' => $orderProduct->calculated_dosage,
+                'product_difference' => $orderProduct->product_difference,
+                'difference_observation' => $orderProduct->difference_observation,
+                'use_client_quantity' => $orderProduct->use_client_quantity,
+                'use_manual_dosage' => $orderProduct->use_manual_dosage,
+                'manual_dosage_per_hectare' => $orderProduct->manual_dosage_per_hectare,
+                'manual_total_quantity' => $orderProduct->manual_total_quantity,
+            ];
+        })->toArray();
+
+
+
+        $this->flights = $this->order->flights->map(function ($flight) {
+            return [
+                'total_hectares' => $flight->total_hectares,
+                'status' => $flight->status,
+                'lots' => $flight->flightLots->map(function ($flightLot) {
+                    return [
+                        'lot_id' => $flightLot->lot_id,
+                        'lot_hectares' => $flightLot->lot_hectares,
+                        'hectares_to_apply' => $flightLot->hectares_to_apply,
+                        'lot_total_hectares' => $flightLot->lot_total_hectares,
+                    ];
+                })->toArray(),
+                'products' => $flight->flightProducts->map(function ($flightProduct) {
+                    return [
+                        'product_id' => $flightProduct->product_id,
+                        'quantity' => $flightProduct->quantity,
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
+
+
+        $this->totalHectares = $this->selectedLots ? array_sum(array_column($this->selectedLots, 'hectares')) : 0;
     }
 
     public function loadClients()
@@ -335,8 +385,7 @@ class OrderForm extends Component
             ]);
 
             // Redirect to next tab or order details
-            return redirect()->route('orders.show', $this->isEditing ? $this->orderId : $this->order->id);
-
+            return redirect()->route('orders.index');
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch('showAlert', [
@@ -359,7 +408,7 @@ class OrderForm extends Component
                 'order_id' => $this->order->id,
                 'lot_id' => $lot['lot_id'],
                 'hectares' => $lot['hectares'],
-                'status' => $lot['status'] ?? 'pending'
+                'status' => is_string($lot['status']) ? $lot['status'] : $lot['status']->value
             ]);
         }
     }
@@ -394,12 +443,12 @@ class OrderForm extends Component
     protected function saveFlights()
     {
         foreach ($this->flights as $flightData) {
-            if (empty($flightData['hectares_to_perform']) || floatval($flightData['hectares_to_perform']) <= 0) continue;
+            if (empty($flightData['total_hectares']) || floatval($flightData['total_hectares']) <= 0) continue;
 
             // Create flight record
             $flight = Flight::create([
                 'order_id' => $this->order->id,
-                'hectares_to_perform' => $flightData['hectares_to_perform'],
+                'total_hectares' => $flightData['total_hectares'],
                 'status' => 'pending',
                 'flight_number' => rand(1000, 9999),
                 'total_hectares' => 0, // calculate?
@@ -469,4 +518,3 @@ class OrderForm extends Component
         return view('livewire.order-form');
     }
 }
-

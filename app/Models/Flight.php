@@ -15,9 +15,14 @@ class Flight extends Model implements ContractsAuditable
     use SoftDeletes;
 
     protected $fillable = [
-        'order_id', 'flight_number', 'total_hectares', 
-        'status', 'started_at', 'completed_at', 
-        'observations', 'weather_conditions'
+        'order_id',
+        'flight_number',
+        'total_hectares', 
+        'status',
+        'started_at',
+        'completed_at', 
+        'observations',
+        'weather_conditions'
     ];
 
     protected $casts = [

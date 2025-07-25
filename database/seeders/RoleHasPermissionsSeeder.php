@@ -78,6 +78,7 @@ class RoleHasPermissionsSeeder extends Seeder
             ['permission_id' => 64, 'role_id' => 1],
             ['permission_id' => 65, 'role_id' => 1],
             ['permission_id' => 66, 'role_id' => 1],
+            ['permission_id' => 67, 'role_id' => 1],
 
             //Tenant permissions
             //['permission_id' => 1, 'role_id' => 2],
@@ -146,6 +147,7 @@ class RoleHasPermissionsSeeder extends Seeder
             ['permission_id' => 64, 'role_id' => 2],
             ['permission_id' => 65, 'role_id' => 2],
             ['permission_id' => 66, 'role_id' => 2],
+            ['permission_id' => 67, 'role_id' => 2],
         
             //Pilot permissions
             //['permission_id' => 1, 'role_id' => 3],

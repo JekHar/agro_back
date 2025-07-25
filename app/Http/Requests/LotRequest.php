@@ -25,6 +25,7 @@ class LotRequest extends FormRequest
         return [
             'merchant_id' => 'required|exists:merchants,id',
             'number' => 'nullable|numeric|min:0|max:255',
+            'name_lot' => 'nullable|max:255',
             'hectares' => 'required|numeric|min:0, max:100',
             'coordinates' => 'required|array|min:3',
             'coordinates.*.lat' => 'required|numeric|between:-90,90',

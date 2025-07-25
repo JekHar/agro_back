@@ -16,7 +16,11 @@ class Lot extends Model implements Auditable
     protected $fillable = [
         'merchant_id',
         'number',
+        'name_lot',
         'hectares',
+        'navigation_latitude',
+        'navigation_longitude',
+        
     ];
 
     public function merchant()

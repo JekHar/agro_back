@@ -16,19 +16,15 @@ class LotForm extends Component
     use WithFileUploads;
 
     public $merchant_id;
-
     public $number;
-
     public $hectares = 0;
-
     public $coordinates = [];
-
+    public $holes = [];
     public $kmlFile;
-
+    public $name_lot;
     public $currentLotId;
-    
-    // Flag to track if we're in create mode
     public $isCreateMode = false;
+    public $navigationPin = ['lat' => null, 'lng' => null];
 
     protected function rules()
     {
@@ -54,34 +50,62 @@ class LotForm extends Component
 
     public function loadLot($lotId)
     {
-        $lot = Lot::with('coordinates')->findOrFail($lotId);
+        $lot = Lot::with(['coordinates' => function ($query) {
+            $query->orderBy('sequence_number');
+        }])->findOrFail($lotId);
+
         $this->merchant_id = $lot->merchant_id;
         $this->number = $lot->number;
-
         $this->hectares = $lot->hectares;
-        $this->coordinates = $lot->coordinates->map(function ($coords) {
+        $this->name_lot = $lot->name_lot;
+        $this->navigationPin['lat'] = $lot->navigation_latitude; // Asumiendo que existe
+        $this->navigationPin['lng'] = $lot->navigation_longitude;
+
+        $mainCoords = $lot->coordinates->where('is_hole', false);
+        $holeCoords = $lot->coordinates->where('is_hole', true)->groupBy('hole_group'); // Agrupa por hole_group
+
+        $this->coordinates = $mainCoords->map(function ($coords) {
             return [
                 'lat' => $coords->latitude,
                 'lng' => $coords->longitude,
             ];
-        })->toArray();
+        })->values()->toArray();
+
+        $this->holes = $holeCoords->map(function ($holeGroup) {
+            return $holeGroup->sortBy('sequence_number')->map(function ($coords) {
+                return [
+                    'lat' => $coords->latitude,
+                    'lng' => $coords->longitude,
+                ];
+            })->values()->toArray();
+        })->values()->toArray();
+
 
         $this->dispatch('lot-loaded', [
             'coordinates' => $this->coordinates,
+            'holes' => $this->holes, 
             'hectares' => $this->hectares,
+            'navigationPin' => $this->navigationPin,
         ]);
     }
 
+    #[On('updateNavigationPin')]
+    public function updateNavigationPin($lat, $lng) 
+    {
+        $this->navigationPin['lat'] = $lat;
+        $this->navigationPin['lng'] = $lng;
+    }
+
     #[On('updateCoordinates')]
-    public function updateCoordinates($coords, $hectares)
+    public function updateCoordinates($coords, $hectares, $holes = [])
     {
         $this->coordinates = $coords;
-        $this->hectares = $hectares;
+        $this->hectares = round($hectares, 2);
+        $this->holes = $holes;
     }
-    
+
     public function updatedMerchantId($value)
     {
-        
         if ($this->isCreateMode && $value) {
             $this->number = $this->getNextLotNumber($value);
         }
@@ -89,9 +113,7 @@ class LotForm extends Component
 
     protected function getNextLotNumber($merchantId)
     {
-        $maxNumber = Lot::where('merchant_id', $merchantId)
-            ->max('number');
-        
+        $maxNumber = Lot::where('merchant_id', $merchantId)->max('number');
         return ($maxNumber ?? 0) + 1;
     }
 
@@ -101,11 +123,16 @@ class LotForm extends Component
             $this->rules()['rules'],
             $this->rules()['messages']
         );
-        
+
         try {
             $lot = $this->currentLotId ?
                 Lot::findOrFail($this->currentLotId) :
                 new Lot;
+
+            if ($this->currentLotId) {
+                $lot->coordinates()->delete(); // Asegura que se borran las coordenadas existentes antes de guardar las nuevas
+            }
+
 
             if (!$this->currentLotId) {
                 $validatedData['number'] = $this->getNextLotNumber($validatedData['merchant_id']);
@@ -115,8 +142,11 @@ class LotForm extends Component
                 'merchant_id' => $validatedData['merchant_id'],
                 'number' => $validatedData['number'],
                 'hectares' => $validatedData['hectares'],
+                'name_lot' => $validatedData['name_lot'],
+                'navigation_latitude' => $this->navigationPin['lat'], // Guardar el pin
+                'navigation_longitude' => $this->navigationPin['lng'], // Guardar el pin
             ]);
-
+            
             $lot->save();
 
             if ($this->currentLotId) {
@@ -128,7 +158,22 @@ class LotForm extends Component
                     'latitude' => $coord['lat'],
                     'longitude' => $coord['lng'],
                     'sequence_number' => $index,
+                    'is_hole' => false,
+                    'hole_group' => null,
                 ]);
+            });
+
+            // Guarda los agujeros
+            collect($this->holes)->each(function ($hole, $holeIndex) use ($lot) {
+                collect($hole)->each(function ($coord, $coordIndex) use ($lot, $holeIndex) {
+                    $lot->coordinates()->create([
+                        'latitude' => $coord['lat'],
+                        'longitude' => $coord['lng'],
+                        'sequence_number' => $coordIndex,
+                        'is_hole' => true,
+                        'hole_group' => $holeIndex + 1, // Asegúrate que esto sea consistente
+                    ]);
+                });
             });
 
             $this->dispatch('swal', [
@@ -149,9 +194,9 @@ class LotForm extends Component
     }
 
     public function render()
-    {   
+    {
         $merchantsQuery = Merchant::where('merchant_type', MerchantType::CLIENT);
-        
+
         if (auth()->user()->hasRole('Tenant')) {
             $merchantsQuery->where('merchant_id', auth()->user()->merchant_id);
         }

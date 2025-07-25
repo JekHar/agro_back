@@ -1,22 +1,7 @@
 @extends('layouts.backend')
 
 @section('content')
-    <x-hero
-        :title="__('crud.orders.plural')"
-        :subtitle="isset($order) ? __('crud.orders.edit') : __('crud.orders.create')"
-        :breadcrumbs="[
-            [
-                'label' => __('crud.lots.breadcrumbs.home'),
-                'url' => '/',
-            ],
-            [
-                'label' => __('crud.orders.plural'),
-                'url' => route('orders.index'),
-            ],
-            [
-                'label' => isset($order) ? __('crud.orders.edit') : __('crud.orders.create'),
-            ],
-        ]"></x-hero>
+    <x-hero :title="__('crud.orders.plural')"></x-hero>
 
     <div class="content">
         <livewire:order-form :orderId="$order->id ?? null" />

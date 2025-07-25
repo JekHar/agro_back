@@ -35,28 +35,74 @@ class MerchantsDataTable extends DataTable
      */
     public function query(Merchant $model)
     {
-
         if (request()->routeIs('clients.merchants.*')) {
             if (auth()->user()->hasRole('Admin')) {
                 return $model->newQuery()
-                    ->select('merchants.*')
+                    ->select([
+                        'merchants.id',
+                        'merchants.business_name',
+                        'merchants.fiscal_number',
+                        'merchants.main_activity',
+                        'merchants.email',
+                        'merchants.phone',
+                        'merchants.created_at',
+                        'merchants.updated_at',
+                        'merchants.deleted_at',
+                        'merchants.merchant_id',
+                        'merchants.merchant_type'
+                    ])
                     ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
-                    //->leftJoin('orders', 'merchants.id', '=', 'orders.merchant_id')
                     ->where('merchant_type', 'Client')
-                    //->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
                     ->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
-                    ->groupBy('merchants.id');
+                    ->groupBy([
+                        'merchants.id',
+                        'merchants.business_name',
+                        'merchants.fiscal_number',
+                        'merchants.main_activity',
+                        'merchants.email',
+                        'merchants.phone',
+                        'merchants.created_at',
+                        'merchants.updated_at',
+                        'merchants.deleted_at',
+                        'merchants.merchant_id',
+                        'merchants.merchant_type'
+                    ]);
 
             } elseif (auth()->user()->hasRole('Tenant')) {
                 return $model->newQuery()
-                    ->select('merchants.*')
+                    ->select([
+                        'merchants.id',
+                        'merchants.business_name',
+                        'merchants.fiscal_number',
+                        'merchants.main_activity',
+                        'merchants.email',
+                        'merchants.phone',
+                        'merchants.created_at',
+                        'merchants.updated_at',
+                        'merchants.deleted_at',
+                        'merchants.merchant_id',
+                        'merchants.merchant_type'
+                    ])
                     ->leftJoin('lots', 'merchants.id', '=', 'lots.merchant_id')
                     ->where('merchant_type', 'Client')
                     ->where('merchants.merchant_id', auth()->user()->merchant_id)
                     ->selectRaw('COUNT(DISTINCT lots.id) as lots_count')
-                    ->groupBy('merchants.id');
+                    ->groupBy([
+                        'merchants.id',
+                        'merchants.business_name',
+                        'merchants.fiscal_number',
+                        'merchants.main_activity',
+                        'merchants.email',
+                        'merchants.phone',
+                        'merchants.created_at',
+                        'merchants.updated_at',
+                        'merchants.deleted_at',
+                        'merchants.merchant_id',
+                        'merchants.merchant_type'
+                    ]);
             }
         }
+        
         if (request()->routeIs('tenants.merchants.*')) {
             return $model->newQuery()->where('merchant_type', 'Tenant');
         }
@@ -78,7 +124,6 @@ class MerchantsDataTable extends DataTable
                 'dom' => 'Bfrtip',
                 'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
                 'drawCallback' => 'function() { initDeleteConfirmation() }',
-
             ])
             ->selectStyleSingle()
             ->buttons([
@@ -89,13 +134,11 @@ class MerchantsDataTable extends DataTable
             ]);
     }
 
-
     /**
      * Get the dataTable columns definition.
      */
     public function getColumns(): array
     {
-
         if (request()->routeIs('tenants.*')) {
             return [
                 Column::make('business_name')->title('Nombre'),
@@ -109,6 +152,7 @@ class MerchantsDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         }
+        
         if (request()->routeIs('clients.*')) {
             return [
                 Column::make('business_name')->title('Nombre'),
@@ -117,10 +161,8 @@ class MerchantsDataTable extends DataTable
                 Column::make('email')->title('Email'),
                 Column::make('phone')->title('Telefono'),
                 Column::computed('lots_count')
-                ->title('Lotes')
-                ->orderable(true),
-                //Column::Make('lots')->name('lots'),
-                //Column::Make('last_service')->name('last service'),
+                    ->title('Lotes')
+                    ->orderable(true),
                 Column::computed('action')->title('Acciones')
                     ->exportable(false)
                     ->printable(false)
