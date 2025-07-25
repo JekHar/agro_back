@@ -45,8 +45,10 @@ class OrderProducts extends Component
             return;
         }
 
-        $this->availableProducts = Product::where(function($query) {
-            $query->where('merchant_id', $this->clientId)
+        $tenantId = auth()->user()->merchant_id;
+
+        $this->availableProducts = Product::where(function ($query) use ($tenantId) {
+            $query->where('merchant_id', $tenantId)
                 ->orWhereNull('merchant_id');
         })
             ->orderBy('name')

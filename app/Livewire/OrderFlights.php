@@ -50,7 +50,7 @@ class OrderFlights extends Component
         $this->flights = [];
         for ($i = 0; $i < $count; $i++) {
             $this->flights[] = [
-                'hectares_to_perform' => 0,
+                'total_hectares' => 0,
                 'lots' => [
                     [
                         'lot_id' => '',
@@ -111,7 +111,7 @@ class OrderFlights extends Component
         $flightIndex = $keyParts[0];
 
         // If a flight's hectares changed, update remaining hectares
-        if ($keyParts[1] === 'hectares_to_perform') {
+        if ($keyParts[1] === 'total_hectares') {
             // Update hectares to apply for all lots in this flight
             foreach ($this->flights[$flightIndex]['lots'] as $lotIndex => $lot) {
                 $this->recalculateLotHectaresToApply($flightIndex, $lotIndex);
@@ -145,8 +145,8 @@ class OrderFlights extends Component
         $flight = $this->flights[$flightIndex];
         $lot = $flight['lots'][$lotIndex];
 
-        if (!empty($flight['hectares_to_perform']) && !empty($lot['lot_id'])) {
-            $hectaresToPerform = floatval($flight['hectares_to_perform']);
+        if (!empty($flight['total_hectares']) && !empty($lot['lot_id'])) {
+            $hectaresToPerform = floatval($flight['total_hectares']);
             $lotHectares = floatval($lot['lot_hectares']);
 
             // Use the smaller value between flight hectares and lot hectares
@@ -162,7 +162,7 @@ class OrderFlights extends Component
     {
         $usedHectares = 0;
         foreach ($this->flights as $flight) {
-            $usedHectares += floatval($flight['hectares_to_perform'] ?? 0);
+            $usedHectares += floatval($flight['total_hectares'] ?? 0);
         }
 
         $this->remainingHectares = $this->totalHectares - $usedHectares;

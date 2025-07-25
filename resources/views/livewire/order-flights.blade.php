@@ -34,7 +34,7 @@
                             <div class="col-md-4">
                                 <label class="form-label">Cantidad de hectáreas a realizar</label>
                                 <input type="number"
-                                       wire:model.live="flights.{{ $flightIndex }}.hectares_to_perform"
+                                       wire:model.live="flights.{{ $flightIndex }}.total_hectares"
                                        class="form-control"
                                        step="0.1"
                                        min="0"

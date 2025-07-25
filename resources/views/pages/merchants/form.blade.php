@@ -1,7 +1,12 @@
 @extends('layouts.backend')
 
 @section('content')
-    <x-hero :title="__('Empresas')" :subtitle="isset($id) ? __('Modificar Cliente') : __('Crear nuevo Cliente')"></x-hero>
+<x-hero
+    :title="request()->routeIs('clients.*') ? __('Clientes') : __('Empresas')"
+    :subtitle="isset($id)
+        ? (request()->routeIs('clients.*') ? __('Modificar Cliente') : __('Modificar Empresa'))
+        : (request()->routeIs('clients.*') ? __('Crear nuevo Cliente') : __('Crear nueva Empresa'))"
+/>
 
     <div class="content">
         <div class="block block-rounded">
