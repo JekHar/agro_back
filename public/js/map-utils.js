@@ -32,9 +32,12 @@ function initializeMap() {
     L.control.layers({
         [labels.satellite]: satellite,
         [labels.terrain]: terrain
+    }, null, {
+        position: 'topright' // Mover a la esquina superior derecha
     }).addTo(map);
 
     L.control.zoom({
+        position: 'topright', // Mover a la esquina superior derecha
         zoomInTitle: labels.zoomIn,
         zoomOutTitle: labels.zoomOut
     }).addTo(map);
@@ -47,13 +50,10 @@ function initializeMap() {
             font-weight: bold !important;
         }
         .leaflet-draw-actions {
-            background-color: #151211 !important;
-            font-weight: bold !important;
+            display: none !important; /* Ocultar completamente los controles de dibujo nativos */
         }
-        .leaflet-draw-actions a {
-            background-color: #151211 !important;
-            font-weight: bold !important;
-            display: inline-block;
+        .leaflet-draw {
+            display: none !important; /* Ocultar la barra de herramientas de dibujo */
         }
         /* Make vertex points smaller */
         .leaflet-editing-icon {
@@ -62,6 +62,12 @@ function initializeMap() {
             margin-left: -4px !important;
             margin-top: -4px !important;
             border-radius: 4px !important;
+        }
+        /* Mejorar controles de zoom y capas */
+        .leaflet-control-layers,
+        .leaflet-control-zoom {
+            margin-top: 15px !important;
+            margin-right: 15px !important;
         }
     `;
     document.head.appendChild(style);
@@ -224,21 +230,21 @@ function handleDrawCreated(e) {
         return;
     }
 
-    if (layer instanceof L.Marker) { 
+    if (layer instanceof L.Marker) {
         console.log('Marker detected, coordinates:', layer.getLatLng());
-        
+
         if (navigationPin) {
             console.log('Removing existing navigation pin');
             map.removeLayer(navigationPin);
         }
-        
+
         const latlng = layer.getLatLng();
         console.log('Creating new marker at:', latlng);
-        
+
         // SOLUCIÓN 1: Usar el marcador estándar de Leaflet primero
         navigationPin = L.marker(latlng).addTo(map);
         console.log('Navigation pin added to map:', navigationPin);
-        
+
         // Verificar si el marcador está realmente en el mapa
         console.log('Map layers after adding pin:', map._layers);
 
@@ -301,7 +307,7 @@ function handleDrawEdited(e) {
 
 function startDrawing() {
     if (drawnItems.getLayers().length > 0) {
-        const confirmMessage = window.translations?.lots?.fields?.draw_confirm || 'There is already a drawn polygon. Do you want to delete it to draw a new one?';
+        const confirmMessage = window.translations?.lots?.fields?.draw_confirm || 'Ya hay un polígono dibujado. ¿Deseas eliminarlo y dibujar uno nuevo?';
         const userConfirmed = confirm(confirmMessage);
         if (!userConfirmed) {
             return;

@@ -82,7 +82,7 @@ return [
         'add' => 'Add Lot',
         'form' => 'Lot Form',
         'fields' => [
-            'name' => 'Name',
+            'name' => 'Name lot',
             'number' => 'Lot Number',
             'lot_id' => 'Lot',
             'hectares' => 'Hectares',
