@@ -33,7 +33,7 @@ class AircraftRequest extends FormRequest
             'brand' => 'required|string|max:100',
             'alias' => 'required|string|max:100',
             'models' => 'required|string|max:100',
-            'manufacturing_year' => 'nullable|numeric|min:0',
+            'manufacturing_year' => 'nullable|numeric|min:0|max:255',
             'acquisition_date' => 'nullable|date',
             'working_width' => 'required|numeric|min:0',
         ];
@@ -48,9 +48,9 @@ class AircraftRequest extends FormRequest
             'models.required' => 'El campo Modelo es obligatorio.',
             'models.max' => 'El campo Modelo debe tener como máximo 100 caracteres.',
             'manufacturing_year.min' => 'El campo Año de Fabricación debe ser como mínimo 0.',
+            'manufacturing_year.max' => 'El campo Año de Fabricación debe ser como máximo 255.',
             'acquisition_date.required' => 'El campo Fecha de Adquisición es obligatorio.',
             'working_width.required' => 'El campo Ancho de Trabajo es obligatorio.',
-            'working_width.min' => 'El campo Ancho de Trabajo debe ser mayor que 0.',
             ];
     }
 

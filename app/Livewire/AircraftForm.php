@@ -89,7 +89,6 @@ class AircraftForm extends Component
                 'redirect' => route('aircrafts.index'),
             ]);
         } catch (\Throwable $th) {
-            throw $th;
             $this->dispatch('swal', [
                 'title' => ('Error'),
                 'message' => ('Ocurrió un error al procesar la solicitud'),
