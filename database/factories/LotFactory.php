@@ -16,7 +16,8 @@ class LotFactory extends Factory
         return [
             'merchant_id' => Merchant::where('merchant_type', 'tenant')->inRandomOrder()->first()->id,
             'number' => $this->faker->unique()->numberBetween(10000, 99999),
-            'hectares' => $this->faker->randomFloat(2, 5, 100)
+            'hectares' => $this->faker->randomFloat(2, 5, 100),
+            'name_lot' => $this->faker->unique()->word,
         ];
     }
 

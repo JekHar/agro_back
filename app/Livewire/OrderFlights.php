@@ -8,37 +8,40 @@ use Livewire\Component;
 class OrderFlights extends Component
 {
     public $clientId;
+    public $orderId;
+    public $orderLots = [];
     public $totalHectares = 0;
     public $flightCount = 1;
     public $flights = [];
-    public $availableLots = [];
+    public $availableLots;
     public $remainingHectares;
 
     // Products from the order
     public $products = [];
-    public $availableProducts = [];
+    public $availableProducts;
+    // Flight wizard integration
+    public $showFlightWizard = false;
 
     protected $listeners = [
         'clientSelected' => 'loadAvailableLots',
         'hectaresUpdated' => 'updateTotalHectares',
         'productsUpdated' => 'updateProducts',
-        'availableProductsUpdated' => 'updateAvailableProducts',
+        'flightCreated' => 'addFlightFromWizard',
+        'lotsUpdated' => 'handleLotsUpdated',
     ];
 
-    public function mount($clientId = null, $existingFlights = [], $totalHectares = 0, $products = [])
+    public function mount($clientId = null, $existingFlights = [], $totalHectares = 0, $products = [], $orderId = null, $orderLots = [])
     {
         $this->clientId = $clientId;
+        $this->orderId = $orderId;
+        $this->orderLots = $orderLots;
         $this->totalHectares = floatval($totalHectares);
         $this->remainingHectares = $this->totalHectares;
         $this->products = $products;
 
-        if (empty($existingFlights)) {
-            // Initialize with one flight by default
-            $this->initializeFlights(1);
-        } else {
-            $this->flights = $existingFlights;
-            $this->flightCount = count($existingFlights);
-        }
+        // Don't initialize flights by default - let user create them via wizard
+        $this->flights = $existingFlights;
+        $this->flightCount = count($existingFlights);
 
         if ($this->clientId) {
             $this->loadAvailableLots();
@@ -73,7 +76,7 @@ class OrderFlights extends Component
         }
 
         if (!$this->clientId) {
-            $this->availableLots = [];
+            $this->availableLots = collect();
             return;
         }
 
@@ -233,6 +236,54 @@ class OrderFlights extends Component
             $this->updateProductsForFlights();
             $this->dispatch('flightsUpdated', $this->flights);
         }
+    }
+
+    public function openFlightWizard()
+    {
+        $this->dispatch('openFlightWizard', [
+            'orderId' => $this->orderId ?? null,
+            'clientId' => $this->clientId,
+            'orderLots' => $this->orderLots ?? [],
+            'orderProducts' => $this->products
+        ]);
+    }
+
+    public function addFlightFromWizard($flightData)
+    {
+        $this->flights[] = $flightData;
+        $this->flightCount = count($this->flights);
+        $this->recalculateRemainingHectares();
+        $this->dispatch('flightsUpdated', $this->flights);
+    }
+
+    public function calculateRemainingHectaresForLot($lotId)
+    {
+        if (!$this->orderId) {
+            $lot = $this->availableLots->firstWhere('id', $lotId);
+            return $lot ? $lot->hectares : 0;
+        }
+
+        // Calculate hectares already used in previous flights for this specific lot
+        $usedHectares = 0;
+        foreach ($this->flights as $flight) {
+            if (isset($flight['lots'])) {
+                foreach ($flight['lots'] as $flightLot) {
+                    if ($flightLot['lot_id'] == $lotId) {
+                        $usedHectares += floatval($flightLot['hectares_to_apply'] ?? 0);
+                    }
+                }
+            }
+        }
+
+        $lot = $this->availableLots->firstWhere('id', $lotId);
+        $totalLotHectares = $lot ? $lot->hectares : 0;
+
+        return max(0, $totalLotHectares - $usedHectares);
+    }
+
+    public function handleLotsUpdated($lots)
+    {
+        $this->orderLots = $lots;
     }
 
     public function render()

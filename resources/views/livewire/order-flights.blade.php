@@ -1,148 +1,243 @@
 <div>
+    <!-- Include Flight Wizard Component -->
+    @livewire('flight-wizard', [
+        'orderId' => $orderId ?? null,
+        'clientId' => $clientId,
+        'orderLots' => $orderLots ?? [],
+        'orderProducts' => $products
+    ])
+
     <div class="block block-rounded mb-2">
         <div class="block-header block-header-default bg-primary">
-            <h3 class="block-title text-white">VUELOS</h3>
+            <h3 class="block-title text-white">
+                <i class="fa fa-plane me-2"></i>CONFIGURACIÓN DE VUELOS
+            </h3>
+            <div class="block-options">
+                <button type="button"
+                        class="btn btn-success btn-sm"
+                        wire:click="openFlightWizard"
+                        {{ !$clientId ? 'disabled' : '' }}>
+                    <i class="fa fa-plus me-2"></i>ADD FLIGHT
+                </button>
+            </div>
         </div>
         <div class="block-content">
-            <div class="row align-items-center mb-3">
-                <div class="col-md-6">
-                    <p class="fw-bold">HECTÁREAS TOTALES: {{ number_format($totalHectares, 1) }}</p>
+            <!-- Flight Summary -->
+            <div class="row align-items-center mb-4">
+                <div class="col-md-4">
+                    <div class="bg-info-light p-3 rounded">
+                        <h6 class="mb-1 text-info">HECTÁREAS TOTALES</h6>
+                        <p class="h4 mb-0 text-info">{{ number_format($totalHectares, 2) }} ha</p>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="row g-2 align-items-center">
-                        <div class="col-auto">
-                            <label class="col-form-label">CANTIDAD VUELOS:</label>
-                        </div>
-                        <div class="col-auto">
-                            <select wire:model.live="flightCount" class="form-select" {{ !$clientId ? 'disabled' : '' }}>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                        </div>
+                <div class="col-md-4">
+                    <div class="bg-success-light p-3 rounded">
+                        <h6 class="mb-1 text-success">VUELOS CONFIGURADOS</h6>
+                        <p class="h4 mb-0 text-success">{{ count($flights) }}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-{{ $remainingHectares < 0 ? 'danger' : 'info' }}-light p-3 rounded">
+                        <h6 class="mb-1 text-{{ $remainingHectares < 0 ? 'danger' : 'info' }}">HECTÁREAS RESTANTES</h6>
+                        <p class="h4 mb-0 text-{{ $remainingHectares < 0 ? 'danger' : 'info' }}">
+                            {{ number_format($remainingHectares, 2) }} ha
+                        </p>
                     </div>
                 </div>
             </div>
 
-            @foreach($flights as $flightIndex => $flight)
-                <div class="block block-rounded block-themed border border-primary mb-3">
-                    <div class="block-header bg-warning">
-                        <h3 class="block-title">VUELO {{ $flightIndex + 1 }}</h3>
-                    </div>
-                    <div class="block-content">
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Cantidad de hectáreas a realizar</label>
-                                <input type="number"
-                                       wire:model.live="flights.{{ $flightIndex }}.total_hectares"
-                                       class="form-control"
-                                       step="0.1"
-                                       min="0"
-                                       max="{{ $totalHectares }}"
-                                    {{ !$clientId ? 'disabled' : '' }}>
+            @if($remainingHectares < 0)
+                <div class="alert alert-danger d-flex align-items-center mb-4">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    <strong>Atención:</strong> Se han excedido las hectáreas totales por {{ number_format(abs($remainingHectares), 2) }} hectáreas.
+                </div>
+            @endif
+
+            <!-- Flight List -->
+            @if(count($flights) > 0)
+                @foreach($flights as $flightIndex => $flight)
+                    <div class="block block-rounded block-themed border border-primary mb-3">
+                        <div class="block-header bg-warning">
+                            <h3 class="block-title">
+                                <i class="fa fa-plane me-2"></i>VUELO {{ $flightIndex + 1 }}
+                            </h3>
+                            <div class="block-options">
+                                <span class="badge bg-primary">{{ number_format($flight['total_hectares'] ?? 0, 2) }} ha</span>
                             </div>
-                            <div class="col-md-8 d-flex align-items-end">
-                                <div>
-                                    @if($remainingHectares < 0)
-                                        <span class="badge bg-danger">Excedido por {{ abs($remainingHectares) }} hectáreas</span>
+                        </div>
+                        <div class="block-content">
+                            <!-- Flight Lots -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="mb-3">
+                                        <i class="fa fa-map-marked-alt me-2"></i>Lotes del Vuelo
+                                    </h6>
+                                    @if(isset($flight['lots']) && count($flight['lots']) > 0)
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-sm table-striped">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>Lote</th>
+                                                        <th class="text-center">Hectáreas del Lote</th>
+                                                        <th class="text-center">Hectáreas a Aplicar</th>
+                                                        <th class="text-center">% del Lote</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($flight['lots'] as $lot)
+                                                        @php
+                                                            $lotData = $availableLots->firstWhere('id', $lot['lot_id']);
+                                                            $percentage = $lot['lot_hectares'] > 0 ? ($lot['hectares_to_apply'] / $lot['lot_hectares']) * 100 : 0;
+                                                        @endphp
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Lote {{ $lotData->number ?? $lot['lot_id'] }}</strong>
+                                                                @if($lotData && $lotData->name)
+                                                                    <br><small class="text-muted">{{ $lotData->name }}</small>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-secondary">{{ number_format($lot['lot_hectares'] ?? 0, 2) }} ha</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-primary">{{ number_format($lot['hectares_to_apply'] ?? 0, 2) }} ha</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-info">{{ number_format($percentage, 1) }}%</span>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     @else
-                                        <span class="badge bg-success">Quedan {{ $remainingHectares }} hectáreas</span>
+                                        <div class="text-center py-3 text-muted">
+                                            <i class="fa fa-map-marked-alt fa-2x mb-2"></i>
+                                            <p>No hay lotes configurados para este vuelo</p>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
+
+                            <!-- Flight Products -->
+                            @if(isset($flight['products']) && count($flight['products']) > 0)
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="mb-3">
+                                            <i class="fa fa-flask me-2"></i>Productos del Vuelo
+                                        </h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-sm table-striped">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>Producto</th>
+                                                        <th class="text-center">Dosificación</th>
+                                                        <th class="text-center">Cantidad Total</th>
+                                                        <th class="text-center">Unidad</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($flight['products'] as $productItem)
+                                                        @php
+                                                            $productData = collect($products)->firstWhere('product_id', $productItem['product_id']);
+                                                            $productInfo = $availableProducts->firstWhere('id', $productItem['product_id']);
+                                                            $dosage = $productItem['dosage_per_hectare'] ?? ($productData['calculated_dosage'] ?? 0);
+                                                        @endphp
+                                                        <tr>
+                                                            <td>
+                                                                <strong>{{ $productInfo->name ?? 'Producto #' . $productItem['product_id'] }}</strong>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-info">{{ number_format($dosage, 3) }}</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-success">{{ number_format($productItem['quantity'] ?? 0, 2) }}</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-secondary">{{ $productInfo->unit ?? 'L' }}</span>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Dosage Summary per Lot -->
+                            @if(isset($flight['lots']) && count($flight['lots']) > 0 && isset($flight['products']) && count($flight['products']) > 0)
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <h6 class="mb-3">
+                                            <i class="fa fa-chart-bar me-2"></i>Resumen de Aplicación por Lote
+                                        </h6>
+                                        <div class="row">
+                                            @foreach($flight['lots'] as $lot)
+                                                @php
+                                                    $lotData = $availableLots->firstWhere('id', $lot['lot_id']);
+                                                @endphp
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="block block-rounded block-bordered">
+                                                        <div class="block-header block-header-default bg-light">
+                                                            <h6 class="block-title mb-0">
+                                                                Lote {{ $lotData->number ?? $lot['lot_id'] }}
+                                                                <small class="text-muted">({{ number_format($lot['hectares_to_apply'], 2) }} ha)</small>
+                                                            </h6>
+                                                        </div>
+                                                        <div class="block-content p-3">
+                                                            @foreach($flight['products'] as $productItem)
+                                                                @php
+                                                                    $productInfo = $availableProducts->firstWhere('id', $productItem['product_id']);
+                                                                    $dosage = $productItem['dosage_per_hectare'] ?? 0;
+                                                                    $totalForLot = $dosage * $lot['hectares_to_apply'];
+                                                                @endphp
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <span class="fw-medium">{{ $productInfo->name ?? 'Producto' }}:</span>
+                                                                    <div class="text-end">
+                                                                        <small class="text-muted d-block">
+                                                                            {{ number_format($dosage, 3) }} {{ $productInfo->unit ?? 'L' }}/ha
+                                                                        </small>
+                                                                        <span class="badge bg-primary">
+                                                                            {{ number_format($totalForLot, 2) }} {{ $productInfo->unit ?? 'L' }}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
-
-                        <h5 class="mb-3">Selección de lotes y orden</h5>
-
-                        @foreach($flight['lots'] as $lotIndex => $lot)
-                            <div class="row mb-2 align-items-center">
-                                <div class="col-md-4">
-                                    <select wire:model.live="flights.{{ $flightIndex }}.lots.{{ $lotIndex }}.lot_id"
-                                            class="form-select"
-                                        {{ !$clientId ? 'disabled' : '' }}>
-                                        <option value="">Seleccione lote</option>
-                                        @foreach($availableLots as $availableLot)
-                                            <option value="{{ $availableLot->id }}">
-                                                Lote {{ $availableLot->number }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-3 text-center">
-                                    <span class="fw-bold">Has del lote</span><br>
-                                    <span>{{ number_format($lot['lot_hectares'] ?? 0, 1) }}</span>
-                                </div>
-                                <div class="col-md-3 text-center">
-                                    <span class="fw-bold">Has a aplicar por lote</span><br>
-                                    <span>{{ number_format($lot['hectares_to_apply'] ?? 0, 1) }}</span>
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger"
-                                            wire:click="removeLotFromFlight({{ $flightIndex }}, {{ $lotIndex }})"
-                                        {{ (count($flight['lots']) <= 1 || !$clientId) ? 'disabled' : '' }}>
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
-
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-primary"
-                                        wire:click="addLotToFlight({{ $flightIndex }})"
-                                    {{ !$clientId ? 'disabled' : '' }}>
-                                    <i class="fa fa-plus me-1"></i> AGREGAR LOTE
-                                </button>
-                            </div>
-                        </div>
-
-                        @if(count($products) > 0)
-                            <h5 class="mb-3">Productos para este vuelo</h5>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-sm">
-                                    <thead class="bg-body-light">
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th class="text-center">Dosis</th>
-                                        <th class="text-center">Cantidad total</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($flight['products'] as $productItem)
-                                        @php
-                                            $productData = collect($products)->firstWhere('product_id', $productItem['product_id']);
-                                            $productName = '';
-
-                                            if ($productData && $productData['product_id']) {
-                                                foreach ($availableProducts as $availableProduct) {
-                                                    if ($availableProduct->id == $productData['product_id']) {
-                                                        $productName = $availableProduct->name;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-
-                                            if (empty($productName)) {
-                                                $productName = 'Producto #' . $productItem['product_id'];
-                                            }
-
-                                            $dosage = $productData ? ($productData['calculated_dosage'] ?? 0) : 0;
-                                        @endphp
-                                        <tr>
-                                            <td>{{ $productName }}</td>
-                                            <td class="text-center">{{ number_format($dosage, 2) }}</td>
-                                            <td class="text-center">{{ number_format($productItem['quantity'] ?? 0, 2) }}</td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endif
                     </div>
+                @endforeach
+            @else
+                <!-- Empty State -->
+                <div class="text-center py-5">
+                    <i class="fa fa-plane fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted mb-3">No hay vuelos configurados</h5>
+                    <p class="text-muted mb-4">
+                        Utilice el botón "ADD FLIGHT" para configurar vuelos usando el asistente guiado.
+                        <br>El asistente le permitirá seleccionar lotes y configurar productos con dosificación precisa.
+                    </p>
+                    @if($clientId)
+                        <button type="button"
+                                class="btn btn-primary btn-lg"
+                                wire:click="openFlightWizard">
+                            <i class="fa fa-plus me-2"></i>Crear Primer Vuelo
+                        </button>
+                    @else
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            Debe seleccionar un cliente antes de configurar vuelos.
+                        </div>
+                    @endif
                 </div>
-            @endforeach
+            @endif
         </div>
     </div>
 </div>

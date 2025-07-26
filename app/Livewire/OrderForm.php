@@ -54,7 +54,8 @@ class OrderForm extends Component
     public $groundSupports = [];
 
     // Products and lots
-    public $selectedProducts = [];
+    // TODO: selectedProducts removed - product selection moved to FlightWizard
+    // public $selectedProducts = [];
     public $selectedLots = [];
     public $flights = [];
 
@@ -72,13 +73,13 @@ class OrderForm extends Component
         'selectedLots.*.lot_id' => 'required|exists:lots,id',
         'selectedLots.*.hectares' => 'required|numeric|min:0.01',
         'selectedLots.*.status' => 'required|in:pending,in_progress,completed',
-        'selectedProducts' => 'required|array|min:1',
-        'selectedProducts.*.product_id' => 'required|exists:products,id',
+        // 'selectedProducts' => 'required|array|min:1',
+        // 'selectedProducts.*.product_id' => 'required|exists:products,id',
     ];
 
     protected $listeners = [
         'lotsUpdated' => 'handleLotsUpdated',
-        'productsUpdated' => 'handleProductsUpdated',
+        // 'productsUpdated' => 'handleProductsUpdated', // TODO: Removed - products handled in FlightWizard
         'flightsUpdated' => 'handleFlightsUpdated'
     ];
 
@@ -96,12 +97,12 @@ class OrderForm extends Component
             $this->order_number = $this->generateOrderNumber();
         }
 
+        $this->tenant_id = auth()->user()->merchant_id;
+
         // Load dropdown options
         $this->loadClients();
         $this->loadAircrafts();
         $this->loadStaff();
-
-        $this->tenant_id = auth()->user()->merchant_id;
 
         if (auth()->user()->hasRole('Admin')) {
             $this->tenants = Merchant::where('merchant_type', 'tenant')
@@ -159,20 +160,20 @@ class OrderForm extends Component
             ];
         })->toArray();
 
-        $this->selectedProducts = $this->order->orderProducts->map(function ($orderProduct) {
-            return [
-                'product_id' => $orderProduct->product_id,
-                'client_provided_quantity' => $orderProduct->client_provided_quantity,
-                'total_quantity_to_use' => $orderProduct->total_quantity_to_use,
-                'calculated_dosage' => $orderProduct->calculated_dosage,
-                'product_difference' => $orderProduct->product_difference,
-                'difference_observation' => $orderProduct->difference_observation,
-                'use_client_quantity' => $orderProduct->use_client_quantity,
-                'use_manual_dosage' => $orderProduct->use_manual_dosage,
-                'manual_dosage_per_hectare' => $orderProduct->manual_dosage_per_hectare,
-                'manual_total_quantity' => $orderProduct->manual_total_quantity,
-            ];
-        })->toArray();
+        // $this->selectedProducts = $this->order->orderProducts->map(function ($orderProduct) {
+        //     return [
+        //         'product_id' => $orderProduct->product_id,
+        //         'client_provided_quantity' => $orderProduct->client_provided_quantity,
+        //         'total_quantity_to_use' => $orderProduct->total_quantity_to_use,
+        //         'calculated_dosage' => $orderProduct->calculated_dosage,
+        //         'product_difference' => $orderProduct->product_difference,
+        //         'difference_observation' => $orderProduct->difference_observation,
+        //         'use_client_quantity' => $orderProduct->use_client_quantity,
+        //         'use_manual_dosage' => $orderProduct->use_manual_dosage,
+        //         'manual_dosage_per_hectare' => $orderProduct->manual_dosage_per_hectare,
+        //         'manual_total_quantity' => $orderProduct->manual_total_quantity,
+        //     ];
+        // })->toArray();
 
 
 
@@ -371,7 +372,7 @@ class OrderForm extends Component
             $this->saveLots();
 
             // Save products
-            $this->saveProducts();
+            // $this->saveProducts();
 
             // Save flights
             $this->saveFlights();
@@ -414,28 +415,28 @@ class OrderForm extends Component
     }
 
     /**
-     * Save the order products
+     * TODO: saveProducts method removed - products are now saved through flights in FlightWizard
      */
-    protected function saveProducts()
-    {
-        foreach ($this->selectedProducts as $product) {
-            if (empty($product['product_id'])) continue;
-
-            OrderProduct::create([
-                'order_id' => $this->order->id,
-                'product_id' => $product['product_id'],
-                'client_provided_quantity' => $product['client_provided_quantity'] ?? 0,
-                'total_quantity_to_use' => $product['total_quantity_to_use'] ?? 0,
-                'calculated_dosage' => $product['calculated_dosage'] ?? 0,
-                'product_difference' => $product['product_difference'] ?? 0,
-                'difference_observation' => $product['difference_observation'] ?? '',
-                'use_client_quantity' => $product['use_client_quantity'] ?? false,
-                'use_manual_dosage' => $product['use_manual_dosage'] ?? false,
-                'manual_dosage_per_hectare' => $product['manual_dosage_per_hectare'] ?? 0,
-                'manual_total_quantity' => $product['manual_total_quantity'] ?? 0,
-            ]);
-        }
-    }
+    // protected function saveProducts()
+    // {
+    //     foreach ($this->selectedProducts as $product) {
+    //         if (empty($product['product_id'])) continue;
+    //
+    //         OrderProduct::create([
+    //             'order_id' => $this->order->id,
+    //             'product_id' => $product['product_id'],
+    //             'client_provided_quantity' => $product['client_provided_quantity'] ?? 0,
+    //             'total_quantity_to_use' => $product['total_quantity_to_use'] ?? 0,
+    //             'calculated_dosage' => $product['calculated_dosage'] ?? 0,
+    //             'product_difference' => $product['product_difference'] ?? 0,
+    //             'difference_observation' => $product['difference_observation'] ?? '',
+    //             'use_client_quantity' => $product['use_client_quantity'] ?? false,
+    //             'use_manual_dosage' => $product['use_manual_dosage'] ?? false,
+    //             'manual_dosage_per_hectare' => $product['manual_dosage_per_hectare'] ?? 0,
+    //             'manual_total_quantity' => $product['manual_total_quantity'] ?? 0,
+    //         ]);
+    //     }
+    // }
 
     /**
      * Save the flights and their related data
