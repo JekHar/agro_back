@@ -22,17 +22,11 @@ class ProductSeeders extends Seeder
             return;
         }
 
-        $merchants = Merchant::where('merchant_type', 'client')->get();
-
-        if ($merchants->isEmpty()) {
-            $this->command->warn('No merchants of type "cliente" found. Please seed Merchants first.');
-
-            return;
-        }
+        $merchants = Merchant::where('merchant_type', 'tenant')->get();
 
         $categories->each(function ($category) use ($merchants) {
             $merchants->each(function ($merchant) use ($category) {
-                Product::factory(10)->create([
+                Product::factory(1)->create([
                     'category_id' => $category->id,
                     'merchant_id' => $merchant->id,
                 ]);

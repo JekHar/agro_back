@@ -11,7 +11,7 @@ class LotSeeder extends Seeder
 {
     public function run()
     {
-        $clientMerchantIds = Merchant::where('merchant_type', 'tenant')->pluck('id');
+        $clientMerchantIds = Merchant::where('merchant_type', 'client')->pluck('id');
 
         foreach ($clientMerchantIds as $clientMerchantId) {
             Lot::factory()->count(10)->create([

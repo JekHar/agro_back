@@ -38,7 +38,7 @@ class LotDataTable extends DataTable
             ->join('merchants', 'lots.merchant_id', '=', 'merchants.id')
             ->select('lots.*', 'merchants.business_name as merchant_name');
 
-       
+
         if ($merchant_id) {
             $query->where('lots.merchant_id', $merchant_id);
         }
@@ -79,10 +79,10 @@ class LotDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('number')->title(__('crud.lots.fields.number')),
+            Column::make('name_lot')->title(__('crud.lots.fields.name_lot')),
             Column::make('hectares')->title(__('crud.lots.fields.hectares')),
             Column::make('merchant_name')->title(__('crud.lots.fields.merchant')),
             Column::make('created_at')->title('Fecha creación'),
-            Column::make('updated_at')->title('Fecha modificación'),
             Column::computed('action')->title('Acciones')
                 ->exportable(false)
                 ->printable(false)

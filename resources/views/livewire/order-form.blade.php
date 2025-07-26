@@ -147,9 +147,11 @@
 
         <livewire:order-lots :clientId="$client_id" :existingLots="$selectedLots" />
 
+        {{-- TODO: OrderProducts component removed - product selection moved to FlightWizard
         <livewire:order-products :clientId="$client_id" :existingProducts="$selectedProducts ?? []" :totalHectares="$totalHectares" />
+        --}}
 
-        <livewire:order-flights :clientId="$client_id" :existingFlights="$flights ?? []" :totalHectares="$totalHectares" :products="$selectedProducts ?? []" />
+        <livewire:order-flights :clientId="$client_id" :existingFlights="$flights ?? []" :totalHectares="$totalHectares" :orderLots="$selectedLots" />
 
         <div class="row mb-3">
             <div class="col-md-12 text-end">

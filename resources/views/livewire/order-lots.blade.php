@@ -37,7 +37,7 @@
                                                 }
                                             @endphp
                                             <option value="{{ $availableLot->id }}" {{ $isSelected ? 'disabled' : '' }}>
-                                                {{ $availableLot->number }} {{ $isSelected ? '(Ya seleccionado)' : '' }}
+                                                {{ $availableLot->name_lot }} {{ $availableLot->number }} {{ $isSelected ? '(Ya seleccionado)' : '' }}
                                             </option>
                                         @endforeach
                                     </select>

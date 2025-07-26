@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Merchant;
 use App\Models\User;
+use App\Types\MerchantType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,12 +15,13 @@ class UserSeeder extends Seeder
         $merchants = Merchant::all();
 
         foreach ($merchants as $merchant) {
-            if ($merchant->merchant_type === 'tenant') {
+            if ($merchant->merchant_type === MerchantType::TENANT) {
                 $tenant = User::create([
                     'name' => "Tenant {$merchant->business_name}",
                     'email' => "tenant.{$merchant->id}@" . strtolower(str_replace(' ', '', $merchant->business_name)) . '.com',
                     'password' => Hash::make('password'),
                     'merchant_id' => $merchant->id,
+                    'email_verified_at' => now(),
                 ]);
                 $tenant->assignRole('Tenant');
             }
@@ -31,16 +33,11 @@ class UserSeeder extends Seeder
                     'email' => fake()->unique()->safeEmail(),
                     'password' => Hash::make('password'),
                     'merchant_id' => $merchant->id,
+                    'email_verified_at' => now(),
                 ]);
 
                 $user->assignRole($role);
             }
-
-            User::factory(2)->create([
-                'merchant_id' => $merchant->id,
-            ])->each(function ($user) use ($roles) {
-                $user->assignRole($roles[array_rand($roles)]);
-            });
         }
     }
 }
