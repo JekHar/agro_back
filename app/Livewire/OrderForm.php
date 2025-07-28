@@ -62,6 +62,50 @@ class OrderForm extends Component
     public ?int $tenant_id = 0;
     public Collection $tenants;
 
+    // Modal states
+    public $showClientModal = false;
+    public $showServiceModal = false;
+    public $showAircraftModal = false;
+    public $showPilotModal = false;
+    public $showGroundSupportModal = false;
+
+    // Form data for modals
+    public $clientForm = [
+        'business_name' => '',
+        'trade_name' => '',
+        'fiscal_number' => '',
+        'email' => '',
+        'phone' => '',
+        'locality' => '',
+        'address' => '',
+        'merchant_type' => 'client',
+        'merchant_id' => null
+    ];
+
+    public $serviceForm = [
+        'name' => '',
+        'price_per_hectare' => '',
+        'merchant_id' => null
+    ];
+
+    public $aircraftForm = [
+        'brand' => '',
+        'alias' => '',
+        'models' => '',
+        'manufacturing_year' => '',
+        'acquisition_date' => '',
+        'working_width' => '',
+        'merchant_id' => null
+    ];
+
+    public $userForm = [
+        'name' => '',
+        'email' => '',
+        'password' => '',
+        'merchant_id' => null,
+        'role' => 'Pilot'
+    ];
+
     protected $rules = [
         'client_id' => 'required|exists:merchants,id',
         'service_id' => 'required|exists:services,id',
@@ -283,26 +327,32 @@ class OrderForm extends Component
 
     public function createNewClient()
     {
-        // Redirect to client creation page or show modal
-        return redirect()->route('clients.merchants.create');
+        $this->resetClientForm();
+        $this->showClientModal = true;
     }
 
     public function createNewService()
     {
-        // Redirect to service creation page or show modal
-        return redirect()->route('services.create');
+        $this->resetServiceForm();
+        $this->showServiceModal = true;
     }
 
     public function createNewAircraft()
     {
-        // Redirect to aircraft creation page or show modal
-        return redirect()->route('aircrafts.create');
+        $this->resetAircraftForm();
+        $this->showAircraftModal = true;
     }
 
     public function createNewPilot()
     {
-        // Redirect to user creation page with pilot role preselected
-        return redirect()->route('users.create', ['role' => 'Pilot']);
+        $this->resetUserForm();
+        $this->showPilotModal = true;
+    }
+
+    public function createNewGroundSupport()
+    {
+        $this->resetUserForm();
+        $this->showGroundSupportModal = true;
     }
 
     public function submit()
@@ -512,6 +562,197 @@ class OrderForm extends Component
     public function handleFlightsUpdated($flights): void
     {
         $this->flights = $flights;
+    }
+
+    // Modal reset methods
+    public function resetClientForm()
+    {
+        $this->clientForm = [
+            'business_name' => '',
+            'trade_name' => '',
+            'fiscal_number' => '',
+            'email' => '',
+            'phone' => '',
+            'locality' => '',
+            'address' => '',
+            'merchant_type' => 'client',
+            'merchant_id' => $this->tenant_id
+        ];
+    }
+
+    public function resetServiceForm()
+    {
+        $this->serviceForm = [
+            'name' => '',
+            'price_per_hectare' => '',
+            'merchant_id' => $this->tenant_id
+        ];
+    }
+
+    public function resetAircraftForm()
+    {
+        $this->aircraftForm = [
+            'brand' => '',
+            'alias' => '',
+            'models' => '',
+            'manufacturing_year' => '',
+            'acquisition_date' => '',
+            'working_width' => '',
+            'merchant_id' => $this->tenant_id
+        ];
+    }
+
+    public function resetUserForm()
+    {
+        $this->userForm = [
+            'name' => '',
+            'email' => '',
+            'password' => '',
+            'merchant_id' => $this->tenant_id,
+            'role' => 'Pilot'
+        ];
+    }
+
+    // Modal save methods
+    public function saveClient()
+    {
+        $this->validate([
+            'clientForm.business_name' => 'required|string|max:255',
+            'clientForm.trade_name' => 'nullable|string|max:255',
+            'clientForm.fiscal_number' => 'required|string|unique:merchants,fiscal_number',
+            'clientForm.email' => 'required|email|unique:merchants,email',
+            'clientForm.phone' => 'nullable|string|max:20',
+            'clientForm.locality' => 'nullable|string|max:255',
+            'clientForm.address' => 'nullable|string|max:500',
+        ]);
+
+        $client = Merchant::create($this->clientForm);
+
+        $this->loadClients();
+        $this->client_id = $client->id;
+        $this->showClientModal = false;
+
+        $this->dispatch('showAlert', [
+            'title' => 'Éxito',
+            'text' => 'Cliente creado correctamente',
+            'type' => 'success'
+        ]);
+    }
+
+    public function saveService()
+    {
+        $this->validate([
+            'serviceForm.name' => 'required|string|max:255',
+            'serviceForm.price_per_hectare' => 'required|numeric|min:0',
+        ]);
+
+        $service = Service::create($this->serviceForm);
+
+        $this->loadServices();
+        $this->service_id = $service->id;
+        $this->showServiceModal = false;
+
+        $this->dispatch('showAlert', [
+            'title' => 'Éxito',
+            'text' => 'Servicio creado correctamente',
+            'type' => 'success'
+        ]);
+    }
+
+    public function saveAircraft()
+    {
+        $this->validate([
+            'aircraftForm.brand' => 'required|string|max:255',
+            'aircraftForm.alias' => 'required|string|max:255',
+            'aircraftForm.models' => 'nullable|string|max:255',
+            'aircraftForm.manufacturing_year' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
+            'aircraftForm.acquisition_date' => 'nullable|date',
+            'aircraftForm.working_width' => 'nullable|numeric|min:0',
+        ]);
+
+        $aircraft = Aircraft::create($this->aircraftForm);
+
+        $this->loadAircrafts();
+        $this->aircraft_id = $aircraft->id;
+        $this->showAircraftModal = false;
+
+        $this->dispatch('showAlert', [
+            'title' => 'Éxito',
+            'text' => 'Aeronave creada correctamente',
+            'type' => 'success'
+        ]);
+    }
+
+    public function savePilot()
+    {
+        $this->validate([
+            'userForm.name' => 'required|string|max:255',
+            'userForm.email' => 'required|email|unique:users,email',
+            'userForm.password' => 'required|string|min:8',
+        ]);
+
+        $user = User::create([
+            'name' => $this->userForm['name'],
+            'email' => $this->userForm['email'],
+            'password' => bcrypt($this->userForm['password']),
+            'merchant_id' => $this->userForm['merchant_id'],
+        ]);
+
+        $user->assignRole($this->userForm['role']);
+
+        $this->loadStaff();
+
+        if ($this->userForm['role'] === 'Pilot') {
+            $this->pilot_id = $user->id;
+        } else {
+            $this->ground_support_id = $user->id;
+        }
+
+        $this->showPilotModal = false;
+        $this->showGroundSupportModal = false;
+
+        $this->dispatch('showAlert', [
+            'title' => 'Éxito',
+            'text' => ($this->userForm['role'] === 'Pilot' ? 'Piloto' : 'Apoyo de tierra') . ' creado correctamente',
+            'type' => 'success'
+        ]);
+    }
+
+    public function saveGroundSupport()
+    {
+        $this->userForm['role'] = 'Ground Support';
+        $this->savePilot();
+    }
+
+    // Modal close methods
+    public function closeClientModal()
+    {
+        $this->showClientModal = false;
+        $this->resetClientForm();
+    }
+
+    public function closeServiceModal()
+    {
+        $this->showServiceModal = false;
+        $this->resetServiceForm();
+    }
+
+    public function closeAircraftModal()
+    {
+        $this->showAircraftModal = false;
+        $this->resetAircraftForm();
+    }
+
+    public function closePilotModal()
+    {
+        $this->showPilotModal = false;
+        $this->resetUserForm();
+    }
+
+    public function closeGroundSupportModal()
+    {
+        $this->showGroundSupportModal = false;
+        $this->resetUserForm();
     }
 
     public function render()

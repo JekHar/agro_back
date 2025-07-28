@@ -31,6 +31,7 @@ class FlightWizard extends Component
     public $availableProducts = [];
     public $selectedFlightProducts = [];
     public $calculationMethod = 'by_quantity'; // 'by_quantity' or 'by_dosage'
+    public $selectedProductId = ''; // For the product selector
 
     protected $rules = [
         'selectedFlightLots' => 'required|array|min:1',
@@ -159,6 +160,11 @@ class FlightWizard extends Component
                 'unit' => $product->unit ?? 'L',
                 'category' => $product->category->name ?? 'Sin categoría',
                 'description' => $product->description,
+                'dosage_per_hectare' => $product->dosage_per_hectare ?? 0,
+                'liters_per_can' => $product->liters_per_can ?? 0,
+                'stock' => $product->stock ?? 0,
+                'commercial_brand' => $product->commercial_brand,
+                'concentration' => $product->concentration,
             ];
         });
     }
@@ -182,17 +188,78 @@ class FlightWizard extends Component
     protected function initializeFlightProducts()
     {
         $this->selectedFlightProducts = [];
-        foreach ($this->availableProducts as $product) {
-            $this->selectedFlightProducts[] = [
-                'product_id' => $product['id'],
-                'product_name' => $product['name'],
-                'unit' => $product['unit'],
-                'category' => $product['category'],
-                'total_quantity' => 0,
-                'dosage_per_hectare' => 0, // Start with 0 since no pre-defined dosage
-                'selected' => false, // Explicitly set to false to prevent default selection
-            ];
+    }
+
+    public function addProduct()
+    {
+        if (empty($this->selectedProductId)) {
+            $this->dispatch('showAlert', [
+                'title' => 'Error',
+                'text' => 'Debe seleccionar un producto',
+                'type' => 'error'
+            ]);
+            return;
         }
+
+        // Check if product is already added
+        $existingProduct = collect($this->selectedFlightProducts)
+            ->firstWhere('product_id', $this->selectedProductId);
+
+        if ($existingProduct) {
+            $this->dispatch('showAlert', [
+                'title' => 'Error',
+                'text' => 'Este producto ya ha sido agregado',
+                'type' => 'error'
+            ]);
+            return;
+        }
+
+        // Find the product data
+        $product = $this->availableProducts->firstWhere('id', $this->selectedProductId);
+
+        if (!$product) {
+            return;
+        }
+
+        // Add product with default values from the product database
+        $recommendedDosage = $product['dosage_per_hectare'] > 0 ? $product['dosage_per_hectare'] : 0;
+        $this->selectedFlightProducts[] = [
+            'product_id' => $product['id'],
+            'product_name' => $product['name'],
+            'unit' => $product['unit'],
+            'category' => $product['category'],
+            'commercial_brand' => $product['commercial_brand'],
+            'dosage_per_hectare' => $product['dosage_per_hectare'], // default value, can be changed if by_dosage
+            'calculated_dosage_per_hectare' => $recommendedDosage,
+            'liters_per_can' => $product['liters_per_can'],
+            'stock' => $product['stock'],
+            'total_quantity' => 0,
+            'selected' => true,
+        ];
+
+        // Calculate initial values
+        $index = count($this->selectedFlightProducts) - 1;
+        $this->calculateProductValues($index);
+
+        // Reset selector
+        $this->selectedProductId = '';
+    }
+
+    public function removeProduct($index)
+    {
+        if (isset($this->selectedFlightProducts[$index])) {
+            array_splice($this->selectedFlightProducts, $index, 1);
+        }
+    }
+
+    public function getAvailableProductsForSelector()
+    {
+        // Return products that haven't been added yet
+        $addedProductIds = collect($this->selectedFlightProducts)->pluck('product_id');
+
+        return $this->availableProducts->reject(function ($product) use ($addedProductIds) {
+            return $addedProductIds->contains($product['id']);
+        });
     }
 
     protected function getTotalHectaresUsedInLot($lotId)
@@ -269,54 +336,31 @@ class FlightWizard extends Component
     public function updatedSelectedFlightLots($value, $key)
     {
         if (strpos($key, '.hectares_to_apply') !== false) {
+            // Round to 2 decimal places
+            $index = explode('.', $key)[0];
+            $this->selectedFlightLots[$index]['hectares_to_apply'] = round(floatval($value), 2);
+
             $this->calculateTotalHectares();
             $this->updateProductQuantities();
         }
     }
 
-    protected function calculateTotalHectares()
+    // Replace the old updatedSelectedFlightProducts method
+    public function updateProductCalculation($index)
     {
-        $this->totalFlightHectares = collect($this->selectedFlightLots)
-            ->where('selected', true)
-            ->sum('hectares_to_apply');
-    }
-
-    public function toggleProductSelection($index)
-    {
-        $this->selectedFlightProducts[$index]['selected'] = !$this->selectedFlightProducts[$index]['selected'];
-
-        if (!$this->selectedFlightProducts[$index]['selected']) {
-            $this->selectedFlightProducts[$index]['total_quantity'] = 0;
-            $this->selectedFlightProducts[$index]['dosage_per_hectare'] = 0;
+        if (!isset($this->selectedFlightProducts[$index])) {
+            return;
+        }
+        $totalHectares = $this->totalFlightHectares > 0 ? $this->totalFlightHectares : 1;
+        if ($this->calculationMethod === 'by_dosage') {
+            // User enters dosage, calculate quantity
+            $dosage = round(floatval($this->selectedFlightProducts[$index]['calculated_dosage_per_hectare']), 2);
+            $this->selectedFlightProducts[$index]['calculated_dosage_per_hectare'] = $dosage;
+            $this->selectedFlightProducts[$index]['total_quantity'] = round($dosage * $totalHectares, 2);
         } else {
-            // Auto-calculate based on current method
-            $this->calculateProductValues($index);
-        }
-    }
-
-    public function updatedCalculationMethod()
-    {
-        // Recalculate all selected products when method changes
-        foreach ($this->selectedFlightProducts as $index => $product) {
-            if ($product['selected']) {
-                $this->calculateProductValues($index);
-            }
-        }
-    }
-
-    public function updatedSelectedFlightProducts($value, $key)
-    {
-        // Extract index from key (e.g., "0.total_quantity" -> 0)
-        $parts = explode('.', $key);
-        $index = $parts[0];
-        $field = $parts[1];
-
-        if ($this->selectedFlightProducts[$index]['selected']) {
-            if ($field === 'total_quantity' && $this->calculationMethod === 'by_quantity') {
-                $this->calculateDosageFromQuantity($index);
-            } elseif ($field === 'dosage_per_hectare' && $this->calculationMethod === 'by_dosage') {
-                $this->calculateQuantityFromDosage($index);
-            }
+            $quantity = round(floatval($this->selectedFlightProducts[$index]['total_quantity']), 2);
+            $this->selectedFlightProducts[$index]['total_quantity'] = $quantity;
+            $this->selectedFlightProducts[$index]['calculated_dosage_per_hectare'] = $totalHectares > 0 ? round($quantity / $totalHectares, 2) : 0;
         }
     }
 
@@ -352,8 +396,15 @@ class FlightWizard extends Component
     {
         if ($this->totalFlightHectares > 0) {
             $quantity = floatval($this->selectedFlightProducts[$index]['total_quantity']);
-            $this->selectedFlightProducts[$index]['dosage_per_hectare'] = $quantity / $this->totalFlightHectares;
+            $this->selectedFlightProducts[$index]['calculated_dosage_per_hectare'] = $quantity / $this->totalFlightHectares;
         }
+    }
+
+    protected function calculateTotalHectares()
+    {
+        $this->totalFlightHectares = collect($this->selectedFlightLots)
+            ->where('selected', true)
+            ->sum('hectares_to_apply');
     }
 
     public function saveFlight()
@@ -376,7 +427,7 @@ class FlightWizard extends Component
                 if ($product['total_quantity'] <= 0) {
                     throw new \Exception("El producto {$product['product_name']} debe tener una cantidad mayor a 0.");
                 }
-                if ($product['dosage_per_hectare'] <= 0) {
+                if ($product['calculated_dosage_per_hectare'] <= 0) {
                     throw new \Exception("El producto {$product['product_name']} debe tener una dosificación mayor a 0.");
                 }
             }
@@ -395,20 +446,16 @@ class FlightWizard extends Component
                 'products' => $selectedProducts->map(function ($product) {
                     return [
                         'product_id' => $product['product_id'],
+                        'name' => $product['product_name'],
                         'quantity' => $product['total_quantity'],
-                        'dosage_per_hectare' => $product['dosage_per_hectare']
+                        'calculated_dosage_per_hectare' => $product['calculated_dosage_per_hectare'],
+                        'liters_per_can' => $product['liters_per_can'],
                     ];
                 })->values()->toArray(),
             ];
 
             $this->dispatch('flightCreated', $flightData);
             $this->closeWizard();
-
-            $this->dispatch('showAlert', [
-                'title' => 'Éxito',
-                'text' => 'Vuelo configurado correctamente',
-                'type' => 'success'
-            ]);
 
         } catch (\Exception $e) {
             $this->dispatch('showAlert', [

@@ -94,6 +94,7 @@ class OrderFlights extends Component
     public function updateProducts($products)
     {
         $this->products = $products;
+        dd($this->products);
         $this->updateProductsForFlights();
     }
 
@@ -284,6 +285,17 @@ class OrderFlights extends Component
     public function handleLotsUpdated($lots)
     {
         $this->orderLots = $lots;
+    }
+
+    public function removeFlight($flightIndex)
+    {
+        if (isset($this->flights[$flightIndex])) {
+            unset($this->flights[$flightIndex]);
+            $this->flights = array_values($this->flights);
+            $this->flightCount = count($this->flights);
+            $this->recalculateRemainingHectares();
+            $this->dispatch('flightsUpdated', $this->flights);
+        }
     }
 
     public function render()

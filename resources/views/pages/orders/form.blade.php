@@ -14,9 +14,9 @@
             Livewire.on('showAlert', (message) => {
                 console.log(message);
                 Swal.fire({
-                    title: message.title,
-                    text: message.text,
-                    icon: message.type,
+                    title: message[0].title,
+                    text: message[0].text,
+                    icon: message[0].type,
                     confirmButtonText: 'OK'
                 });
             });
