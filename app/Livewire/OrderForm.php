@@ -7,11 +7,9 @@ use App\Models\Aircraft;
 use App\Models\Flight;
 use App\Models\FlightLot;
 use App\Models\FlightProduct;
-use App\Models\Lot;
 use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\OrderLot;
-use App\Models\OrderProduct;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -68,63 +66,27 @@ class OrderForm extends Component
     public $showAircraftModal = false;
     public $showPilotModal = false;
     public $showGroundSupportModal = false;
+    public $showLotModal = false;
 
-    // Form data for modals
-    public $clientForm = [
-        'business_name' => '',
-        'trade_name' => '',
-        'fiscal_number' => '',
-        'email' => '',
-        'phone' => '',
-        'locality' => '',
-        'address' => '',
-        'merchant_type' => 'client',
-        'merchant_id' => null
-    ];
+    //    protected $rules = [
+//        'client_id' => 'required|exists:merchants,id',
+//        'service_id' => 'required|exists:services,id',
+//        'aircraft_id' => 'required|exists:aircrafts,id',
+//        'pilot_id' => 'required|exists:users,id',
+//        'ground_support_id' => 'required|exists:users,id',
+//        'observations' => 'nullable|string',
+//        'selectedLots' => 'required|array|min:1',
+//        'selectedLots.*.lot_id' => 'required|exists:lots,id',
+//        'selectedLots.*.hectares' => 'required|numeric|min:0.01',
+//        'selectedLots.*.status' => 'required|in:pending,in_progress,completed',
+//    ];
 
-    public $serviceForm = [
-        'name' => '',
-        'price_per_hectare' => '',
-        'merchant_id' => null
-    ];
-
-    public $aircraftForm = [
-        'brand' => '',
-        'alias' => '',
-        'models' => '',
-        'manufacturing_year' => '',
-        'acquisition_date' => '',
-        'working_width' => '',
-        'merchant_id' => null
-    ];
-
-    public $userForm = [
-        'name' => '',
-        'email' => '',
-        'password' => '',
-        'merchant_id' => null,
-        'role' => 'Pilot'
-    ];
-
-    protected $rules = [
-        'client_id' => 'required|exists:merchants,id',
-        'service_id' => 'required|exists:services,id',
-        'aircraft_id' => 'required|exists:aircrafts,id',
-        'pilot_id' => 'required|exists:users,id',
-        'ground_support_id' => 'required|exists:users,id',
-        'observations' => 'nullable|string',
-        'selectedLots' => 'required|array|min:1',
-        'selectedLots.*.lot_id' => 'required|exists:lots,id',
-        'selectedLots.*.hectares' => 'required|numeric|min:0.01',
-        'selectedLots.*.status' => 'required|in:pending,in_progress,completed',
-        // 'selectedProducts' => 'required|array|min:1',
-        // 'selectedProducts.*.product_id' => 'required|exists:products,id',
-    ];
-
+    // Listeners for when entities are created in modals
     protected $listeners = [
         'lotsUpdated' => 'handleLotsUpdated',
-        // 'productsUpdated' => 'handleProductsUpdated', // TODO: Removed - products handled in FlightWizard
-        'flightsUpdated' => 'handleFlightsUpdated'
+        'flightsUpdated' => 'handleFlightsUpdated',
+        'entityCreated' => 'handleEntityCreated',
+        'openLotModal' => 'createNewLot'
     ];
 
     public function mount($orderId = null)
@@ -327,32 +289,62 @@ class OrderForm extends Component
 
     public function createNewClient()
     {
-        $this->resetClientForm();
         $this->showClientModal = true;
     }
 
     public function createNewService()
     {
-        $this->resetServiceForm();
         $this->showServiceModal = true;
     }
 
     public function createNewAircraft()
     {
-        $this->resetAircraftForm();
         $this->showAircraftModal = true;
     }
 
     public function createNewPilot()
     {
-        $this->resetUserForm();
         $this->showPilotModal = true;
     }
 
     public function createNewGroundSupport()
     {
-        $this->resetUserForm();
         $this->showGroundSupportModal = true;
+    }
+
+    public function createNewLot()
+    {
+        $this->showLotModal = true;
+    }
+
+    public function closeClientModal()
+    {
+        $this->showClientModal = false;
+    }
+
+    public function closeServiceModal()
+    {
+        $this->showServiceModal = false;
+    }
+
+    public function closeAircraftModal()
+    {
+        $this->showAircraftModal = false;
+    }
+
+    public function closePilotModal()
+    {
+        $this->showPilotModal = false;
+    }
+
+    public function closeGroundSupportModal()
+    {
+        $this->showGroundSupportModal = false;
+    }
+
+    public function closeLotModal()
+    {
+        $this->showLotModal = false;
     }
 
     public function submit()
@@ -564,195 +556,50 @@ class OrderForm extends Component
         $this->flights = $flights;
     }
 
-    // Modal reset methods
-    public function resetClientForm()
+    public function handleEntityCreated($entityType, $entityId): void
     {
-        $this->clientForm = [
-            'business_name' => '',
-            'trade_name' => '',
-            'fiscal_number' => '',
-            'email' => '',
-            'phone' => '',
-            'locality' => '',
-            'address' => '',
-            'merchant_type' => 'client',
-            'merchant_id' => $this->tenant_id
-        ];
-    }
-
-    public function resetServiceForm()
-    {
-        $this->serviceForm = [
-            'name' => '',
-            'price_per_hectare' => '',
-            'merchant_id' => $this->tenant_id
-        ];
-    }
-
-    public function resetAircraftForm()
-    {
-        $this->aircraftForm = [
-            'brand' => '',
-            'alias' => '',
-            'models' => '',
-            'manufacturing_year' => '',
-            'acquisition_date' => '',
-            'working_width' => '',
-            'merchant_id' => $this->tenant_id
-        ];
-    }
-
-    public function resetUserForm()
-    {
-        $this->userForm = [
-            'name' => '',
-            'email' => '',
-            'password' => '',
-            'merchant_id' => $this->tenant_id,
-            'role' => 'Pilot'
-        ];
-    }
-
-    // Modal save methods
-    public function saveClient()
-    {
-        $this->validate([
-            'clientForm.business_name' => 'required|string|max:255',
-            'clientForm.trade_name' => 'nullable|string|max:255',
-            'clientForm.fiscal_number' => 'required|string|unique:merchants,fiscal_number',
-            'clientForm.email' => 'required|email|unique:merchants,email',
-            'clientForm.phone' => 'nullable|string|max:20',
-            'clientForm.locality' => 'nullable|string|max:255',
-            'clientForm.address' => 'nullable|string|max:500',
-        ]);
-
-        $client = Merchant::create($this->clientForm);
-
-        $this->loadClients();
-        $this->client_id = $client->id;
-        $this->showClientModal = false;
-
-        $this->dispatch('showAlert', [
-            'title' => 'Éxito',
-            'text' => 'Cliente creado correctamente',
-            'type' => 'success'
-        ]);
-    }
-
-    public function saveService()
-    {
-        $this->validate([
-            'serviceForm.name' => 'required|string|max:255',
-            'serviceForm.price_per_hectare' => 'required|numeric|min:0',
-        ]);
-
-        $service = Service::create($this->serviceForm);
-
-        $this->loadServices();
-        $this->service_id = $service->id;
-        $this->showServiceModal = false;
-
-        $this->dispatch('showAlert', [
-            'title' => 'Éxito',
-            'text' => 'Servicio creado correctamente',
-            'type' => 'success'
-        ]);
-    }
-
-    public function saveAircraft()
-    {
-        $this->validate([
-            'aircraftForm.brand' => 'required|string|max:255',
-            'aircraftForm.alias' => 'required|string|max:255',
-            'aircraftForm.models' => 'nullable|string|max:255',
-            'aircraftForm.manufacturing_year' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
-            'aircraftForm.acquisition_date' => 'nullable|date',
-            'aircraftForm.working_width' => 'nullable|numeric|min:0',
-        ]);
-
-        $aircraft = Aircraft::create($this->aircraftForm);
-
-        $this->loadAircrafts();
-        $this->aircraft_id = $aircraft->id;
-        $this->showAircraftModal = false;
-
-        $this->dispatch('showAlert', [
-            'title' => 'Éxito',
-            'text' => 'Aeronave creada correctamente',
-            'type' => 'success'
-        ]);
-    }
-
-    public function savePilot()
-    {
-        $this->validate([
-            'userForm.name' => 'required|string|max:255',
-            'userForm.email' => 'required|email|unique:users,email',
-            'userForm.password' => 'required|string|min:8',
-        ]);
-
-        $user = User::create([
-            'name' => $this->userForm['name'],
-            'email' => $this->userForm['email'],
-            'password' => bcrypt($this->userForm['password']),
-            'merchant_id' => $this->userForm['merchant_id'],
-        ]);
-
-        $user->assignRole($this->userForm['role']);
-
-        $this->loadStaff();
-
-        if ($this->userForm['role'] === 'Pilot') {
-            $this->pilot_id = $user->id;
-        } else {
-            $this->ground_support_id = $user->id;
+        // Handle entity creation from modals
+        switch ($entityType) {
+            case 'client':
+                $this->loadClients(); // Load first to ensure new entity is available
+                $this->showClientModal = false;
+                // Use $this->js() to ensure DOM is updated before setting value
+                $this->js('$wire.set("client_id", ' . $entityId . ')');
+                // Also load services since client selection triggers service loading
+                $this->loadServices();
+                break;
+            case 'service':
+                $this->loadServices(); // Load first to ensure new entity is available
+                $this->showServiceModal = false;
+                $this->js('$wire.set("service_id", ' . $entityId . ')');
+                break;
+            case 'aircraft':
+                $this->loadAircrafts(); // Load first to ensure new entity is available
+                $this->showAircraftModal = false;
+                $this->js('$wire.set("aircraft_id", ' . $entityId . ')');
+                break;
+            case 'pilot':
+                $this->loadStaff(); // Load first to ensure new entity is available
+                $this->showPilotModal = false;
+                $this->js('$wire.set("pilot_id", ' . $entityId . ')');
+                break;
+            case 'ground_support':
+                $this->loadStaff(); // Load first to ensure new entity is available
+                $this->showGroundSupportModal = false;
+                $this->js('$wire.set("ground_support_id", ' . $entityId . ')');
+                break;
+            case 'lot':
+                $this->showLotModal = false;
+                // For lots, we need to dispatch to the OrderLots component to refresh and add the new lot
+                $this->dispatch('lotCreated', $entityId);
+                break;
         }
 
-        $this->showPilotModal = false;
-        $this->showGroundSupportModal = false;
-
         $this->dispatch('showAlert', [
             'title' => 'Éxito',
-            'text' => ($this->userForm['role'] === 'Pilot' ? 'Piloto' : 'Apoyo de tierra') . ' creado correctamente',
+            'text' => ucfirst($entityType) . ' creado y seleccionado correctamente',
             'type' => 'success'
         ]);
-    }
-
-    public function saveGroundSupport()
-    {
-        $this->userForm['role'] = 'Ground Support';
-        $this->savePilot();
-    }
-
-    // Modal close methods
-    public function closeClientModal()
-    {
-        $this->showClientModal = false;
-        $this->resetClientForm();
-    }
-
-    public function closeServiceModal()
-    {
-        $this->showServiceModal = false;
-        $this->resetServiceForm();
-    }
-
-    public function closeAircraftModal()
-    {
-        $this->showAircraftModal = false;
-        $this->resetAircraftForm();
-    }
-
-    public function closePilotModal()
-    {
-        $this->showPilotModal = false;
-        $this->resetUserForm();
-    }
-
-    public function closeGroundSupportModal()
-    {
-        $this->showGroundSupportModal = false;
-        $this->resetUserForm();
     }
 
     public function render()

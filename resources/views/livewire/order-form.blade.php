@@ -126,7 +126,7 @@
                                             <option value="{{ $support->id }}">{{ $support->name }}</option>
                                         @endforeach
                                     </select>
-                                    <button type="button" class="btn btn-primary">
+                                    <button type="button" class="btn btn-primary" wire:click="createNewGroundSupport" {{ !$client_id ? 'disabled' : '' }}>
                                         <i class="fa fa-add"></i>
                                     </button>
                                 </div>
@@ -162,4 +162,132 @@
             </div>
         </div>
     </form>
+
+    {{-- Modal Components - Reusing existing Livewire forms --}}
+    @if($showClientModal)
+        <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+        <div class="modal fade show" style="display: block; z-index: 1050;" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Crear Nuevo Cliente</h5>
+                        <button type="button" class="btn-close btn-close-white" wire:click="closeClientModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <livewire:merchant-form
+                            :isClient="true"
+                            :isModal="true"
+                            :key="'client-modal-'.now()"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    @endif
+
+    @if($showServiceModal)
+        <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+        <div class="modal fade show" style="display: block; z-index: 1050;" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Crear Nuevo Servicio</h5>
+                        <button type="button" class="btn-close btn-close-white" wire:click="closeServiceModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <livewire:service-form
+                            :isModal="true"
+                            :key="'service-modal-'.now()"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    @endif
+
+    @if($showAircraftModal)
+        <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+        <div class="modal fade show" style="display: block; z-index: 1050;" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Crear Nueva Aeronave</h5>
+                        <button type="button" class="btn-close btn-close-white" wire:click="closeAircraftModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <livewire:aircraft-form
+                            :isModal="true"
+                            :key="'aircraft-modal-'.now()"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    @endif
+
+    @if($showPilotModal)
+        <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+        <div class="modal fade show" style="display: block; z-index: 1050;" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Crear Nuevo Piloto</h5>
+                        <button type="button" class="btn-close btn-close-white" wire:click="closePilotModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <livewire:user-form
+                            :role="'Pilot'"
+                            :isModal="true"
+                            :key="'pilot-modal-'.now()"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    @endif
+
+    @if($showGroundSupportModal)
+        <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+        <div class="modal fade show" style="display: block; z-index: 1050;" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Crear Nuevo Apoyo de Tierra</h5>
+                        <button type="button" class="btn-close btn-close-white" wire:click="closeGroundSupportModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <livewire:user-form
+                            :role="'Ground Support'"
+                            :isModal="true"
+                            :key="'ground-support-modal-'.now()"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if($showLotModal)
+        <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+        <div class="modal fade show" style="display: block; z-index: 1050;" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Crear Nuevo Lote</h5>
+                        <button type="button" class="btn-close btn-close-white" wire:click="closeLotModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <livewire:lot-form
+                            :isModal="true"
+                            :key="'lot-modal-'.now()"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

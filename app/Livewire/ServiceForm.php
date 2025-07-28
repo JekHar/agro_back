@@ -42,7 +42,7 @@ class ServiceForm extends Component
     public function mount($serviceId = null)
     {
         $this->userRole = auth()->user()->hasRole('Admin') ? 'Admin' : 'Tenant';
-        
+
 
         if ($this->userRole === 'Admin') {
             $this->merchants = Merchant::where('merchant_type', 'client')
@@ -50,18 +50,18 @@ class ServiceForm extends Component
         } else {
             $this->merchant_id = auth()->user()->merchant_id;
         }
-        
+
         if ($serviceId) {
             $this->isEditing = true;
             $this->serviceId = $serviceId;
             $this->service = Service::find($serviceId);
             $this->name = $this->service->name;
-            
+
 
             if ($this->userRole === 'Admin') {
                 $this->merchant_id = $this->service->merchant_id;
             }
-            
+
             $this->price_per_hectare = $this->service->price_per_hectare;
         }
     }
@@ -82,8 +82,14 @@ class ServiceForm extends Component
                 $this->service->update($validatedData);
                 $message = 'Servicio modificado exitosamente';
             } else {
-                Service::create($validatedData);
+                $service = Service::create($validatedData);
                 $message = 'Servicio creado exitosamente';
+
+                // If in modal mode, emit event to parent component
+                if ($this->isModal) {
+                    $this->dispatch('entityCreated', 'service', $service->id);
+                    return;
+                }
             }
 
             $this->dispatch('swal', [

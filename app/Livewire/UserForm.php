@@ -45,7 +45,7 @@ class UserForm extends Component
         return $userRequest->rules();
     }
 
-    public function mount($userId = null)
+    public function mount($userId = null, $role = null)
     {
         $this->merchants = Merchant::where('merchant_type', MerchantType::TENANT)
             ->pluck('business_name', 'id');
@@ -56,6 +56,20 @@ class UserForm extends Component
             $this->roles = Role::whereIn('name', ['Pilot', 'Ground Support'])
                 ->pluck('name', 'id');
         }
+
+        // If role is passed (from modal), set it automatically
+        if ($role && $this->isModal) {
+            $roleModel = Role::where('name', $role)->first();
+            if ($roleModel) {
+                $this->role = $roleModel->id;
+            }
+        }
+
+        // Set tenant_id for modal mode
+        if ($this->isModal && auth()->user()->hasRole('Tenant')) {
+            $this->merchant_id = auth()->user()->merchant_id;
+        }
+
         if ($userId) {
             $this->isEditing = true;
             $this->userId = $userId;
@@ -98,6 +112,14 @@ class UserForm extends Component
 
                 if ($validatedData['role']) {
                     $user->assignRole(Role::find($validatedData['role'])->name);
+                }
+
+                // If in modal mode, emit event to parent component
+                if ($this->isModal) {
+                    $roleName = Role::find($validatedData['role'])->name;
+                    $entityType = $roleName === 'Pilot' ? 'pilot' : 'ground_support';
+                    $this->dispatch('entityCreated', $entityType, $user->id);
+                    return;
                 }
             }
 

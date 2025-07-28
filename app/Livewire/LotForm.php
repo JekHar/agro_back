@@ -25,6 +25,7 @@ class LotForm extends Component
     public $currentLotId;
     public $isCreateMode = false;
     public $navigationPin = ['lat' => null, 'lng' => null];
+    public bool $isModal = false;
 
     protected function rules()
     {
@@ -83,14 +84,14 @@ class LotForm extends Component
 
         $this->dispatch('lot-loaded', [
             'coordinates' => $this->coordinates,
-            'holes' => $this->holes, 
+            'holes' => $this->holes,
             'hectares' => $this->hectares,
             'navigationPin' => $this->navigationPin,
         ]);
     }
 
     #[On('updateNavigationPin')]
-    public function updateNavigationPin($lat, $lng) 
+    public function updateNavigationPin($lat, $lng)
     {
         $this->navigationPin['lat'] = $lat;
         $this->navigationPin['lng'] = $lng;
@@ -146,8 +147,14 @@ class LotForm extends Component
                 'navigation_latitude' => $this->navigationPin['lat'], // Guardar el pin
                 'navigation_longitude' => $this->navigationPin['lng'], // Guardar el pin
             ]);
-            
+
             $lot->save();
+
+            // If in modal mode, emit event to parent component
+            if ($this->isModal && !$this->currentLotId) {
+                $this->dispatch('entityCreated', 'lot', $lot->id);
+                return;
+            }
 
             if ($this->currentLotId) {
                 $lot->coordinates()->delete();

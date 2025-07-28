@@ -32,6 +32,8 @@ class AircraftForm extends Component
 
     public $isEditing = false;
 
+    public bool $isModal = false;
+
     protected function rules()
     {
         $aircraftRequest = new AircraftRequest;
@@ -78,8 +80,14 @@ class AircraftForm extends Component
                 $this->aircraft->update($validatedData);
                 $message = 'Aeronave modificado exitosamente';
             } else {
-                Aircraft::create($validatedData);
+                $aircraft = Aircraft::create($validatedData);
                 $message = 'Aeronave creado exitosamente';
+
+                // If in modal mode, emit event to parent component
+                if ($this->isModal) {
+                    $this->dispatch('entityCreated', 'aircraft', $aircraft->id);
+                    return;
+                }
             }
 
             $this->dispatch('swal', [
