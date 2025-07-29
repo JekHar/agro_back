@@ -34,10 +34,12 @@
                                     </td>
                                     <td>
                                         @php
-                                            $currentStock = $this->getProductStock($movement['product_id']);
-                                            $stockClass = $currentStock > 0 ? 'bg-success' : 'bg-warning';
+                                            $stockInfo = $this->getStockDisplayInfo($movement['product_id']);
+                                            $stockClass = $stockInfo['total_liters'] > 0 ? 'bg-success' : 'bg-warning';
                                         @endphp
-                                        <span class="badge {{ $stockClass }}">{{ number_format($currentStock, 2) }} L</span>
+                                        <span class="badge {{ $stockClass }}" title="Stock total en litros">
+                                            {{ $stockInfo['display_text'] }}
+                                        </span>
                                     </td>
                                     <td>
                                         <span class="badge bg-primary">{{ number_format($movement['required_quantity'], 2) }} L</span>

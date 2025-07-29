@@ -12,14 +12,14 @@
             <h3 class="block-title text-white">
                 <i class="fa fa-plane me-2"></i>CONFIGURACIÓN DE VUELOS
             </h3>
-{{--            <div class="block-options">--}}
-{{--                <button type="button"--}}
-{{--                        class="btn btn-success btn-sm"--}}
-{{--                        wire:click="openFlightWizard"--}}
-{{--                        {{ !$clientId ? 'disabled' : '' }}>--}}
-{{--                    <i class="fa fa-plus me-2"></i>ADD FLIGHT--}}
-{{--                </button>--}}
-{{--            </div>--}}
+            <div class="block-options">
+                <button type="button"
+                        class="btn btn-success btn-sm"
+                        wire:click="openFlightWizard"
+                        {{ !$clientId ? 'disabled' : '' }}>
+                    <i class="fa fa-plus me-2"></i>AGREGAR VUELO
+                </button>
+            </div>
         </div>
         <div class="block-content">
             <!-- Flight Summary -->
@@ -158,7 +158,7 @@
                                                             </td>
                                                             <td class="text-center">
                                                                 <span class="badge bg-warning">
-                                                                    @if($productItem['liters_per_can'])
+                                                                    @if(array_key_exists('liters_per_can', $productItem))
                                                                         {{ number_format($productItem['quantity'] / ($productItem['liters_per_can'] ?? 0)) }} envases
                                                                     @else
                                                                         N/A

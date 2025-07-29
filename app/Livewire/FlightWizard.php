@@ -279,7 +279,9 @@ class FlightWizard extends Component
     public function nextStep()
     {
         if ($this->currentStep === 1) {
-            $this->validateStep1();
+            if(!$this->validateStep1()) {
+                return;
+            }
             $this->calculateTotalHectares();
             $this->updateProductQuantities();
         }
@@ -301,17 +303,35 @@ class FlightWizard extends Component
         $selectedLots = collect($this->selectedFlightLots)->where('selected', true);
 
         if ($selectedLots->isEmpty()) {
-            throw new \Exception('Debe seleccionar al menos un lote.');
+            $this->dispatch('swal', [
+                'title' => ('Error'),
+                'message' => ('Debe seleccionar al menos un lote.'),
+                'icon' => 'error',
+            ]);
+
+            return false;
         }
 
         foreach ($selectedLots as $lot) {
             if ($lot['hectares_to_apply'] <= 0) {
-                throw new \Exception('Las hectáreas a aplicar deben ser mayor a 0.');
+                $this->dispatch('swal', [
+                    'title' => ('Error'),
+                    'message' => ('Las hectáreas a aplicar deben ser mayor a 0.'),
+                    'icon' => 'error',
+                ]);
+                return false;
             }
             if ($lot['hectares_to_apply'] > $lot['remaining_hectares']) {
-                throw new \Exception("Las hectáreas a aplicar no pueden ser mayor a las hectáreas disponibles para el lote {$lot['lot_number']}.");
+                $this->dispatch('swal', [
+                    'title' => ('Error'),
+                    'message' => ("Las hectáreas a aplicar no pueden ser mayor a las hectáreas disponibles para el lote {$lot['lot_number']}"),
+                    'icon' => 'error',
+                ]);
+                return  false;
             }
         }
+
+        return true;
     }
 
     public function toggleLotSelection($index)
@@ -345,22 +365,32 @@ class FlightWizard extends Component
         }
     }
 
-    // Replace the old updatedSelectedFlightProducts method
-    public function updateProductCalculation($index)
+    // Handle updates to flight products automatically
+    public function updatedSelectedFlightProducts($value, $key)
     {
-        if (!isset($this->selectedFlightProducts[$index])) {
-            return;
-        }
-        $totalHectares = $this->totalFlightHectares > 0 ? $this->totalFlightHectares : 1;
-        if ($this->calculationMethod === 'by_dosage') {
-            // User enters dosage, calculate quantity
-            $dosage = round(floatval($this->selectedFlightProducts[$index]['calculated_dosage_per_hectare']), 2);
-            $this->selectedFlightProducts[$index]['calculated_dosage_per_hectare'] = $dosage;
-            $this->selectedFlightProducts[$index]['total_quantity'] = round($dosage * $totalHectares, 2);
-        } else {
-            $quantity = round(floatval($this->selectedFlightProducts[$index]['total_quantity']), 2);
-            $this->selectedFlightProducts[$index]['total_quantity'] = $quantity;
-            $this->selectedFlightProducts[$index]['calculated_dosage_per_hectare'] = $totalHectares > 0 ? round($quantity / $totalHectares, 2) : 0;
+        // Parse the key to get index and property
+        $keyParts = explode('.', $key);
+        if (count($keyParts) >= 2) {
+            $index = $keyParts[0];
+            $property = $keyParts[1];
+
+            if (!isset($this->selectedFlightProducts[$index])) {
+                return;
+            }
+
+            $totalHectares = $this->totalFlightHectares > 0 ? $this->totalFlightHectares : 1;
+
+            if ($property === 'calculated_dosage_per_hectare' && $this->calculationMethod === 'by_dosage') {
+                // User enters dosage, calculate quantity
+                $dosage = round(floatval($value), 2);
+                $this->selectedFlightProducts[$index]['calculated_dosage_per_hectare'] = $dosage;
+                $this->selectedFlightProducts[$index]['total_quantity'] = round($dosage * $totalHectares, 2);
+            } elseif ($property === 'total_quantity' && $this->calculationMethod === 'by_quantity') {
+                // User enters quantity, calculate dosage
+                $quantity = round(floatval($value), 2);
+                $this->selectedFlightProducts[$index]['total_quantity'] = $quantity;
+                $this->selectedFlightProducts[$index]['calculated_dosage_per_hectare'] = $totalHectares > 0 ? round($quantity / $totalHectares, 2) : 0;
+            }
         }
     }
 

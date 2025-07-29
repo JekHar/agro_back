@@ -70,18 +70,11 @@ class OrderForm extends Component
     public $showGroundSupportModal = false;
     public $showLotModal = false;
 
-    //    protected $rules = [
-//        'client_id' => 'required|exists:merchants,id',
-//        'service_id' => 'required|exists:services,id',
-//        'aircraft_id' => 'required|exists:aircrafts,id',
-//        'pilot_id' => 'required|exists:users,id',
-//        'ground_support_id' => 'required|exists:users,id',
-//        'observations' => 'nullable|string',
-//        'selectedLots' => 'required|array|min:1',
-//        'selectedLots.*.lot_id' => 'required|exists:lots,id',
-//        'selectedLots.*.hectares' => 'required|numeric|min:0.01',
-//        'selectedLots.*.status' => 'required|in:pending,in_progress,completed',
-//    ];
+        protected $rules = [
+        'client_id' => 'required|exists:merchants,id',
+        'service_id' => 'required|exists:services,id',
+        'aircraft_id' => 'required|exists:aircrafts,id',
+    ];
 
     // Listeners for when entities are created in modals
     protected $listeners = [

@@ -73,10 +73,8 @@
                                                 @foreach($selectedFlightLots as $index => $lot)
                                                     <tr class="{{ $lot['selected'] ? 'table-success' : '' }}">
                                                         <td class="text-center">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       wire:click="toggleLotSelection({{ $index }})"
-                                                                       {{ $lot['selected'] ? 'checked' : '' }}>
+                                                            <div class="form-check form-switch">
+                                                                <input class="form-check-input" type="checkbox" wire:click="toggleLotSelection({{ $index }})" {{ $lot['selected'] ? 'checked' : '' }}>
                                                             </div>
                                                         </td>
                                                         <td>
@@ -96,7 +94,7 @@
                                                                 <div class="input-group input-group-sm">
                                                                     <input type="number" step="0.01" min="0"
                                                                            max="{{ $lot['remaining_hectares'] }}"
-                                                                           wire:model.lazy="selectedFlightLots.{{ $index }}.hectares_to_apply"
+                                                                           wire:model.debounce.500ms="selectedFlightLots.{{ $index }}.hectares_to_apply"
                                                                            class="form-control"
                                                                            onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
                                                                     <span class="input-group-text">ha</span>
@@ -294,8 +292,7 @@
                                                                     <label class="form-label small">Dosificación por Ha</label>
                                                                     <div class="input-group input-group-sm">
                                                                         <input type="number" step="0.01" min="0" max="999.99"
-                                                                               wire:model.lazy="selectedFlightProducts.{{ $index }}.calculated_dosage_per_hectare"
-                                                                               wire:change="updateProductCalculation({{ $index }})"
+                                                                               wire:model.live.debounce.500ms="selectedFlightProducts.{{ $index }}.calculated_dosage_per_hectare"
                                                                                class="form-control"
                                                                                placeholder="Ej: 2.50"
                                                                                onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
@@ -315,11 +312,10 @@
                                                         @else
                                                             <div class="row">
                                                                 <div class="col-6">
-                                                                    <label class="form-label small">Cantidad Total</label>
+                                                                    <label class="form-label small text-dark">Cantidad Total</label>
                                                                     <div class="input-group input-group-sm">
                                                                         <input type="number" step="0.01" min="0" max="99999.99"
-                                                                               wire:model.lazy="selectedFlightProducts.{{ $index }}.total_quantity"
-                                                                               wire:change="updateProductCalculation({{ $index }})"
+                                                                               wire:model.live.debounce.500ms="selectedFlightProducts.{{ $index }}.total_quantity"
                                                                                class="form-control"
                                                                                placeholder="Ej: 20.00"
                                                                                onblur="this.value = parseFloat(this.value || 0).toFixed(2)">

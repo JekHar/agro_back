@@ -195,10 +195,53 @@ class OrderInventory extends Component
     {
         foreach ($this->products as $product) {
             if ($product['id'] == $productId) {
-                return $product['stock'] ?? 0;
+                $stockInContainers = $product['stock'] ?? 0;
+                $litersPerCan = $product['liters_per_can'] ?? 0;
+
+                // If liters_per_can is defined, convert containers to liters
+                if ($litersPerCan > 0) {
+                    return $stockInContainers * $litersPerCan;
+                }
+
+                // Otherwise, stock is already in liters
+                return $stockInContainers;
             }
         }
         return 0;
+    }
+
+    public function getStockDisplayInfo($productId)
+    {
+        foreach ($this->products as $product) {
+            if ($product['id'] == $productId) {
+                $stockInContainers = $product['stock'] ?? 0;
+                $litersPerCan = $product['liters_per_can'] ?? 0;
+
+                if ($litersPerCan > 0) {
+                    $totalLiters = $stockInContainers * $litersPerCan;
+                    return [
+                        'total_liters' => $totalLiters,
+                        'display_text' => "{$totalLiters} L ({$stockInContainers} envases)",
+                        'containers' => $stockInContainers,
+                        'liters_per_container' => $litersPerCan
+                    ];
+                }
+
+                return [
+                    'total_liters' => $stockInContainers,
+                    'display_text' => "{$stockInContainers} L",
+                    'containers' => null,
+                    'liters_per_container' => null
+                ];
+            }
+        }
+
+        return [
+            'total_liters' => 0,
+            'display_text' => '0 L',
+            'containers' => 0,
+            'liters_per_container' => 0
+        ];
     }
 
     public function getInventoryUsageNote($movement)
