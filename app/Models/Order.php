@@ -76,4 +76,9 @@ class Order extends Model implements ContractsAuditable
     {
         return $this->hasMany(Flight::class);
     }
+
+    public function inventoryMovements()
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
 }

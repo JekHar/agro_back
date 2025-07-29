@@ -158,11 +158,11 @@
                                                             </td>
                                                             <td class="text-center">
                                                                 <span class="badge bg-warning">
-                                                                    @isset($productItem['liters_per_can'])
-                                                                        {{ number_format($productItem['quantity'] * ($productItem['liters_per_can'] ?? 0)) }} envases
+                                                                    @if($productItem['liters_per_can'])
+                                                                        {{ number_format($productItem['quantity'] / ($productItem['liters_per_can'] ?? 0)) }} envases
                                                                     @else
                                                                         N/A
-                                                                    @endisset
+                                                                    @endif
                                                                 </span>
                                                             </td>
                                                         </tr>

@@ -7,6 +7,7 @@ use App\Models\Aircraft;
 use App\Models\Flight;
 use App\Models\FlightLot;
 use App\Models\FlightProduct;
+use App\Models\InventoryMovement;
 use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\OrderLot;
@@ -56,6 +57,7 @@ class OrderForm extends Component
     // public $selectedProducts = [];
     public $selectedLots = [];
     public $flights = [];
+    public $inventoryMovements = [];
 
     public ?int $tenant_id = 0;
     public Collection $tenants;
@@ -85,6 +87,7 @@ class OrderForm extends Component
     protected $listeners = [
         'lotsUpdated' => 'handleLotsUpdated',
         'flightsUpdated' => 'handleFlightsUpdated',
+        'inventoryUpdated' => 'handleInventoryUpdated',
         'entityCreated' => 'handleEntityCreated',
         'openLotModal' => 'createNewLot'
     ];
@@ -144,7 +147,7 @@ class OrderForm extends Component
 
     public function loadOrder($orderId)
     {
-        $this->order = Order::with(['orderLots.lot', 'orderProducts.product', 'flights.flightLots.lot', 'flights.flightProducts.product'])
+        $this->order = Order::with(['orderLots.lot', 'orderProducts.product', 'flights.flightLots.lot', 'flights.flightProducts.product', 'inventoryMovements.product'])
             ->findOrFail($orderId);
 
         $this->order_date = $this->order->created_at->format('d/m/y');
@@ -204,6 +207,20 @@ class OrderForm extends Component
             ];
         })->toArray();
 
+
+        // Load existing inventory movements
+        $this->inventoryMovements = $this->order->inventoryMovements->map(function ($movement) {
+            return [
+                'product_id' => $movement->product_id,
+                'client_provides_product' => $movement->client_provides_product,
+                'client_provided_quantity' => $movement->client_provided_quantity,
+                'required_quantity' => $movement->required_quantity,
+                'difference_quantity' => $movement->difference_quantity,
+                'difference_type' => $movement->difference_type,
+                'add_surplus_to_inventory' => $movement->add_surplus_to_inventory,
+                'notes' => $movement->notes,
+            ];
+        })->toArray();
 
         $this->totalHectares = $this->selectedLots ? array_sum(array_column($this->selectedLots, 'hectares')) : 0;
     }
@@ -379,6 +396,7 @@ class OrderForm extends Component
                 $this->order->orderLots()->delete();
                 $this->order->orderProducts()->delete();
                 $this->order->flights()->delete();
+                $this->order->inventoryMovements()->delete();
 
                 $message = 'Orden actualizada correctamente';
             } else {
@@ -418,6 +436,9 @@ class OrderForm extends Component
 
             // Save flights
             $this->saveFlights();
+
+            // Save inventory movements
+            $this->saveInventoryMovements();
 
             DB::commit();
 
@@ -527,6 +548,27 @@ class OrderForm extends Component
         }
     }
 
+    /**
+     * Save the inventory movements
+     */
+    protected function saveInventoryMovements()
+    {
+        foreach ($this->inventoryMovements as $movement) {
+            if (empty($movement['product_id'])) continue;
+
+            $this->order->inventoryMovements()->create([
+                'product_id' => $movement['product_id'],
+                'client_provides_product' => $movement['client_provides_product'] ?? false,
+                'client_provided_quantity' => $movement['client_provided_quantity'] ?? 0,
+                'required_quantity' => $movement['required_quantity'] ?? 0,
+                'difference_quantity' => $movement['difference_quantity'] ?? 0,
+                'difference_type' => $movement['difference_type'] ?? null,
+                'add_surplus_to_inventory' => $movement['add_surplus_to_inventory'] ?? false,
+                'notes' => $movement['notes'] ?? '',
+            ]);
+        }
+    }
+
     public function handleLotsUpdated($lots): void
     {
         $this->selectedLots = $lots;
@@ -554,6 +596,11 @@ class OrderForm extends Component
     public function handleFlightsUpdated($flights): void
     {
         $this->flights = $flights;
+    }
+
+    public function handleInventoryUpdated($inventory): void
+    {
+        $this->inventoryMovements = $inventory;
     }
 
     public function handleEntityCreated($entityType, $entityId): void

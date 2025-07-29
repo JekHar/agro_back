@@ -94,7 +94,6 @@ class OrderFlights extends Component
     public function updateProducts($products)
     {
         $this->products = $products;
-        dd($this->products);
         $this->updateProductsForFlights();
     }
 

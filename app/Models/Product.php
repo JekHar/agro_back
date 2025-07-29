@@ -34,4 +34,9 @@ class Product extends Model implements Auditable
     {
         return $this->belongsTo(Merchant::class);
     }
+
+    public function inventoryMovements()
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
 }
