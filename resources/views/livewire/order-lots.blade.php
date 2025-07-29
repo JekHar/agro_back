@@ -2,11 +2,11 @@
     <div class="block block-rounded">
         <div class="block-header block-header-default bg-primary">
             <h3 class="block-title text-white">LOTES</h3>
-{{--            <div class="block-options">--}}
-{{--                <button type="button" class="btn btn-sm btn-primary" wire:click="createNewLot" {{ !$clientId ? 'disabled' : '' }}>--}}
-{{--                    <i class="fa fa-add me-1"></i> Nuevo Lote de cliente--}}
-{{--                </button>--}}
-{{--            </div>--}}
+            <div class="block-options">
+                <button type="button" class="btn btn-sm btn-primary" wire:click="createNewLot" {{ !$clientId ? 'disabled' : '' }}>
+                    <i class="fa fa-add me-1"></i> Nuevo Lote de cliente
+                </button>
+            </div>
         </div>
         <div class="block-content">
             @if(count($selectedLots) > 0)

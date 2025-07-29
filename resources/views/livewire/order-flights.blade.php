@@ -160,7 +160,7 @@
                                                             <td class="text-center">
                                                                 <span class="badge bg-warning">
                                                                     @if(array_key_exists('liters_per_can', $productItem))
-                                                                        {{ number_format($productItem['quantity'] / ($productItem['liters_per_can'] ?? 0)) }} envases
+                                                                        {{ number_format($productItem['quantity'] / ($productItem['liters_per_can'] != 0 ? $productItem['liters_per_can'] : 1)) }} envases
                                                                     @else
                                                                         N/A
                                                                     @endif

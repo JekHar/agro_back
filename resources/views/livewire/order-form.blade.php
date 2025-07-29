@@ -1,4 +1,25 @@
-<div>
+<div x-data="{
+    showLotModal: @entangle('showLotModal'),
+    mapInitialized: false,
+    init() {
+        this.$watch('showLotModal', (value) => {
+            if (value && !this.mapInitialized) {
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        if (typeof initializeMap === 'function') {
+                            initializeMap();
+                            setupDrawingControls();
+                            this.mapInitialized = true;
+                        }
+                    }, 200);
+                });
+            } else if (!value) {
+                // Reset the flag when modal is closed so it can be initialized again
+                this.mapInitialized = false;
+            }
+        });
+    }
+}">
     <form wire:submit.prevent="submit">
         <div class="block block-rounded">
             <div class="block-header block-header-default bg-primary">
@@ -292,4 +313,65 @@
             </div>
         </div>
     @endif
+
+    <script>
+        document.addEventListener('livewire:init', () => {
+            // Listen for lot-loaded event
+            Livewire.on('lot-loaded', (data) => {
+                if (typeof drawnItems !== 'undefined') {
+                    drawnItems.clearLayers();
+                    if (navigationPin) {
+                        map.removeLayer(navigationPin);
+                        navigationPin = null;
+                    }
+
+                    const coordinates = data[0]?.coordinates;
+                    const holes = data[0].holes;
+                    const hectares = data[0]?.hectares;
+                    const navigationPinCoords = data[0]?.navigationPin;
+
+                    if (coordinates && coordinates.length > 0) {
+                        const mainCoords = coordinates.map(coord => [
+                            parseFloat(coord.lat),
+                            parseFloat(coord.lng)
+                        ]);
+
+                        const polygonLatLngs = [mainCoords];
+
+                        if (holes && holes.length > 0) {
+                            holes.forEach(holeGroup => {
+                                const holeCoords = holeGroup.map(coord => [
+                                    parseFloat(coord.lat),
+                                    parseFloat(coord.lng)
+                                ]);
+                                polygonLatLngs.push(holeCoords);
+                            });
+                        }
+
+                        const polygon = L.polygon(polygonLatLngs, {
+                            color: 'orange',
+                            fillColor: 'orange',
+                            fillOpacity: 0.3
+                        });
+
+                        drawnItems.addLayer(polygon);
+
+                        if (typeof updateCoordinatesDisplay === 'function') {
+                            updateCoordinatesDisplay(coordinates, hectares);
+                        }
+
+                        map.fitBounds(polygon.getBounds());
+                    }
+
+                    if (navigationPinCoords && navigationPinCoords.lat && navigationPinCoords.lng) {
+                        const latlng = L.latLng(parseFloat(navigationPinCoords.lat), parseFloat(navigationPinCoords.lng));
+                        navigationPin = L.marker(latlng).addTo(map);
+                        if (typeof updateNavigationPinDisplay === 'function') {
+                            updateNavigationPinDisplay(latlng);
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </div>

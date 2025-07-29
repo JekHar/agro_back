@@ -14,6 +14,63 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
 
 <script src="{{ asset('js/map-utils.js') }}"></script>
+<script>
+    document.addEventListener('livewire:init', () => {
+        initializeMap();
+        setupDrawingControls();
+
+        Livewire.on('lot-loaded', (data) => {
+            drawnItems.clearLayers();
+            if (navigationPin) {
+                map.removeLayer(navigationPin);
+                navigationPin = null;
+            }
+
+            const coordinates = data[0]?.coordinates;
+            const holes = data[0].holes;
+            const hectares = data[0]?.hectares;
+            const navigationPinCoords = data[0]?.navigationPin;
+
+
+            if (coordinates && coordinates.length > 0) {
+                const mainCoords = coordinates.map(coord => [
+                    parseFloat(coord.lat),
+                    parseFloat(coord.lng)
+                ]);
+
+
+                const polygonLatLngs = [mainCoords];
+
+                if (holes && holes.length > 0) {
+                    holes.forEach(holeGroup => {
+                        const holeCoords = holeGroup.map(coord => [
+                            parseFloat(coord.lat),
+                            parseFloat(coord.lng)
+                        ]);
+                        polygonLatLngs.push(holeCoords);
+                    });
+                }
+
+                const polygon = L.polygon(polygonLatLngs, {
+                    color: 'orange',
+                    fillColor: 'orange',
+                    fillOpacity: 0.3
+                });
+
+                drawnItems.addLayer(polygon);
+
+                updateCoordinatesDisplay(coordinates, hectares);
+
+                map.fitBounds(polygon.getBounds());
+            }
+            if (navigationPinCoords && navigationPinCoords.lat && navigationPinCoords.lng) {
+                const latlng = L.latLng(parseFloat(navigationPinCoords.lat), parseFloat(navigationPinCoords.lng));
+                navigationPin = L.marker(latlng).addTo(map);
+                updateNavigationPinDisplay(latlng);
+            }
+        });
+    });
+</script>
 @endpush
 
 @section('content')
