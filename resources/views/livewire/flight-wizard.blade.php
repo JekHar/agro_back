@@ -96,6 +96,8 @@
                                                                            max="{{ $lot['remaining_hectares'] }}"
                                                                            wire:model.debounce.500ms="selectedFlightLots.{{ $index }}.hectares_to_apply"
                                                                            class="form-control"
+                                                                           x-data
+                                                                           x-on:input.debounce.500ms="$wire.calculateTotalHectares()"
                                                                            onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
                                                                     <span class="input-group-text">ha</span>
                                                                 </div>

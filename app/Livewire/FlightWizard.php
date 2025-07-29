@@ -430,7 +430,7 @@ class FlightWizard extends Component
         }
     }
 
-    protected function calculateTotalHectares()
+    public function calculateTotalHectares()
     {
         $this->totalFlightHectares = collect($this->selectedFlightLots)
             ->where('selected', true)
