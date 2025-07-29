@@ -508,7 +508,6 @@ class OrderForm extends Component
                 'total_hectares' => $flightData['total_hectares'],
                 'status' => 'pending',
                 'flight_number' => rand(1000, 9999),
-                'total_hectares' => 0, // calculate?
             ]);
 
             // Save flight lots

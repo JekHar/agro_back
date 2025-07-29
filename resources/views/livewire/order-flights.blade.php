@@ -89,6 +89,7 @@
                                                 <tbody>
                                                     @foreach($flight['lots'] as $lot)
                                                         @php
+                                                            $lot['lot_hectares'] = $lot['lot_total_hectares'];
                                                             $lotData = $availableLots->firstWhere('id', $lot['lot_id']);
                                                             $percentage = $lot['lot_hectares'] > 0 ? ($lot['hectares_to_apply'] / $lot['lot_hectares']) * 100 : 0;
                                                         @endphp

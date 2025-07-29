@@ -45,6 +45,8 @@ class OrderFlights extends Component
 
         if ($this->clientId) {
             $this->loadAvailableLots();
+            $this->updateProductsForFlights();
+            $this->recalculateRemainingHectares();
         }
     }
 

@@ -184,37 +184,72 @@
                         <strong>Información:</strong> Aquí se muestran todos los movimientos de inventario relacionados con este producto en las órdenes de trabajo.
                     </div>
 
-                    <div id="inventory-movements-container">
-                        {!! $this->getInventoryMovementsDataTable()->html() !!}
-                    </div>
+                    @php
+                        $inventoryMovements = $this->getInventoryMovements();
+                    @endphp
+
+                    @if($inventoryMovements->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Orden</th>
+                                        <th>Cliente</th>
+                                        <th>Cliente Proporciona</th>
+                                        <th>Cantidad Cliente (L)</th>
+                                        <th>Cantidad Requerida (L)</th>
+                                        <th>Diferencia</th>
+                                        <th>Agregado a Inventario</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($inventoryMovements as $movement)
+                                        <tr>
+                                            <td>{{ $movement->order->order_number ?? 'N/A' }}</td>
+                                            <td>{{ $movement->order->client->business_name ?? 'N/A' }}</td>
+                                            <td class="text-center">
+                                                @if($movement->client_provides_product)
+                                                    <span class="badge bg-success">SÍ</span>
+                                                @else
+                                                    <span class="badge bg-secondary">NO</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-end">{{ number_format($movement->client_provided_quantity, 2) }}</td>
+                                            <td class="text-end">{{ number_format($movement->required_quantity, 2) }}</td>
+                                            <td class="text-center">
+                                                @if($movement->difference_type === 'exact')
+                                                    <span class="badge bg-info">Cantidad exacta</span>
+                                                @else
+                                                    @php
+                                                        $badgeClass = $movement->difference_type === 'surplus' ? 'bg-success' : 'bg-danger';
+                                                        $action = $movement->difference_type === 'surplus' ? 'Sobra' : 'Falta';
+                                                    @endphp
+                                                    <span class="badge {{ $badgeClass }}">{{ $action }} {{ number_format($movement->difference_quantity, 2) }} L</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($movement->add_surplus_to_inventory)
+                                                    <span class="badge bg-primary">SÍ</span>
+                                                @else
+                                                    <span class="badge bg-light text-dark">NO</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $movement->created_at->format('d/m/Y H:i') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            No se encontraron movimientos de inventario para este producto.
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>
-
-        @push('scripts')
-            @if($showInventoryMovements)
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        if (typeof window.LaravelDataTables === 'undefined') {
-                            window.LaravelDataTables = {};
-                        }
-
-                        // Initialize DataTable for inventory movements
-                        if (!window.LaravelDataTables['inventory-movements-table']) {
-                            {!! $this->getInventoryMovementsDataTable()->scripts() !!}
-                        }
-                    });
-
-                    // Livewire hook to reinitialize DataTable when section is toggled
-                    document.addEventListener('livewire:updated', function() {
-                        if (document.getElementById('inventory-movements-table') && window.LaravelDataTables['inventory-movements-table']) {
-                            window.LaravelDataTables['inventory-movements-table'].ajax.reload();
-                        }
-                    });
-                </script>
-            @endif
-        @endpush
     @endif
 
 </div>
-

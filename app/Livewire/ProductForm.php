@@ -129,9 +129,16 @@ class ProductForm extends Component
         $this->showInventoryMovements = !$this->showInventoryMovements;
     }
 
-    public function getInventoryMovementsDataTable()
+    public function getInventoryMovements()
     {
-        return new InventoryMovementDataTable($this->productId);
+        if (!$this->productId) {
+            return collect();
+        }
+
+        return \App\Models\InventoryMovement::with(['order.client', 'product'])
+            ->where('product_id', $this->productId)
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     public function render()
