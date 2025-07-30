@@ -15,7 +15,11 @@
             <div class="block-options">
                 <button type="button"
                         class="btn btn-success btn-sm"
-                        wire:click="openFlightWizard"
+                        @if($remainingHectares == 0)
+                            disabled
+                        @else
+                            wire:click="openFlightWizard"
+                        @endif
                         {{ !$clientId ? 'disabled' : '' }}>
                     <i class="fa fa-plus me-2"></i>AGREGAR VUELO
                 </button>
@@ -135,7 +139,7 @@
                                                 <thead class="table-dark">
                                                     <tr>
                                                         <th>Producto</th>
-                                                        <th class="text-center">Dosificación</th>
+{{--                                                        <th class="text-center">Dosificación</th>--}}
                                                         <th class="text-center">Cantidad Total Litros</th>
                                                         <th class="text-center">Cantidad Total Envases</th>
                                                     </tr>
@@ -143,24 +147,23 @@
                                                 <tbody>
                                                     @foreach($flight['products'] as $productItem)
                                                         @php
-                                                            $productData = collect($products)->firstWhere('product_id', $productItem['product_id']);
-                                                            $productInfo = collect($availableProducts)->firstWhere('id', $productItem['product_id']);
+                                                            $productData = $products->firstWhere('id', $productItem['product_id']);
                                                             $dosage = $productItem['calculated_dosage_per_hectare'] ?? 0;
                                                         @endphp
                                                         <tr>
                                                             <td>
-                                                                <strong>{{ $productItem['name'] ?? 'Producto #' . $productItem['product_id'] }}</strong>
+                                                                <strong>{{ $productData['name'] ?? 'Producto #' . $productItem['product_id'] }}</strong>
                                                             </td>
+{{--                                                            <td class="text-center">--}}
+{{--                                                                <span class="badge bg-info">{{ number_format($dosage, 3) }}</span>--}}
+{{--                                                            </td>--}}
                                                             <td class="text-center">
-                                                                <span class="badge bg-info">{{ number_format($dosage, 3) }}</span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge bg-success">{{ number_format($productItem['quantity'] ?? 0, 2) }} {{ $productInfo->unit ?? 'L' }}</span>
+                                                                <span class="badge bg-success">{{ number_format($productItem['quantity'] ?? 0, 2) }} {{ $productData->unit ?? 'L' }}</span>
                                                             </td>
                                                             <td class="text-center">
                                                                 <span class="badge bg-warning">
-                                                                    @if(array_key_exists('liters_per_can', $productItem))
-                                                                        {{ number_format($productItem['quantity'] / ($productItem['liters_per_can'] != 0 ? $productItem['liters_per_can'] : 1)) }} envases
+                                                                    @if(array_key_exists('liters_per_can', $productData->toArray()))
+                                                                        {{ number_format($productItem['quantity'] / ($productData['liters_per_can'] != 0 ? $productData['liters_per_can'] : 1)) }} envases
                                                                     @else
                                                                         N/A
                                                                     @endif

@@ -156,12 +156,45 @@
                     </div>
 
                     <div class="row mb-5">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label">Receta</label>
-                                <input type="file" wire:model="prescription_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+                                <input type="file"
+                                       wire:model="prescription_file"
+                                       class="form-control"
+                                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                <small class="text-muted small mb-2">
+                                    <i class="fa fa-info-circle me-1"></i>
+                                    Seleccione un nuevo archivo para reemplazar el actual
+                                </small>
+
+                                @error('prescription_file')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
+
+                        @if($current_prescription_file)
+                        <div class="col-md-6">
+                            <label class="form-label">&nbsp</label>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <a href="{{ asset('storage/' . $current_prescription_file) }}"
+                                   target="_blank"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fa fa-eye me-1"></i>
+                                    Ver archivo actual
+                                </a>
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        wire:click="removePrescriptionFile"
+                                        onclick="return confirm('¿Está seguro de eliminar el archivo de receta?')">
+                                    <i class="fa fa-trash me-1"></i>
+                                    Eliminar
+                                </button>
+                            </div>
+
+                        </div>
+                        @endif
                     </div>
             </div>
         </div>
@@ -308,6 +341,45 @@
                             :isModal="true"
                             :key="'lot-modal-'.now()"
                         />
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- File Replacement Confirmation Modal --}}
+    @if($show_replace_confirmation)
+        <div class="modal-backdrop fade show" style="z-index: 1040;"></div>
+        <div class="modal fade show" style="display: block; z-index: 1050;" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            Reemplazar Archivo de Receta
+                        </h5>
+                        <button type="button" class="btn-close" wire:click="cancelReplaceFile"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="fa fa-info-circle me-2"></i>
+                            Ya existe un archivo de receta para esta orden.
+                        </div>
+                        <p class="mb-3">
+                            <strong>Archivo actual:</strong><br>
+                            <small class="text-muted">{{ basename($current_prescription_file ?? '') }}</small>
+                        </p>
+                        <p>¿Desea reemplazar el archivo actual con el nuevo archivo seleccionado?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="cancelReplaceFile">
+                            <i class="fa fa-times me-1"></i>
+                            Cancelar
+                        </button>
+                        <button type="button" class="btn btn-warning" wire:click="confirmReplaceFile">
+                            <i class="fa fa-check me-1"></i>
+                            Reemplazar Archivo
+                        </button>
                     </div>
                 </div>
             </div>

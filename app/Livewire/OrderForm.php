@@ -34,8 +34,11 @@ class OrderForm extends Component
     public $responsible_id;
     public $has_prescription = false;
     public $prescription_file;
+    public $current_prescription_file;
+    public $prescription_file_temp;
+    public $show_replace_confirmation = false;
     public $observations;
-    public $status = 'draft';
+    public $status = 'pending';
 
     // Client and service info
     public $client_id;
@@ -154,6 +157,9 @@ class OrderForm extends Component
         $this->observations = $this->order->observations;
         $this->status = $this->order->status;
 
+        // Set current prescription file if exists
+        $this->current_prescription_file = $this->order->prescription_file;
+
         $this->selectedLots = $this->order->orderLots->map(function ($orderLot) {
             return [
                 'lot_id' => $orderLot->lot_id,
@@ -186,7 +192,7 @@ class OrderForm extends Component
                 'lots' => $flight->flightLots->map(function ($flightLot) {
                     return [
                         'lot_id' => $flightLot->lot_id,
-                        'lot_hectares' => $flightLot->lot_hectares,
+                        'lot_hectares' => $flightLot->lot_total_hectares,
                         'hectares_to_apply' => $flightLot->hectares_to_apply,
                         'lot_total_hectares' => $flightLot->lot_total_hectares,
                     ];
@@ -285,6 +291,62 @@ class OrderForm extends Component
             $this->loadStaff();
             $this->loadServices();
         }
+
+        // Handle prescription file upload
+        if ($name === 'prescription_file' && $value) {
+            if ($this->current_prescription_file) {
+                // Store the new file temporarily and show confirmation
+                $this->prescription_file_temp = $this->prescription_file;
+                $this->show_replace_confirmation = true;
+                $this->prescription_file = null; // Reset to prevent processing
+            }
+        }
+    }
+
+    /**
+     * Confirm replacement of current prescription file
+     */
+    public function confirmReplaceFile()
+    {
+        $this->prescription_file = $this->prescription_file_temp;
+        $this->prescription_file_temp = null;
+        $this->show_replace_confirmation = false;
+
+        $this->dispatch('showAlert', [
+            'title' => 'Archivo Seleccionado',
+            'text' => 'El nuevo archivo reemplazará al actual cuando guarde la orden',
+            'type' => 'info'
+        ]);
+    }
+
+    /**
+     * Cancel file replacement
+     */
+    public function cancelReplaceFile()
+    {
+        $this->prescription_file_temp = null;
+        $this->show_replace_confirmation = false;
+        $this->prescription_file = null;
+    }
+
+    /**
+     * Remove current prescription file
+     */
+    public function removePrescriptionFile()
+    {
+        $this->current_prescription_file = null;
+        $this->prescription_file = null;
+
+        if ($this->isEditing && $this->order) {
+            $this->order->prescription_file = null;
+            $this->order->save();
+        }
+
+        $this->dispatch('showAlert', [
+            'title' => 'Archivo Eliminado',
+            'text' => 'El archivo de receta ha sido eliminado',
+            'type' => 'success'
+        ]);
     }
 
     /**
@@ -403,7 +465,7 @@ class OrderForm extends Component
                     'pilot_id' => $this->pilot_id,
                     'ground_support_id' => $this->ground_support_id,
                     'observations' => $this->observations,
-                    'status' => 'draft',
+                    'status' => 'pending',
                     'created_by' => Auth::id(),
                     'total_hectares' => $this->totalHectares,
                     'total_amount' => 0,
@@ -520,7 +582,7 @@ class OrderForm extends Component
                         'lot_id' => $lotData['lot_id'],
                         'lot_hectares' => $lotData['lot_hectares'] ?? 0,
                         'hectares_to_apply' => $lotData['hectares_to_apply'] ?? 0,
-                        'lot_total_hectares' => 0, // calculate?
+                        'lot_total_hectares' => $lotData['lot_hectares'],
                     ]);
                 }
             }

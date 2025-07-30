@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Lot;
+use App\Models\Product;
 use Livewire\Component;
 
 class OrderFlights extends Component
@@ -18,7 +19,6 @@ class OrderFlights extends Component
 
     // Products from the order
     public $products = [];
-    public $availableProducts;
     // Flight wizard integration
     public $showFlightWizard = false;
 
@@ -37,7 +37,9 @@ class OrderFlights extends Component
         $this->orderLots = $orderLots;
         $this->totalHectares = floatval($totalHectares);
         $this->remainingHectares = $this->totalHectares;
-        $this->products = $products;
+        $this->products = Product::where('merchant_id', auth()->user()->merchant_id)
+            ->orderBy('name')
+            ->get();
 
         // Don't initialize flights by default - let user create them via wizard
         $this->flights = $existingFlights;
@@ -48,6 +50,7 @@ class OrderFlights extends Component
             $this->updateProductsForFlights();
             $this->recalculateRemainingHectares();
         }
+
     }
 
     public function initializeFlights($count)
@@ -97,11 +100,6 @@ class OrderFlights extends Component
     {
         $this->products = $products;
         $this->updateProductsForFlights();
-    }
-
-    public function updateAvailableProducts($products)
-    {
-        $this->availableProducts = $products;
     }
 
     public function updatedFlightCount($value)
