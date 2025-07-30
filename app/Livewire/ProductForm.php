@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\DataTables\InventoryMovementDataTable;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Merchant;
@@ -37,6 +38,8 @@ class ProductForm extends Component
 
     public $isTenant = false;
 
+    public $showInventoryMovements = false;
+
     protected function rules()
     {
         $productRequest = new ProductRequest;
@@ -52,13 +55,13 @@ class ProductForm extends Component
     {
         $this->categories = Category::pluck('name', 'id');
         $this->isTenant = auth()->user()->hasRole('Tenant');
-        
+
         if (auth()->user()->hasRole('Admin')) {
             $this->merchants = Merchant::where('merchant_type', 'client')
                 ->pluck('business_name', 'id');
         } elseif ($this->isTenant) {
             $this->merchant_id = auth()->user()->merchant_id;
-            
+
 
             $this->merchants = Merchant::where('merchant_type', 'client')
                 ->where('merchant_id', auth()->user()->merchant_id)
@@ -73,11 +76,11 @@ class ProductForm extends Component
             $this->commercial_brand = $this->product->commercial_brand;
             $this->category_id = $this->product->category_id;
             $this->liters_per_can = $this->product->liters_per_can;
-            
+
             if (!$this->isTenant) {
                 $this->merchant_id = $this->product->merchant_id;
             }
-            
+
             $this->dosage_per_hectare = $this->product->dosage_per_hectare;
             $this->liters_per_can = $this->product->liters_per_can;
             $this->stock = $this->product->stock;
@@ -95,7 +98,7 @@ class ProductForm extends Component
         if ($this->isTenant) {
             $validatedData['merchant_id'] = auth()->user()->merchant_id;
         }
-        
+
         try {
             if ($this->isEditing) {
                 $this->product->update($validatedData);
@@ -119,6 +122,23 @@ class ProductForm extends Component
                 'icon' => 'error',
             ]);
         }
+    }
+
+    public function toggleInventoryMovements()
+    {
+        $this->showInventoryMovements = !$this->showInventoryMovements;
+    }
+
+    public function getInventoryMovements()
+    {
+        if (!$this->productId) {
+            return collect();
+        }
+
+        return \App\Models\InventoryMovement::with(['order.client', 'product'])
+            ->where('product_id', $this->productId)
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     public function render()

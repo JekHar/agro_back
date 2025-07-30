@@ -14,6 +14,7 @@ class OrderLots extends Component
 
     protected $listeners = [
         'clientSelected' => 'loadAvailableLots',
+        'lotCreated' => 'handleLotCreated',
     ];
 
 
@@ -100,6 +101,35 @@ class OrderLots extends Component
         // This could redirect to a lot creation page
         // or open a modal for lot selection
         $this->dispatch('openLotCreation', $this->clientId);
+    }
+
+    /**
+     * Open the lot creation modal
+     */
+    public function createNewLot()
+    {
+        $this->dispatch('openLotModal');
+    }
+
+    /**
+     * Handle the event when a new lot is created
+     */
+    public function handleLotCreated($lotId)
+    {
+        // Refresh available lots to include the new one
+        $this->loadAvailableLots();
+
+        // Automatically add the new lot to the selection
+        $newLot = $this->availableLots->firstWhere('id', $lotId);
+        if ($newLot) {
+            $this->selectedLots[] = [
+                'lot_id' => $newLot->id,
+                'hectares' => $newLot->hectares,
+                'status' => 'pending'
+            ];
+
+            $this->dispatch('lotsUpdated', $this->selectedLots);
+        }
     }
 
     public function render()

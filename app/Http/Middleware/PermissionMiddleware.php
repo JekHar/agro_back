@@ -13,6 +13,7 @@ class PermissionMiddleware
 {
     private $exceptionsPatterns = [
         'dashboard',
+        'storage/*'
     ];
 
     private function getUserPermissions($userId): array
@@ -30,7 +31,6 @@ class PermissionMiddleware
         if (is_null($routeName)) {
             return true;
         }
-
         foreach ($this->exceptionsPatterns as $pattern) {
             if (Str::is($pattern, $routeName)) {
                 return true;
@@ -50,7 +50,6 @@ class PermissionMiddleware
     {
         $route = $request->route();
         $routeName = $route->getName();
-
         if ($this->isExceptedRoute($routeName)) {
             return $next($request);
         }

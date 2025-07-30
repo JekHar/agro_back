@@ -73,10 +73,8 @@
                                                 @foreach($selectedFlightLots as $index => $lot)
                                                     <tr class="{{ $lot['selected'] ? 'table-success' : '' }}">
                                                         <td class="text-center">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       wire:click="toggleLotSelection({{ $index }})"
-                                                                       {{ $lot['selected'] ? 'checked' : '' }}>
+                                                            <div class="form-check form-switch">
+                                                                <input class="form-check-input" type="checkbox" wire:click="toggleLotSelection({{ $index }})" {{ $lot['selected'] ? 'checked' : '' }}>
                                                             </div>
                                                         </td>
                                                         <td>
@@ -96,8 +94,11 @@
                                                                 <div class="input-group input-group-sm">
                                                                     <input type="number" step="0.01" min="0"
                                                                            max="{{ $lot['remaining_hectares'] }}"
-                                                                           wire:model.live="selectedFlightLots.{{ $index }}.hectares_to_apply"
-                                                                           class="form-control">
+                                                                           wire:model.debounce.500ms="selectedFlightLots.{{ $index }}.hectares_to_apply"
+                                                                           class="form-control"
+                                                                           x-data
+                                                                           x-on:input.debounce.500ms="$wire.calculateTotalHectares()"
+                                                                           onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
                                                                     <span class="input-group-text">ha</span>
                                                                 </div>
                                                                 @error("selectedFlightLots.{$index}.hectares_to_apply")
@@ -165,214 +166,197 @@
                                     </div>
                                 </div>
 
-                                @if(count($selectedFlightProducts) > 0)
-                                    <!-- Product Information Summary -->
-                                    <div class="row mb-4">
-                                        <div class="col-12">
-                                            <div class="alert alert-light border">
-                                                <h6 class="mb-2"><i class="fa fa-calculator me-2"></i>Información para Cálculos</h6>
+                                <!-- Product Information Summary -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="alert alert-light border">
+                                            <h6 class="mb-2"><i class="fa fa-calculator me-2"></i>Información para Cálculos</h6>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <strong>Hectáreas del vuelo:</strong><br>
+                                                    <span class="badge bg-primary">{{ number_format($totalFlightHectares, 2) }} ha</span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <strong>Productos agregados:</strong><br>
+                                                    <span class="badge bg-info">{{ count($selectedFlightProducts) }}</span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <strong>Método actual:</strong><br>
+                                                    <span class="badge bg-warning">
+                                                        {{ $calculationMethod === 'by_quantity' ? 'Por Cantidad' : 'Por Dosificación' }}
+                                                    </span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <strong>Total productos disponibles:</strong><br>
+                                                    <span class="badge bg-secondary">{{ count($this->getAvailableProductsForSelector()) }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product Selector -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0"><i class="fa fa-plus-circle me-2"></i>Agregar Producto</h6>
+                                            </div>
+                                            <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-md-3">
-                                                        <strong>Hectáreas del vuelo:</strong><br>
-                                                        <span class="badge bg-primary">{{ number_format($totalFlightHectares, 2) }} ha</span>
+                                                    <div class="col-md-8">
+                                                        <select wire:model="selectedProductId" class="form-select">
+                                                            <option value="">Selecciona un producto...</option>
+                                                            @foreach($this->getAvailableProductsForSelector() as $product)
+                                                                <option value="{{ $product['id'] }}">
+                                                                    {{ $product['name'] }}
+                                                                    ({{ $product['category'] }})
+                                                                    - Stock: {{ number_format($product['stock'], 2) }} {{ $product['unit'] }}
+                                                                    @if($product['dosage_per_hectare'] > 0)
+                                                                        - Dosificación: {{ number_format($product['dosage_per_hectare'], 2) }} {{ $product['unit'] }}/ha
+                                                                    @endif
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <strong>Productos disponibles:</strong><br>
-                                                        <span class="badge bg-info">{{ count($selectedFlightProducts) }}</span>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <strong>Productos seleccionados:</strong><br>
-                                                        <span class="badge bg-success">{{ collect($selectedFlightProducts)->where('selected', true)->count() }}</span>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <strong>Método actual:</strong><br>
-                                                        <span class="badge bg-warning">
-                                                            {{ $calculationMethod === 'by_quantity' ? 'Por Cantidad' : 'Por Dosificación' }}
-                                                        </span>
+                                                    <div class="col-md-4">
+                                                        <button type="button" wire:click="addProduct" class="btn btn-success">
+                                                            <i class="fa fa-plus"></i> Agregar Producto
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped table-vcenter">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th style="width: 50px;">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="selectAllProducts">
-                                                        </div>
-                                                    </th>
-                                                    <th>Producto</th>
-                                                    <th>Descripción</th>
-                                                    <th>Categoría</th>
-                                                    <th>Unidad</th>
-                                                    @if($calculationMethod === 'by_quantity')
-                                                        <th>Cantidad Total</th>
-                                                        <th>Dosificación (Calculada)</th>
-                                                    @else
-                                                        <th>Dosificación por Ha</th>
-                                                        <th>Cantidad Total (Calculada)</th>
-                                                    @endif
-                                                    <th>Estado</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($selectedFlightProducts as $index => $product)
-                                                    <tr class="{{ $product['selected'] ? 'table-success' : '' }}">
-                                                        <td class="text-center">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                       wire:click="toggleProductSelection({{ $index }})"
-                                                                       {{ $product['selected'] ? 'checked' : '' }}
-                                                                       id="product_{{ $index }}">
+                                <!-- Selected Products Cards -->
+                                @if(count($selectedFlightProducts) > 0)
+                                    <div class="row">
+                                        @foreach($selectedFlightProducts as $index => $product)
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card border-primary">
+                                                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                                        <h6 class="mb-0">
+                                                            <i class="fa fa-flask me-2"></i>{{ $product['product_name'] }}
+                                                        </h6>
+                                                        <button type="button" wire:click="removeProduct({{ $index }})"
+                                                                class="btn btn-sm btn-outline-light">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="card-body bg-body-dark">
+                                                        <!-- Product Information -->
+                                                        <div class="row mb-4">
+                                                            <div class="col-4">
+                                                                <small class="text-muted">Categoría:</small><br>
+                                                                <span class="badge bg-info">{{ $product['category'] }}</span>
                                                             </div>
-                                                        </td>
-                                                        <td>
-                                                            <label for="product_{{ $index }}" class="fw-bold mb-0" style="cursor: pointer;">
-                                                                {{ $product['product_name'] }}
-                                                            </label>
-                                                        </td>
-                                                        <td>
-                                                            <small class="text-muted">
-                                                                {{ $product['description'] ?? 'Sin descripción' }}
-                                                            </small>
-                                                        </td>
-                                                        <td>
-                                                            <span class="badge bg-info">{{ $product['category'] }}</span>
-                                                        </td>
-                                                        <td>
-                                                            <span class="badge bg-secondary">{{ $product['unit'] }}</span>
-                                                        </td>
-                                                        @if($calculationMethod === 'by_quantity')
-                                                            <td>
-                                                                @if($product['selected'])
+                                                            <div class="col-4">
+                                                                <small class="text-muted">Unidad:</small><br>
+                                                                <span class="badge bg-secondary">{{ $product['unit'] }}</span>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <small class="text-muted">Dosage:</small><br>
+                                                                <span class="badge bg-secondary">{{ number_format($product['dosage_per_hectare'], 2) }} {{ $product['unit'] }}/ha</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Stock and Can Information -->
+                                                        <div class="row mb-3">
+                                                            <div class="col-4">
+                                                                <small class="text-muted">Stock disponible:</small><br>
+                                                                <strong class="text-success">{{ number_format($product['stock'], 2) }} E</strong>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <small class="text-muted">Litros/Envase:</small><br>
+                                                                <strong class="text-primary">{{ number_format($product['liters_per_can'], 2) }} {{ $product['unit'] }}</strong>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <small class="text-muted">Envases necesarios:</small><br>
+                                                                <strong class="text-primary">
+                                                                    {{ $product['total_quantity'] > 0 && $product['liters_per_can'] > 0 ? ceil($product['total_quantity'] / $product['liters_per_can']) : '-' }}
+                                                                </strong>
+                                                            </div>
+                                                        </div>
+
+                                                        @if($product['commercial_brand'])
+                                                            <div class="mb-3">
+                                                                <small class="text-muted">Marca comercial:</small>
+                                                                <span class="badge bg-light text-dark">{{ $product['commercial_brand'] }}</span>
+                                                            </div>
+                                                        @endif
+
+                                                        <!-- Calculation Inputs -->
+                                                        @if($calculationMethod === 'by_dosage')
+                                                            <div class="row">
+                                                                <div class="col-6">
+                                                                    <label class="form-label small">Dosificación por Ha</label>
                                                                     <div class="input-group input-group-sm">
-                                                                        <input type="number" step="0.01" min="0"
-                                                                               wire:model.live="selectedFlightProducts.{{ $index }}.total_quantity"
+                                                                        <input type="number" step="0.01" min="0" max="999.99"
+                                                                               wire:model.live.debounce.500ms="selectedFlightProducts.{{ $index }}.calculated_dosage_per_hectare"
                                                                                class="form-control"
-                                                                               placeholder="Ej: 20.00">
+                                                                               placeholder="Ej: 2.50"
+                                                                               onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
+                                                                        <span class="input-group-text">{{ $product['unit'] }}/ha</span>
+                                                                    </div>
+                                                                    @error("selectedFlightProducts.{$index}.calculated_dosage_per_hectare")
+                                                                        <div class="text-danger small mt-1">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <label class="form-label small text-dark">Cantidad Total (Calculada)</label>
+                                                                    <div class="form-control form-control-sm bg-dark">
+                                                                        {{ number_format($product['total_quantity'], 2) }} {{ $product['unit'] }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            <div class="row">
+                                                                <div class="col-6">
+                                                                    <label class="form-label small text-dark">Cantidad Total</label>
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input type="number" step="0.01" min="0" max="99999.99"
+                                                                               wire:model.live.debounce.500ms="selectedFlightProducts.{{ $index }}.total_quantity"
+                                                                               class="form-control"
+                                                                               placeholder="Ej: 20.00"
+                                                                               onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
                                                                         <span class="input-group-text">{{ $product['unit'] }}</span>
                                                                     </div>
                                                                     @error("selectedFlightProducts.{$index}.total_quantity")
                                                                         <div class="text-danger small mt-1">{{ $message }}</div>
                                                                     @enderror
-                                                                @else
-                                                                    <span class="text-muted">-</span>
-                                                                @endif
-                                                            </td>
-                                                            <td>
-                                                                @if($product['selected'])
-                                                                    <span class="badge bg-info">
-                                                                        {{ number_format($product['dosage_per_hectare'], 2) }} {{ $product['unit'] }}/ha
-                                                                    </span>
-                                                                @else
-                                                                    <span class="text-muted">-</span>
-                                                                @endif
-                                                            </td>
-                                                        @else
-                                                            <td>
-                                                                @if($product['selected'])
-                                                                    <div class="input-group input-group-sm">
-                                                                        <input type="number" step="0.01" min="0"
-                                                                               wire:model.live="selectedFlightProducts.{{ $index }}.dosage_per_hectare"
-                                                                               class="form-control"
-                                                                               placeholder="Ej: 2.50">
-                                                                        <span class="input-group-text">{{ $product['unit'] }}/ha</span>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <label class="form-label small text-dark">Dosificación por Ha (Calculada)</label>
+                                                                    <div class="form-control form-control-sm bg-dark">
+                                                                        {{ number_format($product['calculated_dosage_per_hectare'], 2) }} {{ $product['unit'] }}/ha
                                                                     </div>
-                                                                    @error("selectedFlightProducts.{$index}.dosage_per_hectare")
-                                                                        <div class="text-danger small mt-1">{{ $message }}</div>
-                                                                    @enderror
-                                                                @else
-                                                                    <span class="text-muted">-</span>
-                                                                @endif
-                                                            </td>
-                                                            <td>
-                                                                @if($product['selected'])
-                                                                    <span class="badge bg-info">
-                                                                        {{ number_format($product['total_quantity'], 2) }} {{ $product['unit'] }}
-                                                                    </span>
-                                                                @else
-                                                                    <span class="text-muted">-</span>
-                                                                @endif
-                                                            </td>
+                                                                </div>
+                                                            </div>
                                                         @endif
-                                                        <td>
-                                                            @if($product['selected'])
-                                                                @if($product['total_quantity'] > 0 && $product['dosage_per_hectare'] > 0)
-                                                                    <span class="badge bg-success">
-                                                                        <i class="fa fa-check"></i> Configurado
-                                                                    </span>
-                                                                @else
-                                                                    <span class="badge bg-warning">
-                                                                        <i class="fa fa-exclamation-triangle"></i> Incompleto
-                                                                    </span>
-                                                                @endif
-                                                            @else
-                                                                <span class="badge bg-secondary">
-                                                                    <i class="fa fa-circle"></i> No seleccionado
-                                                                </span>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot class="table-light">
-                                                <tr>
-                                                    <td colspan="8" class="text-center">
-                                                        <strong>Total productos seleccionados: </strong>
-                                                        <span class="badge bg-primary">
-                                                            {{ collect($selectedFlightProducts)->where('selected', true)->count() }}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
 
-                                    <!-- Dosage Summary per Lot -->
-                                    @if(collect($selectedFlightProducts)->where('selected', true)->count() > 0)
-                                        <div class="mt-4">
-                                            <h5 class="mb-3">
-                                                <i class="fa fa-chart-bar me-2"></i>Resumen de Dosificación por Lote
-                                            </h5>
-                                            <div class="row">
-                                                @foreach(collect($selectedFlightLots)->where('selected', true) as $lot)
-                                                    <div class="col-md-6 mb-3">
-                                                        <div class="block block-rounded block-bordered">
-                                                            <div class="block-header block-header-default bg-light">
-                                                                <h6 class="block-title mb-0">
-                                                                    Lote {{ $lot['lot_number'] }}
-                                                                    <small class="text-muted">({{ number_format($lot['hectares_to_apply'], 2) }} ha)</small>
-                                                                </h6>
+                                                        <!-- Stock Validation -->
+                                                        @if($product['total_quantity'] > $product['stock'])
+                                                            <div class="alert alert-warning mt-2 py-2">
+                                                                <small><i class="fa fa-exclamation-triangle me-1"></i>
+                                                                Cantidad requerida ({{ number_format($product['total_quantity'], 2) }}) excede el stock disponible ({{ number_format($product['stock'], 2) }})
+                                                                </small>
                                                             </div>
-                                                            <div class="block-content p-3">
-                                                                @foreach(collect($selectedFlightProducts)->where('selected', true) as $product)
-                                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                        <span class="fw-medium">{{ $product['product_name'] }}:</span>
-                                                                        <div class="text-end">
-                                                                            <small class="text-muted d-block">
-                                                                                {{ number_format($product['dosage_per_hectare'], 2) }} {{ $product['unit'] }}/ha
-                                                                            </small>
-                                                                            <span class="badge bg-primary">
-                                                                                {{ number_format($product['dosage_per_hectare'] * $lot['hectares_to_apply'], 2) }} {{ $product['unit'] }}
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                @endforeach
+                                                        @elseif($product['total_quantity'] > 0 && $product['dosage_per_hectare'] > 0)
+                                                            <div class="alert alert-success mt-2 py-2">
+                                                                <small><i class="fa fa-check me-1"></i>Producto configurado correctamente</small>
                                                             </div>
-                                                        </div>
+                                                        @endif
                                                     </div>
-                                                @endforeach
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endif
+                                        @endforeach
+                                    </div>
                                 @else
-                                    <div class="text-center py-4">
-                                        <i class="fa fa-flask fa-3x text-muted mb-3"></i>
-                                        <p class="text-muted">No hay productos disponibles para este vuelo.</p>
-                                        <small class="text-muted">Los productos se cargan automáticamente desde el catálogo disponible para el cliente.</small>
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-info-circle me-2"></i>
+                                        No hay productos agregados. Utiliza el selector de arriba para agregar productos al vuelo.
                                     </div>
                                 @endif
                             </div>

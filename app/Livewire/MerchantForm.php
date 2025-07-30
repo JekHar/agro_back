@@ -44,6 +44,8 @@ class MerchantForm extends Component
 
     public array $tenants = [];
 
+    public bool $isModal = false;
+
     protected function rules()
     {
         $merchantRequest = new MerchantRequest;
@@ -85,7 +87,7 @@ class MerchantForm extends Component
                 $this->merchant_id = $this->merchant->merchant_id;
             } elseif (auth()->user()->hasRole('Tenant')) {
                 $this->merchant_id = auth()->user()->merchant_id;
-            } 
+            }
         } else {
             $this->merchant_type = $isClient ? MerchantType::CLIENT->value : MerchantType::TENANT->value;
             if (auth()->user()->hasRole('Tenant')) {
@@ -97,19 +99,19 @@ class MerchantForm extends Component
     }
 
     public function save()
-    {   
+    {
         try {
             if ($this->isClient && !auth()->user()->can('clients.merchants.create')) {
                 throw new \Exception('No tienes permiso para crear clientes');
             } elseif (!$this->isClient && !auth()->user()->can('tenants.merchants.create')) {
                 throw new \Exception('No tienes permiso para crear empresas');
             }
-            
+
             $validated = $this->validate(
                 $this->rules()['rules'],
                 $this->rules()['messages']
             );
-            
+
             $validated['business_name'] = $this->business_name;
             $validated['trade_name'] = $this->trade_name;
             $validated['fiscal_number'] = $this->fiscal_number;
@@ -126,7 +128,7 @@ class MerchantForm extends Component
                 $validated['merchant_id'] = auth()->user()->merchant_id;
                 $validated['merchant_type'] = $this->merchant_type;
             }
-            
+
             if ($this->merchant) {
                 $this->merchant->update($validated);
                 $merchant = $this->merchant;
@@ -136,31 +138,37 @@ class MerchantForm extends Component
 
                 if ($validated['email']) {
                     $existingUser = User::where('email', $validated['email'])->first();
-                    
+
                     if (!$existingUser) {
 
                         $roleName = 'Tenant';
                         if ($validated['merchant_type'] === 'client') {
                             $roleName = 'Client';
                         }
-                        
+
                         $role = Role::where('name', $roleName)->first();
-                        
+
                         if ($role) {
                             $user = User::create([
-                                'name' => $validated['business_name'], 
+                                'name' => $validated['business_name'],
                                 'email' => $validated['email'],
-                                'password' => Hash::make('password'), 
+                                'password' => Hash::make('password'),
                                 'merchant_id' => $merchant->id,
                             ]);
-                            
+
 
                             $user->assignRole($role);
                         }
                     }
                 }
-                
+
                 $message = $validated['merchant_type'] === 'client' ? 'Cliente creado exitosamente' : 'Empresa creada exitosamente';
+            }
+
+            // If in modal mode, emit event to parent component
+            if ($this->isModal && !$this->merchant) {
+                $this->dispatch('entityCreated', 'client', $merchant->id);
+                return;
             }
 
             $route = $this->isClient

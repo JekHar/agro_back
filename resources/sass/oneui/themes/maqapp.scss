@@ -62,3 +62,20 @@
 .btn:hover {
     color: $theme-maqapp-body-bg;
 }
+
+
+
+@media (max-width: 767px) {
+    .dt-buttons button {
+        margin: 5px !important;
+    }
+}
+
+@media (max-width: 1440px) {
+    .dataTable {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+        white-space: nowrap;
+    }
+}

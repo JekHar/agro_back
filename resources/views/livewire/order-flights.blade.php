@@ -15,9 +15,13 @@
             <div class="block-options">
                 <button type="button"
                         class="btn btn-success btn-sm"
-                        wire:click="openFlightWizard"
+                        @if($remainingHectares == 0)
+                            disabled
+                        @else
+                            wire:click="openFlightWizard"
+                        @endif
                         {{ !$clientId ? 'disabled' : '' }}>
-                    <i class="fa fa-plus me-2"></i>ADD FLIGHT
+                    <i class="fa fa-plus me-2"></i>AGREGAR VUELO
                 </button>
             </div>
         </div>
@@ -63,6 +67,9 @@
                             </h3>
                             <div class="block-options">
                                 <span class="badge bg-primary">{{ number_format($flight['total_hectares'] ?? 0, 2) }} ha</span>
+                                <button type="button" class="btn btn-danger btn-sm ms-2" wire:click="removeFlight({{ $flightIndex }})">
+                                    <i class="fa fa-trash"></i> Eliminar vuelo
+                                </button>
                             </div>
                         </div>
                         <div class="block-content">
@@ -86,6 +93,7 @@
                                                 <tbody>
                                                     @foreach($flight['lots'] as $lot)
                                                         @php
+                                                            $lot['lot_hectares'] = $lot['lot_total_hectares'];
                                                             $lotData = $availableLots->firstWhere('id', $lot['lot_id']);
                                                             $percentage = $lot['lot_hectares'] > 0 ? ($lot['hectares_to_apply'] / $lot['lot_hectares']) * 100 : 0;
                                                         @endphp
@@ -131,30 +139,35 @@
                                                 <thead class="table-dark">
                                                     <tr>
                                                         <th>Producto</th>
-                                                        <th class="text-center">Dosificación</th>
-                                                        <th class="text-center">Cantidad Total</th>
-                                                        <th class="text-center">Unidad</th>
+{{--                                                        <th class="text-center">Dosificación</th>--}}
+                                                        <th class="text-center">Cantidad Total Litros</th>
+                                                        <th class="text-center">Cantidad Total Envases</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach($flight['products'] as $productItem)
                                                         @php
-                                                            $productData = collect($products)->firstWhere('product_id', $productItem['product_id']);
-                                                            $productInfo = $availableProducts->firstWhere('id', $productItem['product_id']);
-                                                            $dosage = $productItem['dosage_per_hectare'] ?? ($productData['calculated_dosage'] ?? 0);
+                                                            $productData = $products->firstWhere('id', $productItem['product_id']);
+                                                            $dosage = $productItem['calculated_dosage_per_hectare'] ?? 0;
                                                         @endphp
                                                         <tr>
                                                             <td>
-                                                                <strong>{{ $productInfo->name ?? 'Producto #' . $productItem['product_id'] }}</strong>
+                                                                <strong>{{ $productData['name'] ?? 'Producto #' . $productItem['product_id'] }}</strong>
+                                                            </td>
+{{--                                                            <td class="text-center">--}}
+{{--                                                                <span class="badge bg-info">{{ number_format($dosage, 3) }}</span>--}}
+{{--                                                            </td>--}}
+                                                            <td class="text-center">
+                                                                <span class="badge bg-success">{{ number_format($productItem['quantity'] ?? 0, 2) }} {{ $productData->unit ?? 'L' }}</span>
                                                             </td>
                                                             <td class="text-center">
-                                                                <span class="badge bg-info">{{ number_format($dosage, 3) }}</span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge bg-success">{{ number_format($productItem['quantity'] ?? 0, 2) }}</span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge bg-secondary">{{ $productInfo->unit ?? 'L' }}</span>
+                                                                <span class="badge bg-warning">
+                                                                    @if(array_key_exists('liters_per_can', $productData->toArray()))
+                                                                        {{ number_format($productItem['quantity'] / ($productData['liters_per_can'] != 0 ? $productData['liters_per_can'] : 1)) }} envases
+                                                                    @else
+                                                                        N/A
+                                                                    @endif
+                                                                </span>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -166,52 +179,52 @@
                             @endif
 
                             <!-- Dosage Summary per Lot -->
-                            @if(isset($flight['lots']) && count($flight['lots']) > 0 && isset($flight['products']) && count($flight['products']) > 0)
-                                <div class="row mt-4">
-                                    <div class="col-12">
-                                        <h6 class="mb-3">
-                                            <i class="fa fa-chart-bar me-2"></i>Resumen de Aplicación por Lote
-                                        </h6>
-                                        <div class="row">
-                                            @foreach($flight['lots'] as $lot)
-                                                @php
-                                                    $lotData = $availableLots->firstWhere('id', $lot['lot_id']);
-                                                @endphp
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="block block-rounded block-bordered">
-                                                        <div class="block-header block-header-default bg-light">
-                                                            <h6 class="block-title mb-0">
-                                                                Lote {{ $lotData->number ?? $lot['lot_id'] }}
-                                                                <small class="text-muted">({{ number_format($lot['hectares_to_apply'], 2) }} ha)</small>
-                                                            </h6>
-                                                        </div>
-                                                        <div class="block-content p-3">
-                                                            @foreach($flight['products'] as $productItem)
-                                                                @php
-                                                                    $productInfo = $availableProducts->firstWhere('id', $productItem['product_id']);
-                                                                    $dosage = $productItem['dosage_per_hectare'] ?? 0;
-                                                                    $totalForLot = $dosage * $lot['hectares_to_apply'];
-                                                                @endphp
-                                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                    <span class="fw-medium">{{ $productInfo->name ?? 'Producto' }}:</span>
-                                                                    <div class="text-end">
-                                                                        <small class="text-muted d-block">
-                                                                            {{ number_format($dosage, 3) }} {{ $productInfo->unit ?? 'L' }}/ha
-                                                                        </small>
-                                                                        <span class="badge bg-primary">
-                                                                            {{ number_format($totalForLot, 2) }} {{ $productInfo->unit ?? 'L' }}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
+{{--                            @if(isset($flight['lots']) && count($flight['lots']) > 0 && isset($flight['products']) && count($flight['products']) > 0)--}}
+{{--                                <div class="row mt-4">--}}
+{{--                                    <div class="col-12">--}}
+{{--                                        <h6 class="mb-3">--}}
+{{--                                            <i class="fa fa-chart-bar me-2"></i>Resumen de Aplicación por Lote--}}
+{{--                                        </h6>--}}
+{{--                                        <div class="row">--}}
+{{--                                            @foreach($flight['lots'] as $lot)--}}
+{{--                                                @php--}}
+{{--                                                    $lotData = $availableLots->firstWhere('id', $lot['lot_id']);--}}
+{{--                                                @endphp--}}
+{{--                                                <div class="col-md-6 mb-3">--}}
+{{--                                                    <div class="block block-rounded block-bordered">--}}
+{{--                                                        <div class="block-header block-header-default bg-light">--}}
+{{--                                                            <h6 class="block-title mb-0">--}}
+{{--                                                                Lote {{ $lotData->number ?? $lot['lot_id'] }}--}}
+{{--                                                                <small class="text-muted">({{ number_format($lot['hectares_to_apply'], 2) }} ha)</small>--}}
+{{--                                                            </h6>--}}
+{{--                                                        </div>--}}
+{{--                                                        <div class="block-content p-3">--}}
+{{--                                                            @foreach($flight['products'] as $productItem)--}}
+{{--                                                                @php--}}
+{{--                                                                    $productInfo = collect($availableProducts)->firstWhere('id', $productItem['product_id']);--}}
+{{--                                                                    $dosage = $productItem['dosage_per_hectare'] ?? 0;--}}
+{{--                                                                    $totalForLot = $dosage * $lot['hectares_to_apply'];--}}
+{{--                                                                @endphp--}}
+{{--                                                                <div class="d-flex justify-content-between align-items-center mb-2">--}}
+{{--                                                                    <span class="fw-medium">{{ $productInfo->name ?? 'Producto' }}:</span>--}}
+{{--                                                                    <div class="text-end">--}}
+{{--                                                                        <small class="text-muted d-block">--}}
+{{--                                                                            {{ number_format($dosage, 3) }} {{ $productInfo->unit ?? 'L' }}/ha--}}
+{{--                                                                        </small>--}}
+{{--                                                                        <span class="badge bg-primary">--}}
+{{--                                                                            {{ number_format($totalForLot, 2) }} {{ $productInfo->unit ?? 'L' }}--}}
+{{--                                                                        </span>--}}
+{{--                                                                    </div>--}}
+{{--                                                                </div>--}}
+{{--                                                            @endforeach--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            @endforeach--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            @endif--}}
                         </div>
                     </div>
                 @endforeach

@@ -7,11 +7,10 @@ use App\Models\Aircraft;
 use App\Models\Flight;
 use App\Models\FlightLot;
 use App\Models\FlightProduct;
-use App\Models\Lot;
+use App\Models\InventoryMovement;
 use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\OrderLot;
-use App\Models\OrderProduct;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -35,8 +34,11 @@ class OrderForm extends Component
     public $responsible_id;
     public $has_prescription = false;
     public $prescription_file;
+    public $current_prescription_file;
+    public $prescription_file_temp;
+    public $show_replace_confirmation = false;
     public $observations;
-    public $status = 'draft';
+    public $status = 'pending';
 
     // Client and service info
     public $client_id;
@@ -58,29 +60,32 @@ class OrderForm extends Component
     // public $selectedProducts = [];
     public $selectedLots = [];
     public $flights = [];
+    public $inventoryMovements = [];
 
     public ?int $tenant_id = 0;
     public Collection $tenants;
 
-    protected $rules = [
+    // Modal states
+    public $showClientModal = false;
+    public $showServiceModal = false;
+    public $showAircraftModal = false;
+    public $showPilotModal = false;
+    public $showGroundSupportModal = false;
+    public $showLotModal = false;
+
+        protected $rules = [
         'client_id' => 'required|exists:merchants,id',
         'service_id' => 'required|exists:services,id',
         'aircraft_id' => 'required|exists:aircrafts,id',
-        'pilot_id' => 'required|exists:users,id',
-        'ground_support_id' => 'required|exists:users,id',
-        'observations' => 'nullable|string',
-        'selectedLots' => 'required|array|min:1',
-        'selectedLots.*.lot_id' => 'required|exists:lots,id',
-        'selectedLots.*.hectares' => 'required|numeric|min:0.01',
-        'selectedLots.*.status' => 'required|in:pending,in_progress,completed',
-        // 'selectedProducts' => 'required|array|min:1',
-        // 'selectedProducts.*.product_id' => 'required|exists:products,id',
     ];
 
+    // Listeners for when entities are created in modals
     protected $listeners = [
         'lotsUpdated' => 'handleLotsUpdated',
-        // 'productsUpdated' => 'handleProductsUpdated', // TODO: Removed - products handled in FlightWizard
-        'flightsUpdated' => 'handleFlightsUpdated'
+        'flightsUpdated' => 'handleFlightsUpdated',
+        'inventoryUpdated' => 'handleInventoryUpdated',
+        'entityCreated' => 'handleEntityCreated',
+        'openLotModal' => 'createNewLot'
     ];
 
     public function mount($orderId = null)
@@ -138,7 +143,7 @@ class OrderForm extends Component
 
     public function loadOrder($orderId)
     {
-        $this->order = Order::with(['orderLots.lot', 'orderProducts.product', 'flights.flightLots.lot', 'flights.flightProducts.product'])
+        $this->order = Order::with(['orderLots.lot', 'orderProducts.product', 'flights.flightLots.lot', 'flights.flightProducts.product', 'inventoryMovements.product'])
             ->findOrFail($orderId);
 
         $this->order_date = $this->order->created_at->format('d/m/y');
@@ -151,6 +156,9 @@ class OrderForm extends Component
         $this->ground_support_id = $this->order->ground_support_id;
         $this->observations = $this->order->observations;
         $this->status = $this->order->status;
+
+        // Set current prescription file if exists
+        $this->current_prescription_file = $this->order->prescription_file;
 
         $this->selectedLots = $this->order->orderLots->map(function ($orderLot) {
             return [
@@ -184,7 +192,7 @@ class OrderForm extends Component
                 'lots' => $flight->flightLots->map(function ($flightLot) {
                     return [
                         'lot_id' => $flightLot->lot_id,
-                        'lot_hectares' => $flightLot->lot_hectares,
+                        'lot_hectares' => $flightLot->lot_total_hectares,
                         'hectares_to_apply' => $flightLot->hectares_to_apply,
                         'lot_total_hectares' => $flightLot->lot_total_hectares,
                     ];
@@ -198,6 +206,20 @@ class OrderForm extends Component
             ];
         })->toArray();
 
+
+        // Load existing inventory movements
+        $this->inventoryMovements = $this->order->inventoryMovements->map(function ($movement) {
+            return [
+                'product_id' => $movement->product_id,
+                'client_provides_product' => $movement->client_provides_product,
+                'client_provided_quantity' => $movement->client_provided_quantity,
+                'required_quantity' => $movement->required_quantity,
+                'difference_quantity' => $movement->difference_quantity,
+                'difference_type' => $movement->difference_type,
+                'add_surplus_to_inventory' => $movement->add_surplus_to_inventory,
+                'notes' => $movement->notes,
+            ];
+        })->toArray();
 
         $this->totalHectares = $this->selectedLots ? array_sum(array_column($this->selectedLots, 'hectares')) : 0;
     }
@@ -269,6 +291,62 @@ class OrderForm extends Component
             $this->loadStaff();
             $this->loadServices();
         }
+
+        // Handle prescription file upload
+        if ($name === 'prescription_file' && $value) {
+            if ($this->current_prescription_file) {
+                // Store the new file temporarily and show confirmation
+                $this->prescription_file_temp = $this->prescription_file;
+                $this->show_replace_confirmation = true;
+                $this->prescription_file = null; // Reset to prevent processing
+            }
+        }
+    }
+
+    /**
+     * Confirm replacement of current prescription file
+     */
+    public function confirmReplaceFile()
+    {
+        $this->prescription_file = $this->prescription_file_temp;
+        $this->prescription_file_temp = null;
+        $this->show_replace_confirmation = false;
+
+        $this->dispatch('showAlert', [
+            'title' => 'Archivo Seleccionado',
+            'text' => 'El nuevo archivo reemplazará al actual cuando guarde la orden',
+            'type' => 'info'
+        ]);
+    }
+
+    /**
+     * Cancel file replacement
+     */
+    public function cancelReplaceFile()
+    {
+        $this->prescription_file_temp = null;
+        $this->show_replace_confirmation = false;
+        $this->prescription_file = null;
+    }
+
+    /**
+     * Remove current prescription file
+     */
+    public function removePrescriptionFile()
+    {
+        $this->current_prescription_file = null;
+        $this->prescription_file = null;
+
+        if ($this->isEditing && $this->order) {
+            $this->order->prescription_file = null;
+            $this->order->save();
+        }
+
+        $this->dispatch('showAlert', [
+            'title' => 'Archivo Eliminado',
+            'text' => 'El archivo de receta ha sido eliminado',
+            'type' => 'success'
+        ]);
     }
 
     /**
@@ -283,26 +361,62 @@ class OrderForm extends Component
 
     public function createNewClient()
     {
-        // Redirect to client creation page or show modal
-        return redirect()->route('clients.merchants.create');
+        $this->showClientModal = true;
     }
 
     public function createNewService()
     {
-        // Redirect to service creation page or show modal
-        return redirect()->route('services.create');
+        $this->showServiceModal = true;
     }
 
     public function createNewAircraft()
     {
-        // Redirect to aircraft creation page or show modal
-        return redirect()->route('aircrafts.create');
+        $this->showAircraftModal = true;
     }
 
     public function createNewPilot()
     {
-        // Redirect to user creation page with pilot role preselected
-        return redirect()->route('users.create', ['role' => 'Pilot']);
+        $this->showPilotModal = true;
+    }
+
+    public function createNewGroundSupport()
+    {
+        $this->showGroundSupportModal = true;
+    }
+
+    public function createNewLot()
+    {
+        $this->showLotModal = true;
+    }
+
+    public function closeClientModal()
+    {
+        $this->showClientModal = false;
+    }
+
+    public function closeServiceModal()
+    {
+        $this->showServiceModal = false;
+    }
+
+    public function closeAircraftModal()
+    {
+        $this->showAircraftModal = false;
+    }
+
+    public function closePilotModal()
+    {
+        $this->showPilotModal = false;
+    }
+
+    public function closeGroundSupportModal()
+    {
+        $this->showGroundSupportModal = false;
+    }
+
+    public function closeLotModal()
+    {
+        $this->showLotModal = false;
     }
 
     public function submit()
@@ -337,6 +451,7 @@ class OrderForm extends Component
                 $this->order->orderLots()->delete();
                 $this->order->orderProducts()->delete();
                 $this->order->flights()->delete();
+                $this->order->inventoryMovements()->delete();
 
                 $message = 'Orden actualizada correctamente';
             } else {
@@ -350,7 +465,7 @@ class OrderForm extends Component
                     'pilot_id' => $this->pilot_id,
                     'ground_support_id' => $this->ground_support_id,
                     'observations' => $this->observations,
-                    'status' => 'draft',
+                    'status' => 'pending',
                     'created_by' => Auth::id(),
                     'total_hectares' => $this->totalHectares,
                     'total_amount' => 0,
@@ -376,6 +491,9 @@ class OrderForm extends Component
 
             // Save flights
             $this->saveFlights();
+
+            // Save inventory movements
+            $this->saveInventoryMovements();
 
             DB::commit();
 
@@ -452,7 +570,6 @@ class OrderForm extends Component
                 'total_hectares' => $flightData['total_hectares'],
                 'status' => 'pending',
                 'flight_number' => rand(1000, 9999),
-                'total_hectares' => 0, // calculate?
             ]);
 
             // Save flight lots
@@ -465,7 +582,7 @@ class OrderForm extends Component
                         'lot_id' => $lotData['lot_id'],
                         'lot_hectares' => $lotData['lot_hectares'] ?? 0,
                         'hectares_to_apply' => $lotData['hectares_to_apply'] ?? 0,
-                        'lot_total_hectares' => 0, // calculate?
+                        'lot_total_hectares' => $lotData['lot_hectares'],
                     ]);
                 }
             }
@@ -482,6 +599,27 @@ class OrderForm extends Component
                     ]);
                 }
             }
+        }
+    }
+
+    /**
+     * Save the inventory movements
+     */
+    protected function saveInventoryMovements()
+    {
+        foreach ($this->inventoryMovements as $movement) {
+            if (empty($movement['product_id'])) continue;
+
+            $this->order->inventoryMovements()->create([
+                'product_id' => $movement['product_id'],
+                'client_provides_product' => $movement['client_provides_product'] ?? false,
+                'client_provided_quantity' => $movement['client_provided_quantity'] ?? 0,
+                'required_quantity' => $movement['required_quantity'] ?? 0,
+                'difference_quantity' => $movement['difference_quantity'] ?? 0,
+                'difference_type' => $movement['difference_type'] ?? null,
+                'add_surplus_to_inventory' => $movement['add_surplus_to_inventory'] ?? false,
+                'notes' => $movement['notes'] ?? '',
+            ]);
         }
     }
 
@@ -512,6 +650,57 @@ class OrderForm extends Component
     public function handleFlightsUpdated($flights): void
     {
         $this->flights = $flights;
+    }
+
+    public function handleInventoryUpdated($inventory): void
+    {
+        $this->inventoryMovements = $inventory;
+    }
+
+    public function handleEntityCreated($entityType, $entityId): void
+    {
+        // Handle entity creation from modals
+        switch ($entityType) {
+            case 'client':
+                $this->loadClients(); // Load first to ensure new entity is available
+                $this->showClientModal = false;
+                // Use $this->js() to ensure DOM is updated before setting value
+                $this->js('$wire.set("client_id", ' . $entityId . ')');
+                // Also load services since client selection triggers service loading
+                $this->loadServices();
+                break;
+            case 'service':
+                $this->loadServices(); // Load first to ensure new entity is available
+                $this->showServiceModal = false;
+                $this->js('$wire.set("service_id", ' . $entityId . ')');
+                break;
+            case 'aircraft':
+                $this->loadAircrafts(); // Load first to ensure new entity is available
+                $this->showAircraftModal = false;
+                $this->js('$wire.set("aircraft_id", ' . $entityId . ')');
+                break;
+            case 'pilot':
+                $this->loadStaff(); // Load first to ensure new entity is available
+                $this->showPilotModal = false;
+                $this->js('$wire.set("pilot_id", ' . $entityId . ')');
+                break;
+            case 'ground_support':
+                $this->loadStaff(); // Load first to ensure new entity is available
+                $this->showGroundSupportModal = false;
+                $this->js('$wire.set("ground_support_id", ' . $entityId . ')');
+                break;
+            case 'lot':
+                $this->showLotModal = false;
+                // For lots, we need to dispatch to the OrderLots component to refresh and add the new lot
+                $this->dispatch('lotCreated', $entityId);
+                break;
+        }
+
+        $this->dispatch('showAlert', [
+            'title' => 'Éxito',
+            'text' => ucfirst($entityType) . ' creado y seleccionado correctamente',
+            'type' => 'success'
+        ]);
     }
 
     public function render()
