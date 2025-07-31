@@ -38,7 +38,7 @@ class OrderDataTable extends DataTable
                 return '$' . number_format($order->total_amount, 2);
             })
             ->editColumn('created_at', function ($row) {
-                return $row->created_at->format('d-m-Y H:i:s');
+                return $row->created_at->format('d/m/y H:i');
             })
             ->editColumn('status', function ($row) {
                 $statusClass = [
@@ -114,7 +114,7 @@ class OrderDataTable extends DataTable
                     ->setTableId('order-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->orderBy(0, 'desc')
+                    ->orderBy(4, 'desc')
                     ->selectStyleSingle()
                     ->parameters([
                         'dom' => 'Bfrtip',
@@ -135,12 +135,13 @@ class OrderDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('#'),
+//            Column::make('id')->title('#'),
             Column::make('order_number')->title('Número de Orden'),
             Column::make('client_name')->title('Cliente'),
-            Column::make('tenant_name')->title('Proveedor'),
+//            Column::make('tenant_name')->title('Proveedor'),
             Column::make('service_name')->title('Servicio'),
             Column::make('total_hectares')->title('Total Hectáreas'),
+            Column::make('created_at')->title('Creado'),
             Column::make('total_amount')->title('Monto Total'),
             Column::make('status')->title('Estado'),
             Column::computed('action')->title('Acciones')

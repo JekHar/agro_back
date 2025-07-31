@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Progress Steps -->
-                <div class="modal-header bg-light">
+                <div class="modal-header bg-dark">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-12">
@@ -24,7 +24,7 @@
                                             <span class="step-title">Lotes y Áreas</span>
                                         </div>
                                         <div class="step-divider"></div>
-                                        <div class="step-indicator {{ $currentStep >= 2 ? 'active' : '' }}">
+                                        <div class="step-indicator background-primary {{ $currentStep >= 2 ? 'active' : '' }}">
                                             <span class="step-number">2</span>
                                             <span class="step-title">Productos y Dosificación</span>
                                         </div>
@@ -423,7 +423,7 @@
         }
 
         .step-indicator.active {
-            background: #0d6efd;
+            background: #f60;
             color: white;
             transform: scale(1.05);
         }
@@ -445,7 +445,7 @@
 
         .step-indicator.active .step-number {
             background: white;
-            color: #0d6efd;
+            color: #f60;
             border-color: white;
         }
 

@@ -81,6 +81,9 @@
                                         <i class="fa fa-add"></i>
                                     </button>
                                 </div>
+                                @error('client_id')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -100,6 +103,9 @@
                                         <i class="fa fa-add"></i>
                                     </button>
                                 </div>
+                                @error('service_id')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -117,6 +123,9 @@
                                         <i class="fa fa-add"></i>
                                     </button>
                                 </div>
+                                @error('aircraft_id')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -134,6 +143,9 @@
                                         <i class="fa fa-add"></i>
                                     </button>
                                 </div>
+                                @error('pilot_id')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -151,6 +163,9 @@
                                         <i class="fa fa-add"></i>
                                     </button>
                                 </div>
+                                @error('ground_support_id')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -199,12 +214,18 @@
             </div>
         </div>
 
+        @if ($errors->has('selectedLots'))
+            <div class="alert alert-danger mb-2">{{ $errors->first('selectedLots') }}</div>
+        @endif
         <livewire:order-lots :clientId="$client_id" :existingLots="$selectedLots" />
 
         {{-- TODO: OrderProducts component removed - product selection moved to FlightWizard
         <livewire:order-products :clientId="$client_id" :existingProducts="$selectedProducts ?? []" :totalHectares="$totalHectares" />
         --}}
 
+        @if ($errors->has('flights'))
+            <div class="alert alert-danger mb-2">{{ $errors->first('flights') }}</div>
+        @endif
         <livewire:order-flights :clientId="$client_id" :existingFlights="$flights ?? []" :totalHectares="$totalHectares" :orderLots="$selectedLots" />
 
         <livewire:order-inventory :clientId="$client_id" :existingInventory="$inventoryMovements ?? []" :totalHectares="$totalHectares" />
@@ -444,6 +465,14 @@
                     }
                 }
             });
+        });
+
+        window.addEventListener('scrollToTop', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const errorBlock = document.getElementById('form-errors');
+            if (errorBlock) {
+                errorBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         });
     </script>
 </div>

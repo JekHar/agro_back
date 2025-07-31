@@ -73,10 +73,29 @@ class OrderForm extends Component
     public $showGroundSupportModal = false;
     public $showLotModal = false;
 
-        protected $rules = [
+    protected $rules = [
         'client_id' => 'required|exists:merchants,id',
         'service_id' => 'required|exists:services,id',
         'aircraft_id' => 'required|exists:aircrafts,id',
+        'pilot_id' => 'required|exists:users,id',
+        'ground_support_id' => 'required|exists:users,id',
+        'selectedLots' => 'required|array|min:1',
+        'flights' => 'required|array|min:1',
+    ];
+
+    protected $messages = [
+        'client_id.required' => 'El campo cliente es obligatorio.',
+        'client_id.exists' => 'El cliente seleccionado no es válido.',
+        'service_id.required' => 'El campo servicio es obligatorio.',
+        'service_id.exists' => 'El servicio seleccionado no es válido.',
+        'aircraft_id.required' => 'El campo aeronave es obligatorio.',
+        'aircraft_id.exists' => 'La aeronave seleccionada no es válida.',
+        'pilot_id.required' => 'El campo piloto es obligatorio.',
+        'pilot_id.exists' => 'El piloto seleccionado no es válido.',
+        'ground_support_id.required' => 'El campo apoyo de tierra es obligatorio.',
+        'ground_support_id.exists' => 'El apoyo de tierra seleccionado no es válido.',
+        'selectedLots.required' => 'Debe asociar al menos un lote.',
+        'flights.required' => 'Debe asociar al menos un vuelo.',
     ];
 
     // Listeners for when entities are created in modals
@@ -422,6 +441,16 @@ class OrderForm extends Component
     public function submit()
     {
         $this->validate();
+        if (empty($this->selectedLots) || count($this->selectedLots) < 1) {
+            $this->addError('selectedLots', 'Debe asociar al menos un lote.');
+        }
+        if (empty($this->flights) || count($this->flights) < 1) {
+            $this->addError('flights', 'Debe asociar al menos un vuelo.');
+        }
+        if ($this->getErrorBag()->isNotEmpty()) {
+            $this->dispatchBrowserEvent('scrollToTop');
+            return;
+        }
 
         try {
             DB::beginTransaction();
@@ -468,7 +497,7 @@ class OrderForm extends Component
                     'status' => 'pending',
                     'created_by' => Auth::id(),
                     'total_hectares' => $this->totalHectares,
-                    'total_amount' => 0,
+                    'total_amount' => $this->services->firstWhere('id', $this->service_id)->price_per_hectare * $this->totalHectares,
                 ]);
 
                 // Handle prescription file if uploaded
