@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Progress Steps -->
-                <div class="modal-header bg-light">
+                <div class="modal-header bg-dark">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-12">
@@ -24,7 +24,7 @@
                                             <span class="step-title">Lotes y Áreas</span>
                                         </div>
                                         <div class="step-divider"></div>
-                                        <div class="step-indicator {{ $currentStep >= 2 ? 'active' : '' }}">
+                                        <div class="step-indicator background-primary {{ $currentStep >= 2 ? 'active' : '' }}">
                                             <span class="step-number">2</span>
                                             <span class="step-title">Productos y Dosificación</span>
                                         </div>
@@ -92,12 +92,27 @@
                                                         <td>
                                                             @if($lot['selected'])
                                                                 <div class="input-group input-group-sm">
-                                                                    <input type="number" step="0.01" min="0"
+                                                                    <input type="number"
+                                                                           min="0"
                                                                            max="{{ $lot['remaining_hectares'] }}"
                                                                            wire:model.debounce.500ms="selectedFlightLots.{{ $index }}.hectares_to_apply"
                                                                            class="form-control"
-                                                                           x-data
-                                                                           x-on:input.debounce.500ms="$wire.calculateTotalHectares()"
+                                                                           x-data="{
+           maxValue: {{ $lot['remaining_hectares'] }},
+           lastValidValue: null
+       }"
+                                                                           x-on:input="
+           let value = parseFloat($event.target.value);
+           if (value > maxValue) {
+               $event.target.value = maxValue;
+               // Update Livewire immediately to prevent race condition
+               $wire.set('selectedFlightLots.{{ $index }}.hectares_to_apply', maxValue);
+           }
+           clearTimeout(window.calculateTimeout);
+           window.calculateTimeout = setTimeout(() => {
+               $wire.calculateTotalHectares();
+           }, 500);
+       "
                                                                            onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
                                                                     <span class="input-group-text">ha</span>
                                                                 </div>
@@ -408,7 +423,7 @@
         }
 
         .step-indicator.active {
-            background: #0d6efd;
+            background: #f60;
             color: white;
             transform: scale(1.05);
         }
@@ -430,7 +445,7 @@
 
         .step-indicator.active .step-number {
             background: white;
-            color: #0d6efd;
+            color: #f60;
             border-color: white;
         }
 

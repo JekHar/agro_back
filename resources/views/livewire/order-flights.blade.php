@@ -29,21 +29,21 @@
             <!-- Flight Summary -->
             <div class="row align-items-center mb-4">
                 <div class="col-md-4">
-                    <div class="bg-info-light p-3 rounded">
-                        <h6 class="mb-1 text-info">HECTÁREAS TOTALES</h6>
-                        <p class="h4 mb-0 text-info">{{ number_format($totalHectares, 2) }} ha</p>
+                    <div class="bg-info p-3 rounded">
+                        <h6 class="mb-1 text-white">HECTÁREAS TOTALES</h6>
+                        <p class="h4 mb-0 text-white">{{ number_format($totalHectares, 2) }} ha</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="bg-success-light p-3 rounded">
-                        <h6 class="mb-1 text-success">VUELOS CONFIGURADOS</h6>
-                        <p class="h4 mb-0 text-success">{{ count($flights) }}</p>
+                    <div class="bg-success p-3 rounded">
+                        <h6 class="mb-1 text-white">VUELOS CONFIGURADOS</h6>
+                        <p class="h4 mb-0 text-white">{{ count($flights) }}</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="bg-{{ $remainingHectares < 0 ? 'danger' : 'info' }}-light p-3 rounded">
-                        <h6 class="mb-1 text-{{ $remainingHectares < 0 ? 'danger' : 'info' }}">HECTÁREAS RESTANTES</h6>
-                        <p class="h4 mb-0 text-{{ $remainingHectares < 0 ? 'danger' : 'info' }}">
+                    <div class="bg-{{ $remainingHectares < 0 ? 'danger' : 'info' }} p-3 rounded">
+                        <h6 class="mb-1 text-white">HECTÁREAS RESTANTES</h6>
+                        <p class="h4 mb-0 text-white">
                             {{ number_format($remainingHectares, 2) }} ha
                         </p>
                     </div>

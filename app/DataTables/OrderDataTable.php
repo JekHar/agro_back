@@ -23,7 +23,7 @@ class OrderDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->editColumn('client_name', function ($order) {
-                return $order->client_name ?? 'N/A';
+                return '<strong>' . ($order->client_name ?? 'N/A') . '</strong>';
             })
             ->editColumn('tenant_name', function ($order) {
                 return $order->tenant_name ?? 'N/A';
@@ -38,7 +38,7 @@ class OrderDataTable extends DataTable
                 return '$' . number_format($order->total_amount, 2);
             })
             ->editColumn('created_at', function ($row) {
-                return $row->created_at->format('d-m-Y H:i:s');
+                return $row->created_at->format('d/m/y H:i');
             })
             ->editColumn('status', function ($row) {
                 $statusClass = [
@@ -69,8 +69,25 @@ class OrderDataTable extends DataTable
             ->filterColumn('pilot_name', function ($query, $keyword) {
                 $query->where('pilots.name', 'like', "%{$keyword}%");
             })
+            // Add status filter
+            ->filterColumn('status', function ($query, $keyword) {
+                if ($keyword && $keyword !== 'all') {
+                    $query->where('orders.status', $keyword);
+                }
+            })
+            // Add date range filter for created_at
+            ->filterColumn('created_at', function ($query, $keyword) {
+                if ($keyword) {
+                    $dates = explode(' - ', $keyword);
+                    if (count($dates) == 2) {
+                        $startDate = \Carbon\Carbon::createFromFormat('d/m/Y', trim($dates[0]))->startOfDay();
+                        $endDate = \Carbon\Carbon::createFromFormat('d/m/Y', trim($dates[1]))->endOfDay();
+                        $query->whereBetween('orders.created_at', [$startDate, $endDate]);
+                    }
+                }
+            })
             ->addColumn('action', 'pages.products.orders-actions')
-            ->rawColumns(['status', 'action'])
+            ->rawColumns(['status', 'action', 'client_name'])
             ->setRowId('id');
     }
 
@@ -111,22 +128,26 @@ class OrderDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('order-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->orderBy(0, 'desc')
-                    ->selectStyleSingle()
-                    ->parameters([
-                        'dom' => 'Bfrtip',
-                        'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
-                        'drawCallback' => 'function() { initDeleteConfirmation() }',
-                    ])
-                    ->buttons([
-                        Button::make('excel')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
-                        Button::make('csv')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
-                        Button::make('pdf')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
-                        Button::make('print')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
-                    ]);
+            ->setTableId('order-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->orderBy(4, 'desc')
+            ->selectStyleSingle()
+            ->parameters([
+                'dom' => 'Bfrtip',
+                'language' => ['url' => asset('js/plugins/datatables/Spanish.json')],
+                'drawCallback' => 'function() { initDeleteConfirmation() }',
+                'initComplete' => 'function() {
+                            initStatusFilter();
+                            initDateRangeFilter();
+                        }',
+            ])
+            ->buttons([
+                Button::make('excel')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                Button::make('csv')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                Button::make('pdf')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+                Button::make('print')->attr(['class' => 'btn btn-secondary rounded-pill me-1']),
+            ]);
     }
 
     /**
@@ -135,19 +156,20 @@ class OrderDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('#'),
+//            Column::make('id')->title('#'),
             Column::make('order_number')->title('Número de Orden'),
             Column::make('client_name')->title('Cliente'),
-            Column::make('tenant_name')->title('Proveedor'),
+//            Column::make('tenant_name')->title('Proveedor'),
             Column::make('service_name')->title('Servicio'),
             Column::make('total_hectares')->title('Total Hectáreas'),
+            Column::make('created_at')->title('Creado'),
             Column::make('total_amount')->title('Monto Total'),
             Column::make('status')->title('Estado'),
             Column::computed('action')->title('Acciones')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(120)
-                  ->addClass('text-center'),
+                ->exportable(false)
+                ->printable(false)
+                ->width(120)
+                ->addClass('text-center'),
         ];
     }
 

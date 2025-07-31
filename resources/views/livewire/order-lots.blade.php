@@ -48,8 +48,8 @@
                                 <td class="text-center">
                                     <select wire:model="selectedLots.{{ $index }}.status" class="form-select form-select-sm">
                                         <option value="pending">Pendiente</option>
-                                        <option value="in_progress">En Progreso</option>
-                                        <option value="completed">Completado</option>
+                                        <option value="in_process">En Progreso</option>
+                                        <option value="finished">Completado</option>
                                     </select>
                                 </td>
                                 <td class="text-center">

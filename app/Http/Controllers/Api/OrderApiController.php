@@ -42,6 +42,10 @@ class OrderApiController extends Controller
             $query->where('ground_support_id', auth()->user()->id);
         } */
 
+        if (auth()->user()->hasAnyRole('Tenant', 'Pilot', 'Ground Support') ) {
+            $query->where('tenant_id', auth()->user()->merchant_id);
+        }
+
         if ($request->has('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
@@ -133,7 +137,7 @@ class OrderApiController extends Controller
                     'flightLots' => function ($q) {
                         $q->select(['id', 'flight_id', 'lot_id', 'hectares_to_apply', 'lot_total_hectares'])
                             ->with([
-                                'lot:id,number,hectares,merchant_id',
+                                'lot:id,number,name_lot,hectares,merchant_id',
                                 'lot.coordinates:id,lot_id,latitude,longitude,sequence_number,is_hole,hole_group'
                             ]);
                     }
@@ -157,7 +161,7 @@ class OrderApiController extends Controller
             'orderLots' => function ($query) {
                 $query->select(['id', 'order_id', 'lot_id', 'hectares', 'status'])
                     ->with([
-                        'lot:id,number,hectares,merchant_id',
+                        'lot:id,number,name_lot,hectares,merchant_id',
                         'lot.coordinates:id,lot_id,latitude,longitude,sequence_number,is_hole,hole_group'
                     ]);
             }

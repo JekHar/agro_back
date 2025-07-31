@@ -21,6 +21,7 @@ class FlightWizard extends Component
     public $clientId;
     public $selectedOrderLots = [];
     public $selectedOrderProducts = [];
+    public $existingFlights = []; // Add this to track existing flights
 
     // Step 1: Lot and Area Selection
     public $availableLots = [];
@@ -51,11 +52,12 @@ class FlightWizard extends Component
         'productsUpdated' => 'handleProductsUpdated'
     ];
 
-    public function mount($clientId = null, $orderLots = [], $orderProducts = [])
+    public function mount($clientId = null, $orderLots = [], $orderProducts = [], $existingFlights = [])
     {
         $this->clientId = $clientId;
         $this->selectedOrderLots = $orderLots;
         $this->selectedOrderProducts = $orderProducts;
+        $this->existingFlights = $existingFlights; // Store existing flights
 
         // Initialize as empty collections
         $this->availableLots = collect();
@@ -77,6 +79,9 @@ class FlightWizard extends Component
         }
         if (isset($data['orderProducts'])) {
             $this->selectedOrderProducts = $data['orderProducts'];
+        }
+        if (isset($data['existingFlights'])) {
+            $this->existingFlights = $data['existingFlights'];
         }
 
         $this->loadAvailableLots();
@@ -264,16 +269,29 @@ class FlightWizard extends Component
 
     protected function getTotalHectaresUsedInLot($lotId)
     {
-        if (!$this->orderId) {
-            return 0;
+        $totalUsed = 0;
+
+        // Sum hectares from saved flights in database (if order exists)
+        if ($this->orderId) {
+            $totalUsed += FlightLot::whereHas('flight', function ($query) {
+                    $query->where('order_id', $this->orderId);
+                })
+                ->where('lot_id', $lotId)
+                ->sum('hectares_to_apply');
         }
 
-        // Sum all hectares used in previous flights for this lot
-        return FlightLot::whereHas('flight', function ($query) {
-                $query->where('order_id', $this->orderId);
-            })
-            ->where('lot_id', $lotId)
-            ->sum('hectares_to_apply');
+        // Sum hectares from existing flights in current session
+        foreach ($this->existingFlights as $flight) {
+            if (isset($flight['lots']) && is_array($flight['lots'])) {
+                foreach ($flight['lots'] as $flightLot) {
+                    if (isset($flightLot['lot_id']) && $flightLot['lot_id'] == $lotId) {
+                        $totalUsed += floatval($flightLot['hectares_to_apply'] ?? 0);
+                    }
+                }
+            }
+        }
+
+        return $totalUsed;
     }
 
     public function nextStep()

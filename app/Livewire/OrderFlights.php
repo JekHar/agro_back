@@ -244,7 +244,8 @@ class OrderFlights extends Component
             'orderId' => $this->orderId ?? null,
             'clientId' => $this->clientId,
             'orderLots' => $this->orderLots ?? [],
-            'orderProducts' => $this->products
+            'orderProducts' => $this->products,
+            'existingFlights' => $this->flights ?? [] // Pass existing flights to wizard
         ]);
     }
 
