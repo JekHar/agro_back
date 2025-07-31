@@ -86,6 +86,7 @@ class OrderResource extends JsonResource
                             'lot' => [
                                 'id' => $lot->lot->id,
                                 'numbering' => $lot->lot->number,
+                                'name_lot' => $lot->lot->name_lot,
                                 'hectares' => (double) $lot->lot->hectares,
                                 'merchantId' => $lot->lot->merchant_id,
                                 'coordinates' => $lot->lot->coordinates->map(function ($coordinate) {
@@ -98,7 +99,7 @@ class OrderResource extends JsonResource
                                         'holeGroup' => (int) $coordinate->hole_group,
                                     ];
                                 }),
-                                
+
                             ],
                         ];
                     }),
@@ -138,6 +139,7 @@ class OrderResource extends JsonResource
                     'lot' => [
                         'id' => $orderLot->lot->id,
                         'numbering' => $orderLot->lot->number,
+                        'name' => $orderLot->lot->name,
                         'hectares' => (double) $orderLot->lot->hectares,
                         'merchantId' => $orderLot->lot->merchant_id,
                         'coordinates' => $orderLot->lot->coordinates->map(function ($coordinate) {
@@ -148,7 +150,7 @@ class OrderResource extends JsonResource
                                 'sequenceNumber' => (int) $coordinate->sequence_number,
                                 'isHole' => (bool) $coordinate->is_hole,
                                 'holeGroup' => (int) $coordinate->hole_group,
-                            ];                 
+                            ];
                         }),
                     ],
                 ];
