@@ -20,7 +20,7 @@ class ProductDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->editColumn('category_id', function ($product) {
+            ->editColumn('category_name', function ($product) {
                 return $product->category_name;
             })
             ->filterColumn('category_name', function ($query, $keyword) {
@@ -41,6 +41,9 @@ class ProductDataTable extends DataTable
             })
             ->addColumn('inventory_cans', function ($product) {
                 return $product->inventory_cans;
+            })
+            ->addColumn('merchant_name', function ($product) {
+                return $product->merchant_name;
             })
             ->setRowId('id');
     }
