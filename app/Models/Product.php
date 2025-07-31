@@ -39,4 +39,26 @@ class Product extends Model implements Auditable
     {
         return $this->hasMany(InventoryMovement::class);
     }
+
+    // Accessor for Inventory LITERS
+    public function getInventoryLitersAttribute()
+    {
+        if (is_null($this->liters_per_can)) {
+            // Stock is already in liters
+            return $this->stock;
+        }
+        // Stock is in cans, convert to liters
+        return $this->stock * $this->liters_per_can;
+    }
+
+    // Accessor for Inventory CANS
+    public function getInventoryCansAttribute()
+    {
+        if (is_null($this->liters_per_can)) {
+            // Stock is in liters, so no cans count
+            return '-';
+        }
+        // Stock is already in cans
+        return $this->stock;
+    }
 }

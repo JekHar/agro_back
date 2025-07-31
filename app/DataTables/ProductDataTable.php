@@ -36,6 +36,12 @@ class ProductDataTable extends DataTable
                 return $row->updated_at->format('d-m-Y H:i:s');
             })
             ->addColumn('action', 'pages.products.action')
+            ->addColumn('inventory_liters', function ($product) {
+                return $product->inventory_liters;
+            })
+            ->addColumn('inventory_cans', function ($product) {
+                return $product->inventory_cans;
+            })
             ->setRowId('id');
     }
 
@@ -56,6 +62,9 @@ class ProductDataTable extends DataTable
                 ->select('products.*', 'categories.name as category_name', 'merchants.business_name as merchant_name')
                 ->where('merchants.id', auth()->user()->merchant_id);
         }
+
+        // Default return for other roles
+        return $model->newQuery();
     }
 
     /**
@@ -90,16 +99,18 @@ class ProductDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name')->title('Nombre'),
-            Column::make('category_name')->title('Categoría'),
-            Column::make('merchant_name')->title('Cliente'),
-            Column::make('commercial_brand')->title('Marca Comercial'),
-            Column::make('dosage_per_hectare')->title('Dosis/ha'),
-            Column::make('liters_per_can')->title('litros por bidones'),
+            Column::make('name')->title('Name'),
+            Column::make('category_name')->title('Category'),
+            Column::make('merchant_name')->title('Client'),
+            Column::make('commercial_brand')->title('Commercial Brand'),
+            Column::make('dosage_per_hectare')->title('Dosage/ha'),
+            Column::make('liters_per_can')->title('Liters per Can'),
+            Column::computed('inventory_liters')->title('Inventory LITERS'),
+            Column::computed('inventory_cans')->title('Inventory CANS'),
             // Column::make('stock')->title('Stock'),
-            // Column::make('created_at')->title('Fecha creación'),
-            // Column::make('updated_at')->title('Fecha modificación'),
-            Column::computed('action')->title('Acciones')
+            // Column::make('created_at')->title('Created Date'),
+            // Column::make('updated_at')->title('Updated Date'),
+            Column::computed('action')->title('Actions')
                 ->exportable(false)
                 ->printable(false)
                 ->width(60)
