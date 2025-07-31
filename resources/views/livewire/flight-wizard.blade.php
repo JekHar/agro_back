@@ -92,12 +92,27 @@
                                                         <td>
                                                             @if($lot['selected'])
                                                                 <div class="input-group input-group-sm">
-                                                                    <input type="number" step="0.01" min="0"
+                                                                    <input type="number"
+                                                                           min="0"
                                                                            max="{{ $lot['remaining_hectares'] }}"
                                                                            wire:model.debounce.500ms="selectedFlightLots.{{ $index }}.hectares_to_apply"
                                                                            class="form-control"
-                                                                           x-data
-                                                                           x-on:input.debounce.500ms="$wire.calculateTotalHectares()"
+                                                                           x-data="{
+           maxValue: {{ $lot['remaining_hectares'] }},
+           lastValidValue: null
+       }"
+                                                                           x-on:input="
+           let value = parseFloat($event.target.value);
+           if (value > maxValue) {
+               $event.target.value = maxValue;
+               // Update Livewire immediately to prevent race condition
+               $wire.set('selectedFlightLots.{{ $index }}.hectares_to_apply', maxValue);
+           }
+           clearTimeout(window.calculateTimeout);
+           window.calculateTimeout = setTimeout(() => {
+               $wire.calculateTotalHectares();
+           }, 500);
+       "
                                                                            onblur="this.value = parseFloat(this.value || 0).toFixed(2)">
                                                                     <span class="input-group-text">ha</span>
                                                                 </div>
