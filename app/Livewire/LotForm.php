@@ -150,11 +150,7 @@ class LotForm extends Component
 
             $lot->save();
 
-            // If in modal mode, emit event to parent component
-            if ($this->isModal && !$this->currentLotId) {
-                $this->dispatch('entityCreated', 'lot', $lot->id);
-                return;
-            }
+
 
             if ($this->currentLotId) {
                 $lot->coordinates()->delete();
@@ -183,12 +179,19 @@ class LotForm extends Component
                 });
             });
 
+            // If in modal mode, emit event to parent component
+            if ($this->isModal && !$this->currentLotId) {
+                $this->dispatch('entityCreated', 'lot', $lot->id);
+                return;
+            }
+
             $this->dispatch('swal', [
                 'title' => __('crud.success'),
                 'message' => __($this->currentLotId ? 'crud.lots.actions.updated' : 'crud.lots.actions.created'),
                 'icon' => 'success',
                 'redirect' => route('lots.index'),
             ]);
+
         } catch (\Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
 
