@@ -101,15 +101,14 @@ class ProductDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id'),
-            Column::make('name')->title('Name'),
-            Column::make('category_name')->title('Category'),
-            Column::make('merchant_name')->title('Client'),
-            Column::make('commercial_brand')->title('Commercial Brand'),
+            Column::make('name')->title('Nombre'),
+            Column::make('category_name')->title('Categoria'),
+            Column::make('merchant_name')->title('Cliente'),
+            Column::make('commercial_brand')->title('Marca'),
             Column::make('dosage_per_hectare')->title('Dosage/ha'),
-            Column::make('liters_per_can')->title('Liters per Can'),
-            Column::computed('inventory_liters')->title('Inventory LITERS'),
-            Column::computed('inventory_cans')->title('Inventory CANS'),
+            Column::make('liters_per_can')->title('Litros por bidon'),
+            Column::computed('inventory_liters')->title('Litros'),
+            Column::computed('inventory_cans')->title('Envases'),
             // Column::make('stock')->title('Stock'),
             // Column::make('created_at')->title('Created Date'),
             // Column::make('updated_at')->title('Updated Date'),

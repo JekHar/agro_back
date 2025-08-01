@@ -54,8 +54,6 @@ class CategoryDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-
-            Column::make('id'),
             Column::make('name')->title('Nombre'),
             Column::make('description')->title('Descripción'),
             // Column::make('created_at')->title('Fecha creación'),
