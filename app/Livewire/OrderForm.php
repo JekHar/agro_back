@@ -11,6 +11,7 @@ use App\Models\InventoryMovement;
 use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\OrderLot;
+use App\Models\Product;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -236,6 +237,8 @@ class OrderForm extends Component
                 'difference_quantity' => $movement->difference_quantity,
                 'difference_type' => $movement->difference_type,
                 'add_surplus_to_inventory' => $movement->add_surplus_to_inventory,
+                'tenant_adds_to_inventory' => $movement->tenant_adds_to_inventory ?? false,
+                'tenant_quantity_to_add' => $movement->tenant_quantity_to_add ?? 0,
                 'notes' => $movement->notes,
             ];
         })->toArray();
@@ -639,16 +642,85 @@ class OrderForm extends Component
         foreach ($this->inventoryMovements as $movement) {
             if (empty($movement['product_id'])) continue;
 
-            $this->order->inventoryMovements()->create([
-                'product_id' => $movement['product_id'],
-                'client_provides_product' => $movement['client_provides_product'] ?? false,
-                'client_provided_quantity' => $movement['client_provided_quantity'] ?? 0,
-                'required_quantity' => $movement['required_quantity'] ?? 0,
-                'difference_quantity' => $movement['difference_quantity'] ?? 0,
-                'difference_type' => $movement['difference_type'] ?? null,
-                'add_surplus_to_inventory' => $movement['add_surplus_to_inventory'] ?? false,
-                'notes' => $movement['notes'] ?? '',
-            ]);
+            $clientQuantity = floatval($movement['client_provided_quantity'] ?? 0);
+            $tenantQuantity = floatval($movement['tenant_quantity_to_add'] ?? 0);
+            $requiredQuantity = floatval($movement['required_quantity'] ?? 0);
+
+            // Create inventory movement for client provided products
+            if ($clientQuantity > 0) {
+                $addClientSurplus = $movement['add_client_surplus_to_inventory'] ?? false;
+
+                $inventoryMovement = $this->order->inventoryMovements()->create([
+                    'product_id' => $movement['product_id'],
+                    'client_provided' => true,
+                    'quantity' => $clientQuantity,
+                    'required_quantity' => $requiredQuantity,
+                    'add_surplus_to_inventory' => $addClientSurplus,
+                    'merchant_id' => $this->client_id, // Store which client provided the products
+                    'notes' => $movement['notes'] ?? '',
+                ]);
+
+                // Update product stock if user chose to add surplus to inventory
+                if ($addClientSurplus && $inventoryMovement->hasSurplus()) {
+                    $product = Product::find($movement['product_id']);
+                    if ($product) {
+                        $surplusQuantity = $inventoryMovement->getSurplusQuantity();
+
+                        // Convert liters to containers if product uses containers
+                        if ($product->liters_per_can > 0) {
+                            $containersToAdd = $surplusQuantity / $product->liters_per_can;
+                            $product->increment('stock', $containersToAdd);
+                        } else {
+                            // Stock is in liters
+                            $product->increment('stock', $surplusQuantity);
+                        }
+                    }
+                }
+            }
+
+            // Create separate inventory movement for company provided products
+            if ($tenantQuantity > 0) {
+                $inventoryMovement = $this->order->inventoryMovements()->create([
+                    'product_id' => $movement['product_id'],
+                    'client_provided' => false,
+                    'quantity' => $tenantQuantity,
+                    'required_quantity' => 0, // Company additions don't have a "required" amount
+                    'add_surplus_to_inventory' => true, // Company additions always go to inventory
+                    'merchant_id' => null, // Company additions don't have a merchant_id
+                    'notes' => $movement['notes'] ?? '',
+                ]);
+
+                // Always update product stock for company additions
+                $product = Product::find($movement['product_id']);
+                if ($product) {
+                    // Convert liters to containers if product uses containers
+                    if ($product->liters_per_can > 0) {
+                        $containersToAdd = $tenantQuantity / $product->liters_per_can;
+                        $product->increment('stock', $containersToAdd);
+                    } else {
+                        // Stock is in liters
+                        $product->increment('stock', $tenantQuantity);
+                    }
+                }
+            }
+
+            // Deduct required quantity from product stock (for what's actually used)
+            $product = Product::find($movement['product_id']);
+            if ($product && $requiredQuantity > 0) {
+                $totalProvided = $clientQuantity + $tenantQuantity;
+                $stockToDeduct = max(0, $requiredQuantity - $totalProvided);
+
+                if ($stockToDeduct > 0) {
+                    // Convert liters to containers if product uses containers
+                    if ($product->liters_per_can > 0) {
+                        $containersToDeduct = $stockToDeduct / $product->liters_per_can;
+                        $product->decrement('stock', $containersToDeduct);
+                    } else {
+                        // Stock is in liters
+                        $product->decrement('stock', $stockToDeduct);
+                    }
+                }
+            }
         }
     }
 
@@ -731,6 +803,7 @@ class OrderForm extends Component
             'type' => 'success'
         ]);
     }
+
 
     public function render()
     {

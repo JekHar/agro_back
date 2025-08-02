@@ -40,6 +40,17 @@ class ProductForm extends Component
 
     public $showInventoryMovements = false;
 
+    protected $listeners = [
+        'inventoryMovementSaved' => 'refreshInventoryMovements',
+        'refreshPage' => 'refresh',
+    ];
+
+    public function refresh()
+    {
+        // reload
+        $this->mount($this->productId);
+    }
+
     protected function rules()
     {
         $productRequest = new ProductRequest;
@@ -139,6 +150,17 @@ class ProductForm extends Component
             ->where('product_id', $this->productId)
             ->orderByDesc('created_at')
             ->get();
+    }
+
+    public function refreshInventoryMovements()
+    {
+        // Refresh the inventory movements when a new one is saved
+        $this->dispatch('$refresh');
+    }
+
+    public function openInventoryMovementModal()
+    {
+        $this->dispatch('openInventoryMovementModal');
     }
 
     public function render()

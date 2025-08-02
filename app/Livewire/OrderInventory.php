@@ -20,7 +20,7 @@ class OrderInventory extends Component
         'flightsUpdated' => 'updateFromFlights',
     ];
 
-    public function mount($clientId = null, $existingInventory = [], $totalHectares = 0)
+    public function mount($clientId = null, $existingInventory = [], $totalHectares = 0): void
     {
 
         $this->clientId = $clientId;
@@ -39,7 +39,7 @@ class OrderInventory extends Component
             ->get();
     }
 
-    public function initializeInventoryMovements()
+    public function initializeInventoryMovements(): void
     {
         if (!empty($this->existingInventory)) {
             $this->inventoryMovements = $this->existingInventory;
@@ -48,9 +48,8 @@ class OrderInventory extends Component
         }
     }
 
-    public function updateFromFlights($flights)
+    public function updateFromFlights($flights): void
     {
-        // Calculate required quantities based on flight products
         $productQuantities = [];
 
         foreach ($flights as $flight) {
@@ -100,85 +99,74 @@ class OrderInventory extends Component
 
         if ($existingIndex !== null) {
             $this->inventoryMovements[$existingIndex]['required_quantity'] = $requiredQuantity;
-            $this->calculateDifference($existingIndex);
         } else {
             $this->inventoryMovements[] = [
                 'product_id' => $productId,
-                'client_provides_product' => false,
                 'client_provided_quantity' => 0,
                 'required_quantity' => $requiredQuantity,
-                'difference_quantity' => 0,
-                'difference_type' => 'exact',
-                'add_surplus_to_inventory' => false,
+                'tenant_quantity_to_add' => 0,
+                'add_client_surplus_to_inventory' => false,
+                'add_tenant_to_inventory' => true, // Default to true for tenant additions
                 'notes' => '',
             ];
         }
     }
 
-    public function toggleClientProvidesProduct($index)
-    {
-        $this->inventoryMovements[$index]['client_provides_product'] = !$this->inventoryMovements[$index]['client_provides_product'];
-
-        if (!$this->inventoryMovements[$index]['client_provides_product']) {
-            $this->inventoryMovements[$index]['client_provided_quantity'] = 0;
-            $this->inventoryMovements[$index]['add_surplus_to_inventory'] = false;
-        }
-
-        $this->calculateDifference($index);
-        $this->dispatch('inventoryUpdated', $this->inventoryMovements);
-    }
-
     public function updatedInventoryMovements($value, $key)
     {
-        $parts = explode('.', $key);
-        if (count($parts) >= 2) {
-            $index = $parts[0];
-            $field = $parts[1];
-
-            if ($field === 'client_provided_quantity') {
-                $this->calculateDifference($index);
-            }
-        }
-
+        // Just dispatch the update - no complex calculations needed
         $this->dispatch('inventoryUpdated', $this->inventoryMovements);
     }
 
-    private function calculateDifference($index)
+    public function hasInventoryShortage($movement)
     {
-        $movement = &$this->inventoryMovements[$index];
-        $clientProvided = floatval($movement['client_provided_quantity']);
-        $required = floatval($movement['required_quantity']);
+        $productStock = $this->getProductStock($movement['product_id']);
+        $requiredQuantity = floatval($movement['required_quantity']);
+        $clientProvided = floatval($movement['client_provided_quantity'] ?? 0);
+        $tenantAdded = floatval($movement['tenant_quantity_to_add'] ?? 0);
 
-        $difference = $clientProvided - $required;
-        $movement['difference_quantity'] = abs($difference);
+        $totalAvailable = $productStock + $clientProvided + $tenantAdded;
 
-        if ($difference > 0) {
-            $movement['difference_type'] = 'surplus';
-        } elseif ($difference < 0) {
-            $movement['difference_type'] = 'shortage';
-            $movement['add_surplus_to_inventory'] = false; // Can't add shortage to inventory
+        return $totalAvailable < $requiredQuantity;
+    }
+
+    public function getInventoryUsageNote($movement)
+    {
+        $productStock = $this->getProductStock($movement['product_id']);
+        $requiredQuantity = floatval($movement['required_quantity']);
+        $clientProvided = floatval($movement['client_provided_quantity'] ?? 0);
+        $tenantAdded = floatval($movement['tenant_quantity_to_add'] ?? 0);
+
+        $totalProvided = $clientProvided + $tenantAdded;
+        $stockNeeded = $requiredQuantity - $totalProvided;
+
+        if ($stockNeeded <= 0) {
+            return "Cubierto completamente con productos agregados";
+        }
+
+        if ($productStock >= $stockNeeded) {
+            return "Se utilizará {$stockNeeded} L del inventario (Disponible: {$productStock} L)";
         } else {
-            $movement['difference_type'] = 'exact';
-            $movement['add_surplus_to_inventory'] = false; // No surplus to add
+            $shortage = $stockNeeded - $productStock;
+            return "⚠️ Stock insuficiente. Disponible: {$productStock} L, Falta: {$shortage} L";
         }
     }
 
-    public function toggleAddSurplusToInventory($index)
+    public function getStockStatusClass($movement)
     {
-        if ($this->inventoryMovements[$index]['difference_type'] === 'surplus') {
-            $this->inventoryMovements[$index]['add_surplus_to_inventory'] = !$this->inventoryMovements[$index]['add_surplus_to_inventory'];
-            $this->dispatch('inventoryUpdated', $this->inventoryMovements);
-        }
-    }
+        $productStock = $this->getProductStock($movement['product_id']);
+        $requiredQuantity = floatval($movement['required_quantity']);
+        $clientProvided = floatval($movement['client_provided_quantity'] ?? 0);
+        $tenantAdded = floatval($movement['tenant_quantity_to_add'] ?? 0);
 
-    public function getDifferenceText($movement)
-    {
-        if ($movement['difference_type'] === 'exact') {
-            return 'Cantidad exacta';
+        $totalProvided = $clientProvided + $tenantAdded;
+        $stockNeeded = $requiredQuantity - $totalProvided;
+
+        if ($stockNeeded <= 0) {
+            return 'text-success';
         }
 
-        $action = $movement['difference_type'] === 'surplus' ? 'Sobra' : 'Falta';
-        return "{$action} {$movement['difference_quantity']} de producto";
+        return $productStock >= $stockNeeded ? 'text-warning' : 'text-danger';
     }
 
     public function getProductName($productId)
@@ -242,52 +230,6 @@ class OrderInventory extends Component
             'containers' => 0,
             'liters_per_container' => 0
         ];
-    }
-
-    public function getInventoryUsageNote($movement)
-    {
-        $productStock = $this->getProductStock($movement['product_id']);
-        $requiredQuantity = floatval($movement['required_quantity']);
-
-        // If client doesn't provide product, will use inventory stock
-        if (!$movement['client_provides_product']) {
-            if ($productStock >= $requiredQuantity) {
-                return "Se utilizará stock del inventario (Disponible: {$productStock} L)";
-            } else {
-                $shortage = $requiredQuantity - $productStock;
-                return "⚠️ Stock insuficiente. Disponible: {$productStock} L, Falta: {$shortage} L";
-            }
-        }
-
-        // If client provides product but there's a shortage
-        if ($movement['difference_type'] === 'shortage') {
-            $shortageAmount = floatval($movement['difference_quantity']);
-            if ($productStock >= $shortageAmount) {
-                return "Se completará con stock del inventario (Disponible: {$productStock} L)";
-            } else {
-                $totalShortage = $shortageAmount - $productStock;
-                return "⚠️ Stock insuficiente para completar. Disponible: {$productStock} L, Falta: {$totalShortage} L";
-            }
-        }
-
-        return '';
-    }
-
-    public function getStockStatusClass($movement)
-    {
-        $productStock = $this->getProductStock($movement['product_id']);
-        $requiredQuantity = floatval($movement['required_quantity']);
-
-        if (!$movement['client_provides_product']) {
-            return $productStock >= $requiredQuantity ? 'text-success' : 'text-danger';
-        }
-
-        if ($movement['difference_type'] === 'shortage') {
-            $shortageAmount = floatval($movement['difference_quantity']);
-            return $productStock >= $shortageAmount ? 'text-warning' : 'text-danger';
-        }
-
-        return 'text-muted';
     }
 
     public function render()

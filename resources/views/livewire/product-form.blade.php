@@ -174,6 +174,10 @@
                         <i class="fa fa-{{ $showInventoryMovements ? 'minus' : 'plus' }} me-1"></i>
                         {{ $showInventoryMovements ? 'Ocultar' : 'Mostrar' }} Movimientos
                     </button>
+                    <button type="button" class="btn btn-sm btn-primary ms-2" wire:click="openInventoryMovementModal">
+                        <i class="fa fa-plus me-1"></i>
+                        Crear Movimiento
+                    </button>
                 </div>
             </div>
 
@@ -195,10 +199,10 @@
                                     <tr>
                                         <th>Orden</th>
                                         <th>Cliente</th>
-                                        <th>Cliente Proporciona</th>
-                                        <th>Cantidad Cliente (L)</th>
+                                        <th>Tipo de Producto</th>
+                                        <th>Cantidad Aportada (L)</th>
                                         <th>Cantidad Requerida (L)</th>
-                                        <th>Diferencia</th>
+                                        <th>Estado</th>
                                         <th>Agregado a Inventario</th>
                                         <th>Fecha</th>
                                     </tr>
@@ -207,30 +211,40 @@
                                     @foreach($inventoryMovements as $movement)
                                         <tr>
                                             <td>{{ $movement->order->order_number ?? 'N/A' }}</td>
-                                            <td>{{ $movement->order->client->business_name ?? 'N/A' }}</td>
-                                            <td class="text-center">
-                                                @if($movement->client_provides_product)
-                                                    <span class="badge bg-success">SÍ</span>
+                                            <td>
+                                                @if($movement->client_provided && $movement->merchant)
+                                                    {{ $movement->merchant->business_name }}
+                                                @elseif($movement->client_provided)
+                                                    {{ $movement->order->client->business_name ?? 'Cliente' }}
                                                 @else
-                                                    <span class="badge bg-secondary">NO</span>
+                                                    <span class="text-muted">Empresa</span>
                                                 @endif
                                             </td>
-                                            <td class="text-end">{{ number_format($movement->client_provided_quantity, 2) }}</td>
+                                            <td class="text-center">
+                                                @if($movement->client_provided)
+                                                    <span class="badge bg-primary">Cliente</span>
+                                                @else
+                                                    <span class="badge bg-info">Empresa</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-end">{{ number_format($movement->quantity, 2) }}</td>
                                             <td class="text-end">{{ number_format($movement->required_quantity, 2) }}</td>
                                             <td class="text-center">
-                                                @if($movement->difference_type === 'exact')
-                                                    <span class="badge bg-info">Cantidad exacta</span>
+                                                @if($movement->client_provided)
+                                                    @if($movement->hasSurplus())
+                                                        <span class="badge bg-success">Sobrante: {{ number_format($movement->getSurplusQuantity(), 2) }} L</span>
+                                                    @elseif($movement->hasShortage())
+                                                        <span class="badge bg-danger">Faltante: {{ number_format($movement->getShortageQuantity(), 2) }} L</span>
+                                                    @else
+                                                        <span class="badge bg-info">Cantidad exacta</span>
+                                                    @endif
                                                 @else
-                                                    @php
-                                                        $badgeClass = $movement->difference_type === 'surplus' ? 'bg-success' : 'bg-danger';
-                                                        $action = $movement->difference_type === 'surplus' ? 'Sobra' : 'Falta';
-                                                    @endphp
-                                                    <span class="badge {{ $badgeClass }}">{{ $action }} {{ number_format($movement->difference_quantity, 2) }} L</span>
+                                                    <span class="badge bg-secondary">Adición de empresa</span>
                                                 @endif
                                             </td>
                                             <td class="text-center">
                                                 @if($movement->add_surplus_to_inventory)
-                                                    <span class="badge bg-primary">SÍ</span>
+                                                    <span class="badge bg-success">SÍ</span>
                                                 @else
                                                     <span class="badge bg-light text-dark">NO</span>
                                                 @endif
@@ -250,6 +264,11 @@
                 </div>
             @endif
         </div>
+    @endif
+
+    <!-- Include the InventoryMovementForm component -->
+    @if($isEditing && $productId)
+        @livewire('inventory-movement-form', ['productId' => $productId], key('inventory-movement-form-'.$productId))
     @endif
 
 </div>
